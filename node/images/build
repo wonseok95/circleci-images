@@ -5,3 +5,4 @@ set -eu
 TAG=$1
 
 ../../shared/images/build basic node:${TAG} circleci-library/node:${TAG}
+../../shared/images/build browsers node:${TAG} circleci-library/node:${TAG}-browsers

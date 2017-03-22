@@ -2,18 +2,7 @@
 
 set -eu
 
-BASE_TAG=$1
+TAG=$1
 
-function build() {
-	NEW_TAG=circleci-library/python:${BASE_TAG}
-
-	echo '==> Building $NEW_TAG'
-	rm -rf build; mkdir -p build
-	cat Dockerfile.template | sed "s|{{BASE_TAG}}|$BASE_TAG|g" > ${TEMP_PATH}/Dockerfile
-
-	pushd build
-        docker build -t circleci-library/python:${BASE_TAG} .
-	popd
-}
-
-build $BUILD_TAG
+../../shared/images/build basic python:${TAG} circleci-library/python:${TAG}
+../../shared/images/build browsers python:${TAG} circleci-library/python:${TAG}-browsers

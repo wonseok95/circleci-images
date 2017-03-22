@@ -7,6 +7,8 @@ BASE_REPO=$2
 NEW_IMAGE_REPO=$3
 BASE_MANIFEST=$4
 
+VARIANT_TAG=$5
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 BASE_TAGS=$(
@@ -19,6 +21,6 @@ BASE_TAGS=$(
 
 for tag in $BASE_TAGS
 do
-  ${DIR}/build $TEMPLATE "${BASE_REPO}:${tag}" "${NEW_IMAGE_REPO}:${tag}"
+  ${DIR}/build $TEMPLATE "${BASE_REPO}:${tag}" "${NEW_IMAGE_REPO}:${tag}${VARIANT_TAG}"
 done
 
