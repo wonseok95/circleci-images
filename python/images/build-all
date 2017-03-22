@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -eu
+
+BASE_TAGS=$(
+  curl -sSL 'https://raw.githubusercontent.com/docker-library/official-images/master/library/python' \
+    | grep Tags \
+    | sed  's/Tags: //g' \
+    | sed 's|, | |g' \
+    |grep -v -e '-'
+)
+
+for tag in $BASE_TAGS
+do
+	build $tag
+done
