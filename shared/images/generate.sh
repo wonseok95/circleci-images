@@ -5,6 +5,10 @@ set -eu
 MANIFEST_SOURCE="${MANIFEST_SOURCE:-https://raw.githubusercontent.com/docker-library/official-images/master/library/${BASE_REPO}}"
 IMAGE_CUSTOMIZATIONS=${IMAGE_CUSTOMIZATIONS:-}
 
+NEW_ORG=${NEW_ORG:-circleci}
+BASE_REPO_BASE=$(echo $BASE_REPO | cut -d/ -f2)
+NEW_REPO=${NEW_REPO:-${NEW_ORG}/${BASE_REPO_BASE}}
+
 function find_tags() {
   curl -sSL "$MANIFEST_SOURCE" \
     | grep Tags \
@@ -50,6 +54,7 @@ function render_template() {
 
   rm $TEMP
 }
+
 
 for tag in $(find_tags)
 do
