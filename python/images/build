@@ -1,19 +1,8 @@
 #!/bin/bash
 
-set -eu
+BASE_REPO=python
+NEW_REPO=circleci-library/python
 
-BASE_TAG=$1
+VARIANTS=(browsers)
 
-function build() {
-	NEW_TAG=circleci-library/python:${BASE_TAG}
-
-	echo '==> Building $NEW_TAG'
-	rm -rf build; mkdir -p build
-	cat Dockerfile.template | sed "s|{{BASE_TAG}}|$BASE_TAG|g" > ${TEMP_PATH}/Dockerfile
-
-	pushd build
-        docker build -t circleci-library/python:${BASE_TAG} .
-	popd
-}
-
-build $BUILD_TAG
+source ../../shared/images/generate.sh
