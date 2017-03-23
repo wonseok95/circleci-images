@@ -1,0 +1,20 @@
+version: 2
+jobs:
+  build:
+    machine: true
+    working_directory: ~/circleci-orb
+    steps:
+    - checkout
+    - run: docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+    - run:
+        name: build and deploy containers
+        command: |
+          export NEW_ORG=notnoopci
+          if [[ "$CIRCLE_BRANCH" == "production" ]]
+          then
+            export NEW_ORG=circleci
+          fi
+
+          pushd mongo/images; ./build publish ; popd
+          pushd node/images; ./build publish ; popd
+          pushd python/images; ./build publish ; popd
