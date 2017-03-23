@@ -1,0 +1,7 @@
+#!/bin/bash
+
+BASE_REPO=mongo
+NEW_REPO=circleci-library/mongo
+VARIANTS=()
+
+source ../../shared/images/generate.sh

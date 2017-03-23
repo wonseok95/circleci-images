@@ -16,6 +16,7 @@ function find_tags() {
 SHARED_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 TEMPLATE=${TEMPLATE:-basic}
+VARIANTS=${VARIANTS:-none}
 
 function find_template() {
   # find the right template - start with invoker path
@@ -63,14 +64,17 @@ do
   render_template $TEMPLATE > $tag/Dockerfile
 
   # variants based on the basic image
-  for variant in ${VARIANTS}
-  do
+  if [ ${VARIANTS} != "none" ]
+  then
+    for variant in ${VARIANTS}
+    do
 
-    echo "  $variant"
-    BASE_IMAGE=${NEW_REPO}:${tag}
-    NEW_IMAGE=${NEW_REPO}:${tag}-${variant}
+      echo "  $variant"
+      BASE_IMAGE=${NEW_REPO}:${tag}
+      NEW_IMAGE=${NEW_REPO}:${tag}-${variant}
 
-    mkdir $tag/$variant
-    render_template $variant > $tag/$variant/Dockerfile
-  done
+      mkdir $tag/$variant
+      render_template $variant > $tag/$variant/Dockerfile
+    done
+  fi
 done
