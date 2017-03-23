@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -eu
+BASE_REPO=node
+NEW_REPO=circleci-library/node
 
-TAG=$1
+VARIANTS=(browsers)
 
-../../shared/images/build basic node:${TAG} circleci-library/node:${TAG}
-../../shared/images/build browsers node:${TAG} circleci-library/node:${TAG}-browsers
+source ../../shared/images/generate.sh

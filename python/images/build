@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -eu
+BASE_REPO=python
+NEW_REPO=circleci-library/python
 
-TAG=$1
+VARIANTS=(browsers)
 
-../../shared/images/build basic python:${TAG} circleci-library/python:${TAG}
-../../shared/images/build browsers python:${TAG} circleci-library/python:${TAG}-browsers
+source ../../shared/images/generate.sh
