@@ -14,7 +14,7 @@ jobs:
             curl -u ${CIRCLE_API_TOKEN}: \
                  -d revision=${CIRCLE_SHA1}  \
                  -d build_parameters[CIRCLE_JOB]=publish_images \
-                 https://circleci.com/api/v1.1/project/github/circleci/circleci-orb/tree/${CIRCLE_BRANCH}
+                 https://circleci.com/api/v1.1/project/github/circleci/circleci-bundles/tree/${CIRCLE_BRANCH}
           else
             echo not building images
           fi

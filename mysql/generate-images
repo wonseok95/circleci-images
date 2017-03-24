@@ -1,0 +1,8 @@
+#!/bin/bash
+
+BASE_REPO=mysql
+VARIANTS=()
+
+INCLUDE_ALPINE=true
+
+source ../shared/images/generate.sh

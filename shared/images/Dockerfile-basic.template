@@ -21,8 +21,9 @@ RUN locale-gen C.UTF-8 || true
 ENV LANG=C.UTF-8
 
 # install jq
-RUN JQ_URL=$(curl -sSL https://api.github.com/repos/stedolan/jq/releases/latest | jq -r '.assets | map(.browser_download_url)| .[]' | grep  jq-linux64) \
-  && curl -sSL --fail -o /usr/bin/jq $JQ_URL
+RUN JQ_URL=$(curl -sSL https://api.github.com/repos/stedolan/jq/releases/latest  |grep browser_download_url |grep '/jq-linux64"' | grep -o -e 'https.*jq-linux64') \
+  && curl -sSL --fail -o /usr/bin/jq $JQ_URL \
+  && chmod +x /usr/bin/jq
 
 # install dockerize
 RUN DOCKERIZE_URL=$(curl -sSL https://api.github.com/repos/jwilder/dockerize/releases/latest | jq -r '.assets | map(.browser_download_url) |.[]'  |grep dockerize-linux-amd64-) \
