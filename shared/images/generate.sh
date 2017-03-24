@@ -29,9 +29,9 @@ function find_template() {
   # then check this path
   template=$1
 
-  if [ -e "$(dirname pwd)/Dockerfile-${template}.template" ]
+  if [ -e "$(dirname pwd)/resources/Dockerfile-${template}.template" ]
   then
-    echo "$(dirname pwd)/Dockerfile-${template}.template"
+    echo "$(dirname pwd)/resources/Dockerfile-${template}.template"
     exit 0
   fi
 
@@ -58,26 +58,26 @@ function render_template() {
 }
 
 
+rm -rf images
 for tag in $(find_tags)
 do
   echo $tag
 
-  rm -rf $tag
-  mkdir -p $tag
+  mkdir -p images/$tag
 
   BASE_IMAGE=${BASE_REPO}:${tag}
   NEW_IMAGE=${NEW_REPO}:${tag}
 
-  render_template $TEMPLATE > $tag/Dockerfile
+  render_template $TEMPLATE > images/$tag/Dockerfile
 
   case $ACTION in
   "build")
-    pushd $tag
+    pushd images/$tag
     docker build -t $NEW_IMAGE .
     popd
     ;;
     "publish")
-    pushd $tag
+    pushd images/$tag
     docker build -t $NEW_IMAGE .
     docker push $NEW_IMAGE
     popd
@@ -94,17 +94,17 @@ do
       BASE_IMAGE=${NEW_REPO}:${tag}
       NEW_IMAGE=${NEW_REPO}:${tag}-${variant}
 
-      mkdir -p $tag/$variant
-      render_template $variant > $tag/$variant/Dockerfile
+      mkdir -p images/$tag/$variant
+      render_template $variant > images/$tag/$variant/Dockerfile
 
       case $ACTION in
       "build")
-        pushd $tag/$variant
+        pushd images/$tag/$variant
         docker build -t $NEW_IMAGE .
         popd
         ;;
       "publish")
-        pushd $tag/$variant
+        pushd images/$tag/$variant
         docker build -t $NEW_IMAGE .
         docker push $NEW_IMAGE
 	popd

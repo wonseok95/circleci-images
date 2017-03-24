@@ -3,4 +3,4 @@
 BASE_REPO=python
 VARIANTS=(browsers)
 
-source ../../shared/images/generate.sh
+source ../shared/images/generate.sh
