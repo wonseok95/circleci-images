@@ -1,4 +1,4 @@
-BUNDLES = mongo node python postgres
+BUNDLES = mongo node python postgres mysql
 
 images: $(foreach b, $(BUNDLES), $(b)/generate_images)
 
