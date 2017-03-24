@@ -1,0 +1,49 @@
+version: 2
+jobs:
+  build:
+    docker:
+    - image: golang:1.8
+    working_directory: /tmp/orb
+    steps:
+    - checkout
+    - run:
+        name: maybe build images
+        command: |
+          if (git log -n 1 | grep -q 'build-images')
+          then
+            curl -u ${CIRCLE_API_TOKEN}: \
+                 -d revision=${CIRCLE_SHA1}  \
+                 -d build_parameters[CIRCLE_JOB]=publish_images \
+                 https://circleci.com/api/v1.1/project/github/circleci/circleci-orb/tree/${CIRCLE_BRANCH}
+          else
+            echo not building images
+          fi
+
+
+  publish_images:
+    machine: true
+    working_directory: ~/circleci-orb
+    steps:
+    - checkout
+    - run: docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+    - run:
+        name: build and deploy containers
+        command: |
+          if ! (git log -n 1 | grep -q 'build-images')
+          then
+            echo skipping building images
+            exit 0
+          fi
+
+          export NEW_ORG=notnoopci
+          if [[ "$CIRCLE_BRANCH" == "production" ]]
+          then
+            export NEW_ORG=circleci
+          fi
+
+          for repo in $(find . -name 'images' |grep -v shared)
+          do
+            pushd repo/images
+            ./build publish
+            popd
+          end

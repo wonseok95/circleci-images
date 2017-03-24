@@ -1,8 +1,6 @@
 #!/bin/bash
 
 BASE_REPO=node
-NEW_REPO=circleci-library/node
-
 VARIANTS=(browsers)
 
 source ../../shared/images/generate.sh

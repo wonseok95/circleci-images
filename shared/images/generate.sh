@@ -2,8 +2,14 @@
 
 set -eu
 
+ACTION=${1:-generate}
+
 MANIFEST_SOURCE="${MANIFEST_SOURCE:-https://raw.githubusercontent.com/docker-library/official-images/master/library/${BASE_REPO}}"
 IMAGE_CUSTOMIZATIONS=${IMAGE_CUSTOMIZATIONS:-}
+
+NEW_ORG=${NEW_ORG:-circleci}
+BASE_REPO_BASE=$(echo $BASE_REPO | cut -d/ -f2)
+NEW_REPO=${NEW_REPO:-${NEW_ORG}/${BASE_REPO_BASE}}
 
 function find_tags() {
   curl -sSL "$MANIFEST_SOURCE" \
@@ -51,17 +57,32 @@ function render_template() {
   rm $TEMP
 }
 
+
 for tag in $(find_tags)
 do
   echo $tag
 
   rm -rf $tag
-  mkdir $tag
+  mkdir -p $tag
 
   BASE_IMAGE=${BASE_REPO}:${tag}
   NEW_IMAGE=${NEW_REPO}:${tag}
 
   render_template $TEMPLATE > $tag/Dockerfile
+
+  case $ACTION in
+  "build")
+    pushd $tag
+    docker build -t $NEW_IMAGE .
+    popd
+    ;;
+    "publish")
+    pushd $tag
+    docker build -t $NEW_IMAGE .
+    docker push $NEW_IMAGE
+    popd
+    ;;
+  esac
 
   # variants based on the basic image
   if [ ${VARIANTS} != "none" ]
@@ -73,8 +94,22 @@ do
       BASE_IMAGE=${NEW_REPO}:${tag}
       NEW_IMAGE=${NEW_REPO}:${tag}-${variant}
 
-      mkdir $tag/$variant
+      mkdir -p $tag/$variant
       render_template $variant > $tag/$variant/Dockerfile
+
+      case $ACTION in
+      "build")
+        pushd $tag/$variant
+        docker build -t $NEW_IMAGE .
+        popd
+        ;;
+      "publish")
+        pushd $tag/$variant
+        docker build -t $NEW_IMAGE .
+        docker push $NEW_IMAGE
+	popd
+        ;;
+      esac
     done
   fi
 done

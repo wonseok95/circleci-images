@@ -1,8 +1,6 @@
 #!/bin/bash
 
 BASE_REPO=python
-NEW_REPO=circleci-library/python
-
 VARIANTS=(browsers)
 
 source ../../shared/images/generate.sh
