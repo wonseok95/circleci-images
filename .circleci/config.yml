@@ -41,9 +41,4 @@ jobs:
             export NEW_ORG=circleci
           fi
 
-          for repo in $(find . -name 'images' |grep -v shared)
-          do
-            pushd repo/images
-            ./build publish
-            popd
-          end
+          make publish_images
