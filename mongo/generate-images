@@ -3,4 +3,4 @@
 BASE_REPO=mongo
 VARIANTS=()
 
-source ../../shared/images/generate.sh
+source ../shared/images/generate.sh
