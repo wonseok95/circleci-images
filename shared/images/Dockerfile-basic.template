@@ -11,7 +11,7 @@ RUN apt-get update \
   && apt-get install -y \
     git mercurial \
     locales sudo openssh-client ca-certificates tar gzip parallel \
-    net-tools netcat jq unzip zip
+    net-tools netcat unzip zip
 
 # Set timezone to UTC by default
 RUN ln -sf /usr/share/zoneinfo/Etc/UTC /etc/localtime
@@ -19,6 +19,16 @@ RUN ln -sf /usr/share/zoneinfo/Etc/UTC /etc/localtime
 # Use unicode
 RUN locale-gen C.UTF-8 || true
 ENV LANG=C.UTF-8
+
+# install jq
+RUN JQ_URL=$(curl -sSL https://api.github.com/repos/stedolan/jq/releases/latest | jq -r '.assets | map(.browser_download_url)| .[]' | grep  jq-linux64) \
+  && curl -sSL --fail -o /usr/bin/jq $JQ_URL
+
+# install dockerize
+RUN DOCKERIZE_URL=$(curl -sSL https://api.github.com/repos/jwilder/dockerize/releases/latest | jq -r '.assets | map(.browser_download_url) |.[]'  |grep dockerize-linux-amd64-) \
+  && curl -sSL -o /tmp/dockerize-linux-amd64.tar.gz $DOCKERIZE_URL \
+  && tar -C /usr/local/bin -xzvf /tmp/dockerize-linux-amd64.tar.gz \
+  && rm -rf /tmp/dockerize-linux-amd64.tar.gz
 
 RUN groupadd --gid 3434 circleci \
   && useradd --uid 3434 --gid circleci --shell /bin/bash --create-home circleci \
