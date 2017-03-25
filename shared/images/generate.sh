@@ -89,12 +89,16 @@ do
   case $ACTION in
   "build")
     pushd images/$tag
-    docker build -t $NEW_IMAGE .
+    # pull latest image to get cache - but always attempt to use latest base image
+    docker pull $NEW_IMAGE || true
+    docker build --pull -t $NEW_IMAGE .
     popd
     ;;
     "publish")
     pushd images/$tag
-    docker build -t $NEW_IMAGE .
+    # pull latest image to get cache - but always attempt to use latest base image
+    docker pull $NEW_IMAGE || true
+    docker build --pull -t $NEW_IMAGE .
     docker push $NEW_IMAGE
     popd
     ;;
@@ -116,11 +120,15 @@ do
       case $ACTION in
       "build")
         pushd images/$tag/$variant
+        # pull latest image to get cache - but don't pull base, since base image is local
+        docker pull $NEW_IMAGE || true
         docker build -t $NEW_IMAGE .
         popd
         ;;
       "publish")
         pushd images/$tag/$variant
+        # pull latest image to get cache - but don't pull base, since base image is local
+        docker pull $NEW_IMAGE || true
         docker build -t $NEW_IMAGE .
         docker push $NEW_IMAGE
 	popd
