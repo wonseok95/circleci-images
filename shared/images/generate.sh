@@ -103,7 +103,7 @@ do
   # variants based on the basic image
   if [ ${VARIANTS} != "none" ]
   then
-    for variant in ${VARIANTS}
+    for variant in ${VARIANTS[@]}
     do
 
       echo "  $variant"
