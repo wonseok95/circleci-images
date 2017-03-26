@@ -24,7 +24,7 @@ function find_tags() {
     | grep Tags \
     | sed  's/Tags: //g' \
     | sed 's|, | |g' \
-    | grep -v $ALPINE_TAG -e 'slim' -e 'onbuild' -e windows -e wheezy
+    | grep -v $ALPINE_TAG -e 'slim' -e 'onbuild' -e windows -e wheezy -e stretch -e nanoserver
 }
 
 SHARED_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -89,12 +89,16 @@ do
   case $ACTION in
   "build")
     pushd images/$tag
-    docker build -t $NEW_IMAGE .
+    # pull latest image to get cache - but always attempt to use latest base image
+    docker pull $NEW_IMAGE || true
+    docker build --pull -t $NEW_IMAGE .
     popd
     ;;
     "publish")
     pushd images/$tag
-    docker build -t $NEW_IMAGE .
+    # pull latest image to get cache - but always attempt to use latest base image
+    docker pull $NEW_IMAGE || true
+    docker build --pull -t $NEW_IMAGE .
     docker push $NEW_IMAGE
     popd
     ;;
@@ -103,7 +107,7 @@ do
   # variants based on the basic image
   if [ ${VARIANTS} != "none" ]
   then
-    for variant in ${VARIANTS}
+    for variant in ${VARIANTS[@]}
     do
 
       echo "  $variant"
@@ -116,11 +120,15 @@ do
       case $ACTION in
       "build")
         pushd images/$tag/$variant
+        # pull latest image to get cache - but don't pull base, since base image is local
+        docker pull $NEW_IMAGE || true
         docker build -t $NEW_IMAGE .
         popd
         ;;
       "publish")
         pushd images/$tag/$variant
+        # pull latest image to get cache - but don't pull base, since base image is local
+        docker pull $NEW_IMAGE || true
         docker build -t $NEW_IMAGE .
         docker push $NEW_IMAGE
 	popd
