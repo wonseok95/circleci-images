@@ -4,12 +4,14 @@ BUNDLES = \
 
 images: $(foreach b, $(BUNDLES), $(b)/generate_images)
 
-publish_images: $(foreach b, $(BUNDLES), $(b)/publish_images)
+publish_images: images
+	find . -name Dockerfile -exec ./shared/images/build.sh {} \;
 
 %/generate_images:
 	cd $(@D); ./generate-images
 
-%/publish_images:
-	cd $(@D); ./generate-images publish
+%/build_image:
+	echo $(@D)
 
-
+%/publish_image:
+	echo $(@D)
