@@ -1,4 +1,4 @@
-# CircleCI Conveniance Images
+# CircleCI Convenience Images
 
 CircleCI provides a set of language/stack images that CircleCI has found to be useful for development and use in CI.
 
