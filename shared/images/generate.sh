@@ -2,8 +2,6 @@
 
 set -eu
 
-ACTION=${1:-generate}
-
 MANIFEST_SOURCE="${MANIFEST_SOURCE:-https://raw.githubusercontent.com/docker-library/official-images/master/library/${BASE_REPO}}"
 IMAGE_CUSTOMIZATIONS=${IMAGE_CUSTOMIZATIONS:-}
 
@@ -86,24 +84,6 @@ do
 
   render_template $TEMPLATE > images/$tag/Dockerfile
 
-  case $ACTION in
-  "build")
-    pushd images/$tag
-    # pull latest image to get cache - but always attempt to use latest base image
-    docker pull $NEW_IMAGE || true
-    docker build --pull -t $NEW_IMAGE .
-    popd
-    ;;
-    "publish")
-    pushd images/$tag
-    # pull latest image to get cache - but always attempt to use latest base image
-    docker pull $NEW_IMAGE || true
-    docker build --pull -t $NEW_IMAGE .
-    docker push $NEW_IMAGE
-    popd
-    ;;
-  esac
-
   # variants based on the basic image
   if [ ${VARIANTS} != "none" ]
   then
@@ -116,24 +96,6 @@ do
 
       mkdir -p images/$tag/$variant
       render_template $variant > images/$tag/$variant/Dockerfile
-
-      case $ACTION in
-      "build")
-        pushd images/$tag/$variant
-        # pull latest image to get cache - but don't pull base, since base image is local
-        docker pull $NEW_IMAGE || true
-        docker build -t $NEW_IMAGE .
-        popd
-        ;;
-      "publish")
-        pushd images/$tag/$variant
-        # pull latest image to get cache - but don't pull base, since base image is local
-        docker pull $NEW_IMAGE || true
-        docker build -t $NEW_IMAGE .
-        docker push $NEW_IMAGE
-	popd
-        ;;
-      esac
     done
   fi
 done

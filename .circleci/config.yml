@@ -29,16 +29,11 @@ jobs:
     - run:
         name: build and deploy containers
         command: |
-          if ! (git log -n 1 | grep -q 'build-images')
-          then
-            echo skipping building images
-            exit 0
-          fi
-
-          export NEW_ORG=notnoopci
+          export COMPUTED_ORG=notnoopci
           if [[ "$CIRCLE_BRANCH" == "production" ]]
           then
-            export NEW_ORG=circleci
+            export COMPUTED_ORG=circleci
           fi
+          export NEW_ORG=${NEW_ORG:-$COMPUTED_ORG}
 
           make publish_images
