@@ -1,0 +1,6 @@
+#!/bin/bash
+
+BASE_REPO=php
+VARIANTS=(browsers)
+
+source ../shared/images/generate.sh
