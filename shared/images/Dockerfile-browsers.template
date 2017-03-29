@@ -1,10 +1,6 @@
 FROM {{BASE_IMAGE}}
 
 
-# install xvfb
-
-RUN sudo apt-get update && sudo apt-get install -y xvfb
-
 ## Consider adding phantomjs
 #
 ## install phantomjs
