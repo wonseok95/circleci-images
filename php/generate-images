@@ -1,5 +1,6 @@
 #!/bin/bash
 
+NAME=PHP
 BASE_REPO=php
 VARIANTS=(browsers)
 

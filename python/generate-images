@@ -1,5 +1,6 @@
 #!/bin/bash
 
+NAME=Python
 BASE_REPO=python
 VARIANTS=(browsers)
 

@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
     - image: golang:1.8
-    working_directory: /tmp/orb
+    working_directory: /tmp/bundles
     steps:
     - checkout
     - run:
@@ -22,7 +22,7 @@ jobs:
 
   publish_images:
     machine: true
-    working_directory: ~/circleci-orb
+    working_directory: ~/circleci-bundles
     steps:
     - checkout
     - run: docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
@@ -37,3 +37,6 @@ jobs:
           export NEW_ORG=${NEW_ORG:-$COMPUTED_ORG}
 
           make publish_images
+    - store_artifacts:
+        path: "."
+        destination: circleci-bundles
