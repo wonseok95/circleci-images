@@ -22,7 +22,7 @@ function find_tags() {
     | grep Tags \
     | sed  's/Tags: //g' \
     | sed 's|, | |g' \
-    | grep -v $ALPINE_TAG -e 'slim' -e 'onbuild' -e windows -e wheezy -e stretch -e nanoserver
+    | grep -v $ALPINE_TAG -e 'slim' -e 'onbuild' -e windows -e wheezy -e stretch -e nanoserver -e jre
 }
 
 SHARED_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
