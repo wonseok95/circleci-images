@@ -1,0 +1,31 @@
+CircleCI images for {{NAME}}.
+
+# Why
+
+Docker provides official images for popular languages and services that are aimed to work in common context, whether in development or in production.  CircleCI highly recommends using them for creating custom images that are more appropriate for users.
+
+However, we frequently found them lacking some tools making them appropriate for dev/CI use.  CircleCI publishes this image to extend the images in the following ways:
+
+1. Common tools used in development and CI are installed e.g. `git`, `ssh`, `tar`, `ca-certificates`, `curl`, `wget`.
+2. Variants for common use cases, e.g. images with common browsers installed and configured to run in a containized environment
+3. Use a non-root user (namely `circleci`) by default.  Many applications refuse to run as run (e.g. `chrome`) or their behavior differs when run as root (e.g. `tar` file ownership behavior)
+
+Aiming to have CircleCI extended images ease adoption of Docker and CircleCI.  Once users are successful, we encourage users to build and customize their images to suite their individual project needs.
+
+# Notable Variants
+
+## `{{BASE_REPO}}:<version>`
+
+This is the defacto image. If you are unsure about what your needs are, you probably want to use this one for common tools.
+
+Sample Dockerfile
+
+## `{{BASE_REPO}}:<version>-browsers`
+
+This image makes browser testing easier.  It extends the defacto image and installs Firefox and Chrome/chromedriver and configure them to run in a chrontainzied environment
+
+# User Feedback
+## Issues
+
+If you have any problems with or questions about this image, please contact us on [CircleCI Discuss Forum](https://discuss.circleci.com/c/circleci-2-0).
+

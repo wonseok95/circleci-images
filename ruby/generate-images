@@ -1,5 +1,6 @@
 #!/bin/bash
 
+NAME=Ruby
 BASE_REPO=ruby
 VARIANTS=(browsers node node-browsers)
 

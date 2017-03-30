@@ -1,5 +1,6 @@
 #!/bin/bash
 
+NAME=MongoDB
 BASE_REPO=mongo
 VARIANTS=()
 
