@@ -107,6 +107,8 @@ function render_readme_template() {
 
 
 rm -rf images
+mkdir -p images
+
 for tag in $(find_tags)
 do
   echo $tag
