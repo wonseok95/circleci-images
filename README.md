@@ -7,11 +7,27 @@ A Bundle is a set of reusable resources aimed to ease working with specific lang
 
 Each bundle may have the following:
 
-* Images: a set of conveniance images that work better in context of CI.  This repo contains the official set of images that CircleCI maintains.  It contains language as well as services images.
-  * Language images (e.g. `ruby`, `python`, `node`) are images targetted for common programming languages with the common tools pre-installed.  They primarily extend the official images and install additional tools (e.g. browsers) that we find very useful in context of CI.
-  * Services images (e.g. `mongo`, `postgres`) are images that have the services pre-configured with development/CI mode.  They also primarily extend the corresponding official images but with sensible development/CI defaults (e.g. disable production checks, default to nojournal to speed up tests)
+* Images: a set of convenience images that work better in context of CI.  This repo contains the official set of images that CircleCI maintains.  It contains language as well as services images.
+  * Language images (e.g. `ruby`, `python`, `node`) are images targeted for common programming languages with the common tools pre-installed.  They primarily extend the [official images](#official-images) and install additional tools (e.g. browsers) that we find very useful in context of CI.
+  * Services images (e.g. `mongo`, `postgres`) are images that have the services pre-configured with development/CI mode.  They also primarily extend the corresponding [official images](#official-images) but with sensible development/CI defaults (e.g. disable production checks, default to nojournal to speed up tests)
 
 * Commands: a set of individual steps that users can reference in their CircleCI build configuration files.  For example, `ruby/rspec` is a command that users can reference that will automatically split tests in context of parallel builds.
+
+## Official Images
+
+We extend [Docker Official Repositories](https://docs.docker.com/docker-hub/official_repos/) in order to start with the same consistent set of images.
+
+This allows us to make things more standardized. From our scripts for checking for updates, the type of OS on the base image, and so forth. We can recommend using `apt-get install` rather than documenting various constraints depending on which stack you're using.
+
+The official images on Docker Hub are curated by Docker as their way to provide convenience images which address both development and production needs. Since Docker sponsors a dedicated team responsible for reviewing each of the official images, we can take advantage of the community maintaining them independently without trying to track all of the sources and building automations for each one. For now we can take a shortcut, without building this infrastructure.
+
+Finally, our convenience images are augmenting these official images, by adding some missing packages, that we install ourselves for common dependencies shared for the CI environment.
+
+All of the official images on Docker Hub have an "_" for the username, for example:
+https://hub.docker.com/_/ruby
+
+You can view all of the officially supported images here:
+https://hub.docker.com/explore/
 
 
 # How to add a bundle with images
