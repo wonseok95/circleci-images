@@ -1,0 +1,8 @@
+type: command
+name: Install Phoenix dependencies
+descriptions: |
+  install phoenix dependencies
+steps:
+- run:
+    name: mix deps.get
+    command: mix deps.get || mix deps.get || mix deps.get
