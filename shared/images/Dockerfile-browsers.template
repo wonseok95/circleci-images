@@ -21,6 +21,7 @@ FROM {{BASE_IMAGE}}
 RUN curl --output /tmp/firefox.deb https://s3.amazonaws.com/circle-downloads/firefox-mozilla-build_47.0.1-0ubuntu1_amd64.deb \
   && echo 'ef016febe5ec4eaf7d455a34579834bcde7703cb0818c80044f4d148df8473bb  /tmp/firefox.deb' | sha256sum -c \
   && sudo dpkg -i /tmp/firefox.deb || sudo apt-get -f install  \
+  && sudo apt-get install -y libgtk3.0-cil-dev \
   && rm -rf /tmp/firefox.deb
 
 # install chrome
