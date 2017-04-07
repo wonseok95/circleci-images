@@ -3,5 +3,3 @@
 NAME="Go (golang)"
 BASE_REPO=golang
 VARIANTS=(browsers)
-
-source ../shared/images/generate.sh

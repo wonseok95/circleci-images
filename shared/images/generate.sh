@@ -105,7 +105,6 @@ function render_readme_template() {
   rm $BROWSERS_TEMP_PATH
 }
 
-
 rm -rf images
 mkdir -p images
 

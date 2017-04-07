@@ -3,5 +3,3 @@
 NAME="Node.js"
 BASE_REPO=node
 VARIANTS=(browsers)
-
-source ../shared/images/generate.sh
