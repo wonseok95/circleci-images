@@ -8,7 +8,7 @@ GITHUB_BASE = 'https://github.com/circleci-public/circleci-bundles/'
 DOCKERHUB_ORG = 'circleci'
 
 def run(cmd):
-    result = subprocess.check_output(['/bin/sh', '-c', cmd])
+    result = subprocess.check_output(['/bin/bash', '-c', cmd])
     return result.strip()
 
 def fetch_field(bundle, field):
