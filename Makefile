@@ -8,7 +8,7 @@ publish_images: images
 	find . -name Dockerfile -exec ./shared/images/build.sh {} \;
 
 %/generate_images:
-	cd $(@D); ./generate-images
+	cd $(@D); source ./generate-images; source ../shared/images/generate.sh
 
 %/build_image:
 	echo $(@D)

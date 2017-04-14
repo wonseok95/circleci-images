@@ -5,5 +5,3 @@ BASE_REPO=postgres
 VARIANTS=()
 
 INCLUDE_ALPINE=true
-
-source ../shared/images/generate.sh

@@ -3,5 +3,3 @@
 NAME=MongoDB
 BASE_REPO=mongo
 VARIANTS=()
-
-source ../shared/images/generate.sh

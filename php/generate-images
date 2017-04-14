@@ -3,5 +3,3 @@
 NAME=PHP
 BASE_REPO=php
 VARIANTS=(browsers)
-
-source ../shared/images/generate.sh
