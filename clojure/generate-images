@@ -1,0 +1,9 @@
+#!/bin/bash
+
+NAME="Clojure"
+BASE_REPO=clojure
+VARIANTS=(browsers)
+IMAGE_CUSTOMIZATIONS='
+ENV LEIN_JVM_OPTS=-Xmx400m
+ENV JVM_OPTS=-Xmx3200m
+'
