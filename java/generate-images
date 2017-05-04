@@ -1,0 +1,48 @@
+#!/bin/bash
+
+NAME=Java
+BASE_REPO=openjdk
+VARIANTS=(browsers)
+
+function generate_customizations() {
+
+  MAVEN_VERSION=$(./java_helper maven)
+  ANT_VERSION=$(./java_helper ant)
+  GRADLE_VERSION=$(./java_helper gradle)
+  SBT_VERSION=$(./java_helper sbt)
+
+  printf "\n# Install Maven Version: $MAVEN_VERSION\n"
+  echo "RUN wget http://mirrors.advancedhosters.com/apache/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz"
+  echo "RUN tar xf apache-maven-$MAVEN_VERSION-bin.tar.gz -C /opt/"
+  echo "RUN rm apache-maven-$MAVEN_VERSION-bin.tar.gz"
+
+  printf "\n# Install Ant Version: $ANT_VERSION\n"
+  echo "RUN wget http://archive.apache.org/dist/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz"
+  echo "RUN tar xf apache-ant-$ANT_VERSION-bin.tar.gz -C /opt/"
+  echo "RUN rm apache-ant-$ANT_VERSION-bin.tar.gz"
+
+  printf "\n# Install Gradle Version: $GRADLE_VERSION\n"
+  echo "RUN mkdir /opt/gradle"
+  echo "RUN wget https://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip"
+  echo "RUN unzip -d /opt/gradle gradle-$GRADLE_VERSION-bin.zip"
+  echo "RUN rm gradle-$GRADLE_VERSION-bin.zip"
+
+  printf "\n# Install sbt Version: $SBT_VERSION\n"
+  echo "RUN mkdir /opt/sbt"
+  echo "RUN wget https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SBT_VERSION.zip"
+  echo "RUN unzip -d /opt sbt-$SBT_VERSION.zip"
+  echo "RUN rm sbt-$SBT_VERSION.zip"
+
+  printf "\n# Update PATH for Java tools\n"
+  echo "ENV ANT_HOME=/opt/apache-ant-$ANT_VERSION"
+  echo "ENV PATH='/opt/sbt/bin:/opt/apache-maven-$MAVEN_VERSION/bin:/opt/apache-ant-$ANT_VERSION/bin:/opt/gradle/gradle-$GRADLE_VERSION/bin:$PATH'"
+
+  printf "\n# smoke test"
+  echo "RUN mvn -version"
+  echo "RUN ant -version"
+  echo "RUN gradle -version"
+  echo "RUN sbt sbtVersion"
+}
+
+IMAGE_CUSTOMIZATIONS=$(generate_customizations)
+

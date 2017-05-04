@@ -1,6 +1,7 @@
 BUNDLES = \
   node python ruby golang php \
-  postgres mysql mongo elixir clojure
+  postgres mysql mongo elixir \
+  clojure java
 
 images: $(foreach b, $(BUNDLES), $(b)/generate_images)
 
