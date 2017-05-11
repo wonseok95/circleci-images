@@ -107,7 +107,7 @@ def image_manifest(bundle):
     return info
 
 def manifest():
-    bundles = ['node', 'python', 'ruby', 'golang', 'clojure', 'php', 'java', 'postgres', 'mysql', 'mongo']
+    bundles = ['node', 'python', 'ruby', 'elixir', 'golang', 'clojure', 'php', 'java', 'postgres', 'mysql', 'mongo']
     images = {}
     for b in bundles:
         images[b] = image_manifest(b)
