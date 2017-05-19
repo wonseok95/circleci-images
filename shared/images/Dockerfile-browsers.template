@@ -5,12 +5,12 @@ FROM {{BASE_IMAGE}}
 #
 ## install phantomjs
 #
-#RUN export PHANTOMJS_VERSION=$(curl -sSL https://api.github.com/repos/ariya/phantomjs/tags | jq -r '.[0].name') \
-#  && sudo apt-get update; sudo apt-get install libfontconfig \
-#  && curl -L --fail -o /tmp/phantomjs.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${PHANTOMJS_VERSION}-linux-x86_64.tar.bz2 \
-#  && tar -x -C /tmp -f /tmp/phantomjs.tar.bz2 \
-#  && sudo mv /tmp/phantomjs-${PHANTOMJS_VERSION}-linux-x86_64/bin/phantomjs /usr/local/bin \
-#  && rm -rf /tmp/phantomjs.tar.bz2 /tmp/phantomjs-*
+RUN export PHANTOMJS_VERSION=$(curl -sSL https://api.github.com/repos/ariya/phantomjs/tags | jq -r '.[0].name') \
+  && sudo apt-get update; sudo apt-get install libfontconfig \
+  && curl -L --fail -o /tmp/phantomjs.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${PHANTOMJS_VERSION}-linux-x86_64.tar.bz2 \
+  && tar -x -C /tmp -f /tmp/phantomjs.tar.bz2 \
+  && sudo mv /tmp/phantomjs-${PHANTOMJS_VERSION}-linux-x86_64/bin/phantomjs /usr/local/bin \
+  && rm -rf /tmp/phantomjs.tar.bz2 /tmp/phantomjs-*
 
 
 # install firefox
