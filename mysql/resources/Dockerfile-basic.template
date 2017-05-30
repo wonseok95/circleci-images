@@ -6,9 +6,7 @@ ENV MYSQL_ALLOW_EMPTY_PASSWORD=true \
     MYSQL_ROOT_HOST=% \
     MYSQL_USER=root
 
-# The same performance optimization tweak as in 1.0.
-# The experiment showed that DB operation such as 'rake db:migrate'
-# got nearly 1.5 times faster with the tweak than without it.
+# This is the performance optimization tweak to make DB faster
 RUN echo '\n\
 [mysqld]\n\
 collation-server = utf8_unicode_ci\n\
