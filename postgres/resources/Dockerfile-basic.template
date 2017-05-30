@@ -3,9 +3,7 @@ FROM {{BASE_IMAGE}}
 ENV POSTGRES_USER=root \
     POSTGRES_DB=circle_test
 
-# The same performance optimization tweak as in 1.0.
-# The experiment showed that DB operation such as 'rake db:migrate'
-# got nearly two times faster with the tweak than without it.
+# This is performance optimization tweak to make DB faster
 RUN if [ -e /usr/local/share/postgresql/postgresql.conf.sample ]; then \
         postgresfile=/usr/local/share/postgresql/postgresql.conf.sample; \
     else \
