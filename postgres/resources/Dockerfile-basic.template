@@ -9,8 +9,7 @@ RUN if [ -e /usr/local/share/postgresql/postgresql.conf.sample ]; then \
     else \
         postgresfile=/usr/share/postgresql/postgresql.conf.sample; \
     fi && \
-    echo '\n\
-fsync=off\n\
-synchronous_commit=off\n\
-full_page_writes=off\n\
-bgwriter_lru_maxpages=0\n' >> $postgresfile
+    echo fsync=off >> $postgresfile &&\
+    echo synchronous_commit=off >> $postgresfile &&\
+    echo full_page_writes=off >> $postgresfile &&\
+    echo bgwriter_lru_maxpages=0 >> $postgresfile
