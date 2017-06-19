@@ -2,5 +2,6 @@ echo Generating Android API 25 Dockerfile
 
 TAG=api-25-alpha
 mkdir -p images/${TAG}
+cp -rv bin images/${TAG}
 m4 Dockerfile.m4 > images/${TAG}/Dockerfile
 
