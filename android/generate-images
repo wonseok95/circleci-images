@@ -1,7 +1,10 @@
-echo Generating Android API 25 Dockerfile
+#!/bin/bash
+set -ex
 
-TAG=api-25-alpha
-mkdir -p images/${TAG}
-cp -rv bin images/${TAG}
-m4 Dockerfile.m4 > images/${TAG}/Dockerfile
-
+for API in 23 24 25 26; do
+  echo Generating Android ${API} Dockerfile
+  TAG=api-${API}-alpha
+  mkdir -p images/${TAG}
+  cp -r bin images/${TAG}
+  m4 -DAPI_LEVEL=${API} Dockerfile.m4 > images/${TAG}/Dockerfile
+done
