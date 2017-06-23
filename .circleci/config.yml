@@ -7,6 +7,20 @@ jobs:
     steps:
     - checkout
     - run:
+        name: Install Tools
+        command: apt-get update && apt-get install --yes m4
+    - run:
+        name: Generate Dockerfiles
+        command: make
+    - run:
+        name: Prepare Artifacts
+        command: |
+          mkdir /tmp/dockerfiles
+          find . -name Dockerfile -type f | grep -v shared | xargs -I{} cp -v --parents {} /tmp/dockerfiles
+    - store_artifacts:
+          path: /tmp/dockerfiles
+          destination: Dockerfiles
+    - run:
         name: maybe build images
         command: |
           if (git log -n 1 | grep -q 'build-images')
