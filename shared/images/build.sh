@@ -33,6 +33,5 @@ else
 fi
 
 docker push $IMAGE_NAME
-docker rmi $IMAGE_NAME
 
 popd
