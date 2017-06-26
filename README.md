@@ -71,3 +71,4 @@ Also, add the bundle name to in Makefile `BUNDLES` field.
 * The template language is WIP - it only supports `{{BASE_IMAGE}}` template.  We should extend this.
 * Generated dockerfiles isn't checked into repo.  Since we track moving set of tags, checking into repository can create lots of unnecessary changes
 * By default, this pushes to `notnoopci/` Dockerhub org (treated as staging).  Once we get some test builds with these images, we can promote them to `circleci` Dockerhub org
+
