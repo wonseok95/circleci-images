@@ -6,6 +6,8 @@ NEW_ORG=${NEW_ORG:-circleci}
 
 DOCKERFILE_PATH=$1
 
+echo Building docker image from $DOCKERFILE_PATH
+
 function image_name() {
   repo_tag=$( echo ${DOCKERFILE_PATH} | sed 's|.*/\([^/]*\)/images/\(.*\)/Dockerfile|\1:\2|g' | sed 's|/|-|g')
   echo "${NEW_ORG}/${repo_tag}"
@@ -31,5 +33,6 @@ else
 fi
 
 docker push $IMAGE_NAME
+docker rmi $IMAGE_NAME
 
 popd
