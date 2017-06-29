@@ -16,3 +16,8 @@ publish_images: images
 
 %/publish_image:
 	echo $(@D)
+
+%/clean:
+	cd $(@D) ; rm -r images || true
+
+clean: $(foreach b, $(BUNDLES), $(b)/clean)
