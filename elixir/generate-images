@@ -3,3 +3,5 @@
 NAME="elixir"
 BASE_REPO=elixir
 VARIANTS=(browsers)
+
+source ../shared/images/generate.sh

@@ -46,3 +46,4 @@ function generate_customizations() {
 
 IMAGE_CUSTOMIZATIONS=$(generate_customizations)
 
+source ../shared/images/generate.sh
