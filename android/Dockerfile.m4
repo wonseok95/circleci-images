@@ -20,7 +20,7 @@ RUN sudo apt-get update && \
 # Download and install Android SDK
 RUN sudo mkdir -p ${android_home} && \
     sudo chown -R circleci:circleci ${android_home} && \
-    curl --output /tmp/${sdk_version} https://dl.google.com/android/repository/${sdk_version} && \
+    curl --silent --show-error --location --fail --retry 3 --output /tmp/${sdk_version} https://dl.google.com/android/repository/${sdk_version} && \
     unzip -q /tmp/${sdk_version} -d ${android_home} && \
     rm /tmp/${sdk_version}
 
