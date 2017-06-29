@@ -11,9 +11,6 @@ publish_images: images
 %/generate_images:
 	cd $(@D) && ./generate-images
 
-%/build_image:
-	echo $(@D)
-
 %/publish_images: %/generate_images
 	find ./$(@D) -name Dockerfile -exec ./shared/images/build.sh {} \;
 
