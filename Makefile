@@ -14,8 +14,8 @@ publish_images: images
 %/build_image:
 	echo $(@D)
 
-%/publish_image:
-	echo $(@D)
+%/publish_images: %/generate_images
+	find ./$(@D) -name Dockerfile -exec ./shared/images/build.sh {} \;
 
 %/clean:
 	cd $(@D) ; rm -r images || true
