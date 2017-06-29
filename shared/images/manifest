@@ -15,7 +15,7 @@ def fetch_field(bundle, field):
     return run('cd "%s"; source ./generate-images; echo ${%s}' % (bundle, field))
 
 def short_description(image):
-    return run("curl -sSL 'https://hub.docker.com/v2/repositories/library/%s/' | jq -r .description" % (image))
+    return run("curl --location --fail --retry 3 'https://hub.docker.com/v2/repositories/library/%s/' | jq -r .description" % (image))
 
 def language_description(name, image):
     d = """
