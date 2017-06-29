@@ -110,7 +110,7 @@ mkdir -p images
 
 for tag in $(find_tags)
 do
-  echo $tag
+  echo Generating $(basename `pwd`) $tag Dockerfile
 
   mkdir -p images/$tag
 
@@ -125,7 +125,7 @@ do
     for variant in ${VARIANTS[@]}
     do
 
-      echo "  $variant"
+      echo " + including $variant variant"
       BASE_IMAGE=${NEW_REPO}:${tag}
       NEW_IMAGE=${NEW_REPO}:${tag}-${variant}
 
