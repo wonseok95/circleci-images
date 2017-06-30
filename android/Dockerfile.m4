@@ -48,6 +48,4 @@ RUN sdkmanager \
   "build-tools;25.0.2" \
   "build-tools;25.0.3"
 
-RUN sdkmanager \
-  "platforms;android-API_LEVEL" \
-  "system-images;android-API_LEVEL;google_apis;armeabi-v7a"
+RUN sdkmanager "platforms;android-API_LEVEL"
