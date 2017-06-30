@@ -12,7 +12,7 @@ publish_images: images
 	cd $(@D) && ./generate-images
 
 %/publish_images: %/generate_images
-	find ./$(@D) -name Dockerfile -exec ./shared/images/build.sh {} \;
+	find ./$(@D) -name Dockerfile | xargs -n 1 ./shared/images/build.sh
 
 %/clean:
 	cd $(@D) ; rm -r images || true

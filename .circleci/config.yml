@@ -1,58 +1,136 @@
 version: 2
 jobs:
-  build:
+  generate_dockerfiles:
+    working_directory: ~/repo
     docker:
-    - image: golang:1.8
-    working_directory: /tmp/bundles
+      - image: gcc:7
     steps:
-    - checkout
-    - run:
-        name: Install Tools
-        command: apt-get update && apt-get install --yes m4
-    - run:
-        name: Generate Dockerfiles
-        command: make
-    - run:
-        name: Prepare Artifacts
-        command: |
-          mkdir /tmp/dockerfiles
-          find . -name Dockerfile -type f | grep -v shared | xargs -I{} cp -v --parents {} /tmp/dockerfiles
-    - store_artifacts:
+      - checkout
+      - run:
+          name: Generate Dockerfiles
+          command: make -j
+      - run:
+          name: Prepare Artifacts
+          command: |
+            mkdir /tmp/dockerfiles
+            find . -name Dockerfile -type f | grep -v shared | xargs -I{} cp -v --parents {} /tmp/dockerfiles
+      - store_artifacts:
           path: /tmp/dockerfiles
           destination: Dockerfiles
-    - run:
-        name: maybe build images
-        command: |
-          if (git log -n 1 | grep -q 'build-images')
-          then
-            curl -u ${CIRCLE_API_TOKEN}: \
-                 -d revision=${CIRCLE_SHA1}  \
-                 -d build_parameters[CIRCLE_JOB]=publish_images \
-                 --fail --retry 3 \
-                 https://circleci.com/api/v1.1/project/github/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/tree/${CIRCLE_BRANCH}
-          else
-            echo not building images
-          fi
 
-
-  publish_images:
+  publish_image: &publish_image
     machine: true
     working_directory: ~/circleci-bundles
+    branches:
+      only:
+        - master
+        - production
     steps:
-    - checkout
-    - run: docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-    - run:
-        name: build and deploy containers
-        command: |
-          export COMPUTED_ORG=notnoopci
-          if [[ "$CIRCLE_BRANCH" == "production" ]]
-          then
-            export COMPUTED_ORG=circleci
-          fi
-          export NEW_ORG=${NEW_ORG:-$COMPUTED_ORG}
+      - checkout
+      - run:
+          name: Docker Login
+          command: docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - run:
+          name: Build and Publish Images
+          command: |
+            export COMPUTED_ORG=notnoopci
+            if [[ "$CIRCLE_BRANCH" == "production" ]]
+            then
+              export COMPUTED_ORG=circleci
+            fi
+            export NEW_ORG=${NEW_ORG:-$COMPUTED_ORG}
 
-          make publish_images
-          ./shared/images/manifest > manifest.json
-    - store_artifacts:
-        path: "."
-        destination: circleci-bundles
+            make -j $PLATFORM/publish_images
+            ./shared/images/manifest > manifest.json
+      - store_artifacts:
+          path: "."
+          destination: circleci-bundles
+
+  publish_android:
+    <<: *publish_image
+    environment:
+      - PLATFORM: android
+
+  publish_node:
+    <<: *publish_image
+    environment:
+      - PLATFORM: node
+
+  publish_python:
+    <<: *publish_image
+    environment:
+      - PLATFORM: python
+
+  publish_ruby:
+    <<: *publish_image
+    environment:
+      - PLATFORM: ruby
+
+  publish_golang:
+    <<: *publish_image
+    environment:
+      - PLATFORM: golang
+
+  publish_php:
+    <<: *publish_image
+    environment:
+      - PLATFORM: php
+
+  publish_postgres:
+    <<: *publish_image
+    environment:
+      - PLATFORM: postgres
+
+  publish_mysql:
+    <<: *publish_image
+    environment:
+      - PLATFORM: mysql
+
+  publish_mongo:
+    <<: *publish_image
+    environment:
+      - PLATFORM: mongo
+
+  publish_elixir:
+    <<: *publish_image
+    environment:
+      - PLATFORM: elixir
+
+  publish_clojure:
+    <<: *publish_image
+    environment:
+      - PLATFORM: clojure
+
+  publish_openjdk:
+    <<: *publish_image
+    environment:
+      - PLATFORM: openjdk
+
+
+workflow_filters: &workflow_filters
+  requires:
+    - generate_dockerfiles
+  filters:
+    branches:
+      only:
+        - master
+        - production
+        - parallel
+
+workflows:
+  version: 2
+  build_test_deploy:
+    jobs:
+      - generate_dockerfiles
+      - publish_android:  *workflow_filters
+      - publish_node:     *workflow_filters
+      - publish_python:   *workflow_filters
+      - publish_ruby:     *workflow_filters
+      - publish_golang:   *workflow_filters
+      - publish_php:      *workflow_filters
+      - publish_postgres: *workflow_filters
+      - publish_mysql:    *workflow_filters
+      - publish_mongo:    *workflow_filters
+      - publish_elixir:   *workflow_filters
+      - publish_clojure:  *workflow_filters
+      - publish_openjdk:  *workflow_filters

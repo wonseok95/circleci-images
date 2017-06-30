@@ -7,7 +7,7 @@ FROM {{BASE_IMAGE}}
 #
 RUN export PHANTOMJS_VERSION=$(curl --location --fail --retry 3  https://api.github.com/repos/ariya/phantomjs/tags | jq -r '.[0].name') \
   && sudo apt-get update; sudo apt-get install libfontconfig \
-  && curl --silent --show-error --location --fail --retry 3 --ouput /tmp/phantomjs.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${PHANTOMJS_VERSION}-linux-x86_64.tar.bz2 \
+  && curl --silent --show-error --location --fail --retry 3 --output /tmp/phantomjs.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${PHANTOMJS_VERSION}-linux-x86_64.tar.bz2 \
   && tar -x -C /tmp -f /tmp/phantomjs.tar.bz2 \
   && sudo mv /tmp/phantomjs-${PHANTOMJS_VERSION}-linux-x86_64/bin/phantomjs /usr/local/bin \
   && rm -rf /tmp/phantomjs.tar.bz2 /tmp/phantomjs-*
@@ -26,7 +26,7 @@ RUN curl --silent --show-error --location --fail --retry 3 --output /tmp/firefox
 
 # install chrome
 
-RUN curl --silent --show-error --location --fail --retry 3 --ouput /tmp/google-chrome-stable_current_amd64.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+RUN curl --silent --show-error --location --fail --retry 3 --output /tmp/google-chrome-stable_current_amd64.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
       && (sudo dpkg -i /tmp/google-chrome-stable_current_amd64.deb || sudo apt-get -fy install)  \
       && rm -rf /tmp/google-chrome-stable_current_amd64.deb \
       && sudo sed -i 's|HERE/chrome"|HERE/chrome" --disable-setuid-sandbox --no-sandbox|g' \
