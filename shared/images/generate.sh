@@ -18,7 +18,7 @@ function find_tags() {
     ALPINE_TAG=""
   fi
 
-  curl --location --fail --retry 3 "$MANIFEST_SOURCE" \
+  curl --silent --location --fail --retry 3 "$MANIFEST_SOURCE" \
     | grep Tags \
     | sed  's/Tags: //g' \
     | sed 's|, | |g' \
