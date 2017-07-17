@@ -1,0 +1,13 @@
+# Default to pinging Danielle and Marc when changes are made to this repository
+*   @dantoml @marcomorain
+
+# For images with a language advocate, recommend them instead.
+
+ruby/*      @zzak
+clojure/*   @technomancy
+openjdk/*   @technomancy
+golang/*    @felicianotech
+node/*      @hannahhenderson
+php/*       @ryanwohara
+android/*   @marcomorain
+python/*    @keybits
