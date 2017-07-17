@@ -5,7 +5,7 @@
 
 ruby/*      @zzak
 clojure/*   @technomancy
-openjdk/*   @technomancy
+openjdk/*   @levlaz
 golang/*    @felicianotech
 node/*      @hannahhenderson
 php/*       @ryanwohara
