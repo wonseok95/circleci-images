@@ -34,4 +34,6 @@ fi
 
 docker push $IMAGE_NAME
 
+docker image rm $IMAGE_NAME
+
 popd
