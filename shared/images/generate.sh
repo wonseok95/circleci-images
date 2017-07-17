@@ -21,7 +21,7 @@ function find_tags() {
   curl --silent --location --fail --retry 3 "$MANIFEST_SOURCE" \
     | grep Tags \
     | sed  's/Tags: //g' \
-    | sed 's|, | |g' \
+    | sed 's/,//g' \
     | grep -v $ALPINE_TAG -e 'slim' -e 'onbuild' -e windows -e wheezy -e stretch -e nanoserver -e jre
 }
 
@@ -78,9 +78,12 @@ function render_readme_template() {
 
   echo "$GENERATED_HEADER"
 
-  cat images/latest/Dockerfile | \
-    grep -v -e '^###' -e '^{{' -e '^# BEGIN' -e '^# END BEGIN' | \
-    grep -v -e '^ *$' > $BASIC_TEMP_PATH
+  if [ -e images/latest/Dockerfile ]
+  then
+    cat images/latest/Dockerfile | \
+      grep -v -e '^###' -e '^{{' -e '^# BEGIN' -e '^# END BEGIN' | \
+      grep -v -e '^ *$' > $BASIC_TEMP_PATH
+  fi
 
   if [ -e images/latest/browsers/Dockerfile ]
   then
