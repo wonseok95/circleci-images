@@ -2,7 +2,6 @@ FROM {{BASE_IMAGE}}
 
 # make Apt non-interactive
 RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/90circleci \
-  && echo 'APT::Get::force-Yes "true";' >> /etc/apt/apt.conf.d/90circleci \
   && echo 'DPkg::Options "--force-confnew";' >> /etc/apt/apt.conf.d/90circleci
 
 ENV DEBIAN_FRONTEND=noninteractive
