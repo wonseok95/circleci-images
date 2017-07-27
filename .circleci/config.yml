@@ -21,10 +21,6 @@ jobs:
   publish_image: &publish_image
     machine: true
     working_directory: ~/circleci-bundles
-    branches:
-      only:
-        - master
-        - production
     steps:
       - checkout
       - run:
