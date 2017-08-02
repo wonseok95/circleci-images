@@ -2,6 +2,6 @@
 
 NAME=MongoDB
 BASE_REPO=mongo
-VARIANTS=()
+VARIANTS=(ram)
 
 source ../shared/images/generate.sh

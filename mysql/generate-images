@@ -2,7 +2,7 @@
 
 NAME=MySQL
 BASE_REPO=mysql
-VARIANTS=()
+VARIANTS=(ram)
 
 INCLUDE_ALPINE=true
 

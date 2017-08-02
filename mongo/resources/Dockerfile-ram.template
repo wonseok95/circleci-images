@@ -1,0 +1,6 @@
+FROM {{BASE_IMAGE}}
+
+RUN sed -i '/exec "$@"/i mkdir \/dev\/shm\/mongo' /entrypoint.sh \
+      &&  sed -i '/exec "$@"/i mkdir \/dev\/shm\/mongo' /usr/local/bin/docker-entrypoint.sh
+
+CMD ["mongod", "--nojournal", "--noprealloc", "--smallfiles", "--dbpath=/dev/shm/mongo"]

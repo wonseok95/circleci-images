@@ -2,7 +2,7 @@
 
 NAME=PostgreSQL
 BASE_REPO=postgres
-VARIANTS=()
+VARIANTS=(ram)
 
 INCLUDE_ALPINE=true
 
