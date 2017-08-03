@@ -15,7 +15,7 @@ GRADLE_VERSION_PATTERN = r'(<span>v\d+\.\d+(\.\d+)?)'
 ANT_URL = 'http://archive.apache.org/dist/ant/binaries/'
 ANT_VERSION_PATTERN = r'\d+\.\d+\.\d+'
 SBT_URL = 'http://www.scala-sbt.org/download.html'
-SBT_VERSION_PATTERN = r'v\d+\.\d+\.\d+'
+SBT_VERSION_PATTERN = r'sbt-\d+\.\d+\.\d+'
 
 def get_latest_version(url, pattern):
     """Return latest version of given tool 
