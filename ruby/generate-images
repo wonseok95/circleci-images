@@ -19,7 +19,7 @@ FROM {{BASE_IMAGE}}
 USER root
 EOF
 
-  NODE_MANIFEST_INFO=$(curl --silent --location --fail --retry 3 https://raw.githubusercontent.com/docker-library/official-images/master/library/node | grep -A2 $DESIRED_NODE_TAG)
+  NODE_MANIFEST_INFO=$(curl --silent --location --fail --retry 3 https://raw.githubusercontent.com/docker-library/official-images/master/library/node | grep -A3 $DESIRED_NODE_TAG)
   NODE_GIT_COMMIT=$(printf "%s\n" "${NODE_MANIFEST_INFO}" | grep GitCommit | awk '{print $2;}')
   NODE_DIRECTORY=$(printf "%s\n" "${NODE_MANIFEST_INFO}" | grep Directory | awk '{print $2;}')
 
