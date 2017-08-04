@@ -41,6 +41,10 @@ EOF
   curl --silent --location --fail --retry 3 $NODE_DOCKERFILE_URL | grep -v -e '^FROM buildpack-deps:jessie' -e '^CMD'
 
   echo ''
+  echo '# Basic smoke test'
+  echo 'RUN node --version'
+
+  echo ''
   echo 'USER circleci'
 }
 
