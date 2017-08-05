@@ -11,6 +11,8 @@ NEW_REPO=${NEW_REPO:-${NEW_ORG}/${BASE_REPO_BASE}}
 
 INCLUDE_ALPINE=${INCLUDE_ALPINE:-false}
 
+TAG_FILTER="${TAG_FILTER:-cat}"
+
 function find_tags() {
   ALPINE_TAG="-e alpine"
   if [[ $INCLUDE_ALPINE == "true" ]]
@@ -22,7 +24,8 @@ function find_tags() {
     | grep Tags \
     | sed  's/Tags: //g' \
     | sed 's/,//g' \
-    | grep -v $ALPINE_TAG -e 'slim' -e 'onbuild' -e windows -e wheezy -e stretch -e nanoserver -e jre
+    | grep -v $ALPINE_TAG -e 'slim' -e 'onbuild' -e windows -e wheezy -e stretch -e nanoserver \
+    | ${TAG_FILTER}
 }
 
 SHARED_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
