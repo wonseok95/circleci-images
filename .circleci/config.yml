@@ -18,6 +18,14 @@ jobs:
           path: /tmp/dockerfiles
           destination: Dockerfiles
 
+  refresh_tools_cache:
+    docker:
+    - image: circleci/python:latest
+    steps:
+    - checkout
+    - run: sudo pip install awscli
+    - run: cd ./shared/images; ./refresh-tools-cache
+
   publish_image: &publish_image
     machine: true
     working_directory: ~/circleci-bundles
@@ -109,7 +117,7 @@ jobs:
 
 workflow_filters: &workflow_filters
   requires:
-    - generate_dockerfiles
+    - refresh_tools_cache
   filters:
     branches:
       only:
@@ -122,6 +130,15 @@ workflows:
   build_test_deploy:
     jobs:
       - generate_dockerfiles
+      - refresh_tools_cache:
+          requires:
+          - generate_dockerfiles
+          filters:
+            branches:
+              only:
+                - master
+                - production
+                - parallel
       - publish_android:  *workflow_filters
       - publish_node:     *workflow_filters
       - publish_python:   *workflow_filters
