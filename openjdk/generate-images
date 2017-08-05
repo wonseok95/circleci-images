@@ -4,46 +4,63 @@ NAME=Java
 BASE_REPO=openjdk
 VARIANTS=(browsers)
 
-TAG_FILTER="grep -v -e ^7 -e ^6"
+TAG_FILTER="grep -v -e ^7 -e ^6 -e jre"
 
 function generate_customizations() {
 
   MAVEN_VERSION=$(./java_helper maven)
   ANT_VERSION=$(./java_helper ant)
   GRADLE_VERSION=$(./java_helper gradle)
-  SBT_VERSION=$(./java_helper sbt)
+  SBT_URL=$(./java_helper sbt)
 
-  printf "\n# Install Maven Version: $MAVEN_VERSION\n"
-  echo "RUN wget http://mirrors.advancedhosters.com/apache/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz"
-  echo "RUN tar xf apache-maven-$MAVEN_VERSION-bin.tar.gz -C /opt/"
-  echo "RUN rm apache-maven-$MAVEN_VERSION-bin.tar.gz"
+  cat <<EOF
 
-  printf "\n# Install Ant Version: $ANT_VERSION\n"
-  echo "RUN wget http://archive.apache.org/dist/ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz"
-  echo "RUN tar xf apache-ant-$ANT_VERSION-bin.tar.gz -C /opt/"
-  echo "RUN rm apache-ant-$ANT_VERSION-bin.tar.gz"
+# Install Maven Version: $MAVEN_VERSION
+RUN curl --silent --show-error --location --fail --retry 3 --output /tmp/apache-maven.tar.gz \
+    https://www.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
+  && tar xf /tmp/apache-maven.tar.gz -C /opt/ \
+  && rm /tmp/apache-maven.tar.gz \
+  && ln -s /opt/apache-maven-* /opt/apache-maven \
+  && /opt/apache-maven/bin/mvn -version
 
-  printf "\n# Install Gradle Version: $GRADLE_VERSION\n"
-  echo "RUN mkdir /opt/gradle"
-  echo "RUN wget https://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip"
-  echo "RUN unzip -d /opt/gradle gradle-$GRADLE_VERSION-bin.zip"
-  echo "RUN rm gradle-$GRADLE_VERSION-bin.zip"
+# Install Ant Version: $ANT_VERSION
+RUN curl --silent --show-error --location --fail --retry 3 --output /tmp/apache-ant.tar.gz \
+    https://archive.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz \
+  && tar xf /tmp/apache-ant.tar.gz -C /opt/ \
+  && ln -s /opt/apache-ant-* /opt/apache-ant \
+  && rm -rf /tmp/apache-ant.tar.gz \
+  && /opt/apache-ant/bin/ant -version
 
-  printf "\n# Install sbt Version: $SBT_VERSION\n"
-  echo "RUN mkdir /opt/sbt"
-  echo "RUN wget https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SBT_VERSION.zip"
-  echo "RUN unzip -d /opt sbt-$SBT_VERSION.zip"
-  echo "RUN rm sbt-$SBT_VERSION.zip"
+ENV ANT_HOME=/opt/apache-ant
 
-  printf "\n# Update PATH for Java tools\n"
-  echo "ENV ANT_HOME=/opt/apache-ant-$ANT_VERSION"
-  echo "ENV PATH='/opt/sbt/bin:/opt/apache-maven-$MAVEN_VERSION/bin:/opt/apache-ant-$ANT_VERSION/bin:/opt/gradle/gradle-$GRADLE_VERSION/bin:$PATH'"
+# Install Gradle Version: $GRADLE_VERSION
+RUN curl --silent --show-error --location --fail --retry 3 --output /tmp/gradle.zip \
+    https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip \
+  && unzip -d /opt /tmp/gradle.zip \
+  && rm /tmp/gradle.zip \
+  && ln -s /opt/gradle-* /opt/gradle \
+  && /opt/gradle/bin/gradle -version
 
-  printf "\n# smoke test"
-  echo "RUN mvn -version"
-  echo "RUN ant -version"
-  echo "RUN gradle -version"
-  echo "RUN sbt sbtVersion"
+# Install sbt from $SBT_URL
+RUN curl --silent --show-error --location --fail --retry 3 --output /tmp/sbt.tgz ${SBT_URL} \
+  && tar -xzf /tmp/sbt.tgz -C /opt/ \
+  && rm /tmp/sbt.tgz \
+  && /opt/sbt/bin/sbt sbtVersion
+
+EOF
+
+  # Modify path but don't inject builder path in there!
+  cat <<'EOF'
+# Update PATH for Java tools
+ENV PATH="/opt/sbt/bin:/opt/apache-maven/bin:/opt/apache-ant/bin:/opt/gradle/bin:$PATH"
+
+# smoke test with path
+RUN mvn -version
+RUN ant -version
+RUN gradle -version
+RUN sbt sbtVersion
+
+EOF
 }
 
 IMAGE_CUSTOMIZATIONS=$(generate_customizations)

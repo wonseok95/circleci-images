@@ -15,7 +15,7 @@ GRADLE_VERSION_PATTERN = r'(<span>v\d+\.\d+(\.\d+)?)'
 ANT_URL = 'http://archive.apache.org/dist/ant/binaries/'
 ANT_VERSION_PATTERN = r'\d+\.\d+\.\d+'
 SBT_URL = 'http://www.scala-sbt.org/download.html'
-SBT_VERSION_PATTERN = r'sbt-\d+\.\d+\.\d+'
+SBT_URL_PATTERN = r'https://[^"]*tgz'
 
 def get_latest_version(url, pattern):
     """Return latest version of given tool 
@@ -38,6 +38,14 @@ def get_latest_version(url, pattern):
             'Unable to find any versions from {0}, this is not expected'.format(url))
     return versions[((len(versions) - 1))]
 
+def get_sbt_url(url, pattern):
+    raw_html = urllib2.urlopen(url).read()
+    raw_urls = re.findall(pattern, raw_html)
+    if (len(raw_urls) < 1):
+        raise Exception(
+            'Unable to find any urls from {0}, this is not expected'.format(url))
+    return raw_urls[((len(raw_urls) - 1))]
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Get Latest Version of Java Tools.')
     parser.add_argument('get', type=str, choices=['ant', 'gradle', 'maven', 'sbt'], 
@@ -50,4 +58,4 @@ if __name__ == '__main__':
     if args.get == 'maven':
         print(get_latest_version(MAVEN_URL, MAVEN_VERSION_PATTERN))
     if args.get == 'sbt':
-        print(get_latest_version(SBT_URL, SBT_VERSION_PATTERN))
+        print(get_sbt_url(SBT_URL, SBT_URL_PATTERN))
