@@ -10,7 +10,8 @@ RUN export PHANTOMJS_VERSION=$(curl --location --fail --retry 3  https://api.git
   && curl --silent --show-error --location --fail --retry 3 --output /tmp/phantomjs.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${PHANTOMJS_VERSION}-linux-x86_64.tar.bz2 \
   && tar -x -C /tmp -f /tmp/phantomjs.tar.bz2 \
   && sudo mv /tmp/phantomjs-${PHANTOMJS_VERSION}-linux-x86_64/bin/phantomjs /usr/local/bin \
-  && rm -rf /tmp/phantomjs.tar.bz2 /tmp/phantomjs-*
+  && rm -rf /tmp/phantomjs.tar.bz2 /tmp/phantomjs-* \
+  && phantomjs --version
 
 
 # install firefox
@@ -22,7 +23,8 @@ RUN curl --silent --show-error --location --fail --retry 3 --output /tmp/firefox
   && echo 'ef016febe5ec4eaf7d455a34579834bcde7703cb0818c80044f4d148df8473bb  /tmp/firefox.deb' | sha256sum -c \
   && sudo dpkg -i /tmp/firefox.deb || sudo apt-get -f install  \
   && sudo apt-get install -y libgtk3.0-cil-dev \
-  && rm -rf /tmp/firefox.deb
+  && rm -rf /tmp/firefox.deb \
+  && firefox --version
 
 # install chrome
 
@@ -30,7 +32,8 @@ RUN curl --silent --show-error --location --fail --retry 3 --output /tmp/google-
       && (sudo dpkg -i /tmp/google-chrome-stable_current_amd64.deb || sudo apt-get -fy install)  \
       && rm -rf /tmp/google-chrome-stable_current_amd64.deb \
       && sudo sed -i 's|HERE/chrome"|HERE/chrome" --disable-setuid-sandbox --no-sandbox|g' \
-           "/opt/google/chrome/google-chrome"
+           "/opt/google/chrome/google-chrome" \
+      && google-chrome --version
 
 RUN export CHROMEDRIVER_RELEASE=$(curl --location --fail --retry 3 http://chromedriver.storage.googleapis.com/LATEST_RELEASE) \
       && curl --silent --show-error --location --fail --retry 3 --output /tmp/chromedriver_linux64.zip "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_RELEASE/chromedriver_linux64.zip" \
@@ -38,7 +41,8 @@ RUN export CHROMEDRIVER_RELEASE=$(curl --location --fail --retry 3 http://chrome
       && unzip chromedriver_linux64.zip \
       && rm -rf chromedriver_linux64.zip \
       && sudo mv chromedriver /usr/local/bin/chromedriver \
-      && sudo chmod +x /usr/local/bin/chromedriver
+      && sudo chmod +x /usr/local/bin/chromedriver \
+      && chromedriver --version
 
 # start xvfb automatically to avoid needing to express in circle.yml
 ENV DISPLAY :99
