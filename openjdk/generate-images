@@ -4,6 +4,8 @@ NAME=Java
 BASE_REPO=openjdk
 VARIANTS=(browsers)
 
+TAG_FILTER="grep -v -e ^7 -e ^6"
+
 function generate_customizations() {
 
   MAVEN_VERSION=$(./java_helper maven)
