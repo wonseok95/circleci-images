@@ -15,7 +15,7 @@ publish_images: images
 	find ./$(@D) -name Dockerfile | awk '{ print length, $$0 }' | sort -n -s | cut -d" " -f2- | sed 's|/Dockerfile|/publish_image|g' | xargs -n1 make
 
 %/publish_image: %/Dockerfile
-	./shared/images/build.sh $(@D)/Dockerfile
+	./shared/images/build.sh ./$(@D)/Dockerfile
 
 %/clean:
 	cd $(@D) ; rm -r images || true
