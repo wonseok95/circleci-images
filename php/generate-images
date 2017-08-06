@@ -4,6 +4,8 @@ NAME=PHP
 BASE_REPO=php
 VARIANTS=(browsers node node-browsers)
 
+TAG_FILTER="grep -v -e rc -e beta"
+
 IMAGE_CUSTOMIZATIONS=$(cat <<'EOF'
 
 # Install composer
