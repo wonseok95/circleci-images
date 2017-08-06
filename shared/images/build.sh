@@ -27,13 +27,15 @@ docker pull $IMAGE_NAME || true
 if is_variant
 then
     docker build -t $IMAGE_NAME .
+    docker push $IMAGE_NAME
+
+    # variants don't get reused, clean them up
+    docker image rm $IMAGE_NAME
 else
     # when building the new base image - always try to pull from latest
+    # also keep new base images around for variants
     docker build --pull -t $IMAGE_NAME .
+    docker push $IMAGE_NAME
 fi
-
-docker push $IMAGE_NAME
-
-docker image rm $IMAGE_NAME
 
 popd
