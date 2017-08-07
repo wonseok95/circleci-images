@@ -149,7 +149,12 @@ do
       mkdir -p images/$tag/$variant
       render_dockerfile_template $variant > images/$tag/$variant/Dockerfile
       echo "${tag}-${variant}" > images/$tag/$variant/TAG
-      echo "${aliases}-$variant" | sed "s|,|-$variant,|g" > images/$tag/$variant/ALIASES
+      if [[ "${aliases}" ]]
+      then
+          echo "${aliases}-$variant" | sed "s|,|-$variant,|g" > images/$tag/$variant/ALIASES
+      else
+          echo '' > images/$tag/$variant/ALIASES
+      fi
     done
   fi
 done
