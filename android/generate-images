@@ -6,5 +6,6 @@ for API in 23 24 25 26; do
   TAG=api-${API}-alpha
   mkdir -p images/${TAG}
   cp -r bin images/${TAG}
+  echo "${TAG}" > images/${TAG}/TAG
   m4 -DAPI_LEVEL=${API} Dockerfile.m4 > images/${TAG}/Dockerfile
 done
