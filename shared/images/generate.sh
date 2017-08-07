@@ -118,7 +118,12 @@ mkdir -p images
 for tag_aliases in $(find_tags_and_aliases)
 do
   tag=$(echo "$tag_aliases" | cut -d: -f1)
-  aliases=$(echo "$tag_aliases" | cut -d: -f2)
+
+  aliases=""
+  if $(echo "$tag_aliases" | grep -q :)
+  then
+    aliases=$(echo "$tag_aliases" | cut -d: -f2)
+  fi
 
   echo Generating $(basename `pwd`) $tag Dockerfile
 
