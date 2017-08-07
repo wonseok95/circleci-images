@@ -13,7 +13,7 @@ INCLUDE_ALPINE=${INCLUDE_ALPINE:-false}
 
 TAG_FILTER="${TAG_FILTER:-cat}"
 
-function find_tags() {
+function find_tags_and_aliases() {
   ALPINE_TAG="-e alpine"
   if [[ $INCLUDE_ALPINE == "true" ]]
   then
@@ -23,9 +23,10 @@ function find_tags() {
   curl --silent --location --fail --retry 3 "$MANIFEST_SOURCE" \
     | grep Tags \
     | sed  's/Tags: //g' \
-    | sed 's/,//g' \
     | grep -v $ALPINE_TAG -e 'slim' -e 'onbuild' -e windows -e wheezy -e stretch -e nanoserver \
-    | ${TAG_FILTER}
+    | ${TAG_FILTER} \
+    | sed 's/, /:/' \
+    | sed 's/, /,/g'
 }
 
 SHARED_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -114,8 +115,11 @@ function render_readme_template() {
 rm -rf images
 mkdir -p images
 
-for tag in $(find_tags)
+for tag_aliases in $(find_tags_and_aliases)
 do
+  tag=$(echo "$tag_aliases" | cut -d: -f1)
+  aliases=$(echo "$tag_aliases" | cut -d: -f2)
+
   echo Generating $(basename `pwd`) $tag Dockerfile
 
   mkdir -p images/$tag
@@ -124,6 +128,8 @@ do
   NEW_IMAGE=${NEW_REPO}:${tag}
 
   render_dockerfile_template $TEMPLATE > images/$tag/Dockerfile
+  echo "${tag}" > images/$tag/TAG
+  echo "${aliases}" > images/$tag/ALIASES
 
   # variants based on the basic image
   if [ ${VARIANTS} != "none" ]
@@ -137,6 +143,8 @@ do
 
       mkdir -p images/$tag/$variant
       render_dockerfile_template $variant > images/$tag/$variant/Dockerfile
+      echo "${tag}-${variant}" > images/$tag/$variant/TAG
+      echo "${aliases}-$variant" | sed "s|,|-$variant,|g" > images/$tag/$variant/ALIASES
     done
   fi
 done
