@@ -21,7 +21,7 @@ IMAGE_NAME=${REPO_NAME}:$(cat TAG)
 echo "OFFICIAL IMAGE REF: $IMAGE_NAME"
 
 function is_variant() {
-    echo ${DOCKERFILE_PATH} | grep -q -e 'images/.*/Dockerfile'
+    echo ${DOCKERFILE_PATH} | grep -q -e 'images/.*/.*/Dockerfile'
 }
 
 function update_aliases() {
