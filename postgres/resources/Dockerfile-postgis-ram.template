@@ -4,14 +4,14 @@
 FROM {{BASE_IMAGE}}-postgis
 
 ENV PGUSER $POSTGRES_USER
-ENV POSTGIS_VERSION 2.3
+ENV POSTGIS_VERSION 2.3.3
 
 RUN if which apt-get > /dev/null ; then \
       apt-get update \
       && apt-get install -y --no-install-recommends \
-           postgis \
+           postgis wget \
       && rm -rf /var/lib/apt/lists/* \
-    else \
+    ; else \
       apk add --no-cache --virtual .fetch-deps \
           ca-certificates \
           openssl \
@@ -56,12 +56,14 @@ RUN if which apt-get > /dev/null ; then \
           geos \
           gdal \
           proj4 \
+          wget \
       && cd / \
       && rm -rf /usr/src/postgis \
       && apk del .fetch-deps .build-deps .build-deps-testing \
     ; fi
 
-COPY ../../../resources/initdb-postgis.sh /docker-entrypoint-initdb.d/postgis.sh
-COPY ../../../resources/update-postgis.sh /usr/local/bin
+RUN wget --no-check-certificate https://raw.githubusercontent.com/appropriate/docker-postgis/master/initdb-postgis.sh -O /docker-entrypoint-initdb.d/postgis.sh 
+
+RUN wget --no-check-certificate https://raw.githubusercontent.com/appropriate/docker-postgis/master/update-postgis.sh -O /usr/local/bin/update-postgis.sh
 
 ENV PGDATA /dev/shm/pgdata/data
