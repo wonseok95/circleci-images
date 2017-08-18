@@ -1,18 +1,20 @@
 FROM {{BASE_IMAGE}}
 
-
-## Consider adding phantomjs
+# install java 8
 #
+RUN echo "deb http://http.us.debian.org/debian/ jessie-backports main" | sudo tee -a /etc/apt/sources.list \
+  && echo "deb-src http://http.us.debian.org/debian/ jessie-backports main" | sudo tee -a /etc/apt/sources.list \
+  && sudo apt-get update; sudo apt-get install -t jessie-backports openjdk-8-jre openjdk-8-jre-headless
+
 ## install phantomjs
 #
 RUN PHANTOMJS_URL="https://circle-downloads.s3.amazonaws.com/circleci-images/cache/linux-amd64/phantomjs-latest.tar.bz2" \
-  && sudo apt-get update; sudo apt-get install libfontconfig openjdk-7-jre \
+  && sudo apt-get install libfontconfig \
   && curl --silent --show-error --location --fail --retry 3 --output /tmp/phantomjs.tar.bz2 ${PHANTOMJS_URL} \
   && tar -x -C /tmp -f /tmp/phantomjs.tar.bz2 \
   && sudo mv /tmp/phantomjs-*-linux-x86_64/bin/phantomjs /usr/local/bin \
   && rm -rf /tmp/phantomjs.tar.bz2 /tmp/phantomjs-* \
   && phantomjs --version
-
 
 # install firefox
 
