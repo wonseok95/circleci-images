@@ -2,9 +2,13 @@ FROM {{BASE_IMAGE}}
 
 # install java 8
 #
-RUN echo "deb http://http.us.debian.org/debian/ jessie-backports main" | sudo tee -a /etc/apt/sources.list \
-  && echo "deb-src http://http.us.debian.org/debian/ jessie-backports main" | sudo tee -a /etc/apt/sources.list \
-  && sudo apt-get update; sudo apt-get install -t jessie-backports openjdk-8-jre openjdk-8-jre-headless
+RUN if grep Debian /etc/*release > /dev/null ; then \
+    echo "deb http://http.us.debian.org/debian/ jessie-backports main" | sudo tee -a /etc/apt/sources.list \
+    && echo "deb-src http://http.us.debian.org/debian/ jessie-backports main" | sudo tee -a /etc/apt/sources.list \
+    && sudo apt-get update; sudo apt-get install -t jessie-backports openjdk-8-jre openjdk-8-jre-headless openjdk-8-jdk openjdk-8-jdk-headless \
+  ; else \
+    sudo apt-get update; sudo apt-get install openjdk-8-jre openjdk-8-jre-headless openjdk-8-jdk openjdk-8-jdk-headless \
+  ; fi
 
 ## install phantomjs
 #
