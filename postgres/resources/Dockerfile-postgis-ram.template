@@ -58,7 +58,7 @@ RUN if which apt-get > /dev/null ; then \
       && apk del .fetch-deps .build-deps .build-deps-testing \
     ; fi
 
-COPY ./initdb-postgis.sh /docker-entrypoint-initdb.d/postgis.sh
-COPY ./update-postgis.sh /usr/local/bin
+COPY ../../../resources/initdb-postgis.sh /docker-entrypoint-initdb.d/postgis.sh
+COPY ../../../resources/update-postgis.sh /usr/local/bin
 
 ENV PGDATA /dev/shm/pgdata/data
