@@ -100,6 +100,11 @@ jobs:
     environment:
       - PLATFORM: elixir
 
+  publish_jruby:
+    <<: *publish_image
+    environment:
+      - PLATFORM: jruby
+
   publish_clojure:
     <<: *publish_image
     environment:
@@ -149,6 +154,7 @@ workflows:
       - publish_mysql:    *workflow_filters
       - publish_mongo:    *workflow_filters
       - publish_elixir:   *workflow_filters
+      - publish_jruby:    *workflow_filters
       - publish_clojure:  *workflow_filters
       - publish_openjdk:  *workflow_filters
       - publish_buildpack-deps:   *workflow_filters
