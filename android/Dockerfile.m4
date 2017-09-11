@@ -22,7 +22,7 @@ RUN cd /tmp && wget -O ruby-install-0.6.1.tar.gz https://github.com/postmodern/r
     tar -xzvf ruby-install-0.6.1.tar.gz && \
     cd ruby-install-0.6.1 && \
     sudo make install && \
-    sudo ruby-install --jobs 4 --system --cleanup ruby 2.4 && \
+    sudo ruby-install --system --cleanup ruby 2.4 && \
     rm -r /tmp/ruby-install-*
 
 
