@@ -15,7 +15,16 @@ ARG android_home=/opt/android/sdk
 # SHA-256 444e22ce8ca0f67353bda4b85175ed3731cae3ffa695ca18119cbacef1c1bea0
 
 RUN sudo apt-get update && \
-    sudo apt-get install --yes xvfb gcc-multilib lib32z1 lib32stdc++6
+    sudo apt-get install --yes xvfb gcc-multilib lib32z1 lib32stdc++6 build-essential
+
+# Install Ruby
+RUN cd /tmp && wget -O ruby-install-0.6.1.tar.gz https://github.com/postmodern/ruby-install/archive/v0.6.1.tar.gz && \
+    tar -xzvf ruby-install-0.6.1.tar.gz && \
+    cd ruby-install-0.6.1 && \
+    sudo make install && \
+    sudo ruby-install --jobs 4 --system --cleanup ruby 2.4 && \
+    rm -r /tmp/ruby-install-*
+
 
 # Download and install Android SDK
 RUN sudo mkdir -p ${android_home} && \
