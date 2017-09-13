@@ -25,6 +25,11 @@ RUN cd /tmp && wget -O ruby-install-0.6.1.tar.gz https://github.com/postmodern/r
     sudo ruby-install --system --cleanup ruby 2.4 && \
     rm -r /tmp/ruby-install-*
 
+RUN echo 'gem: --user-install --env-shebang --no-rdoc --no-ri' >> ~/.gemrc && \
+    echo 'export PATH=$(ruby -rubygems -e "puts Gem.user_dir")/bin:$PATH'>> ~/.bashrc && \
+    gem install bundler
+
+ENV BASH_ENV ${HOME}/.bashrc
 
 # Download and install Android SDK
 RUN sudo mkdir -p ${android_home} && \
