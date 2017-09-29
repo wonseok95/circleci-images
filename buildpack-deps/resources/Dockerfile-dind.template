@@ -48,4 +48,7 @@ VOLUME /var/lib/docker
 
 ENTRYPOINT ["dockerd-entrypoint.sh"]
 
+LABEL com.circleci.user="circleci"
+LABEL com.circleci.preserve-entrypoint=true
+
 USER circleci
