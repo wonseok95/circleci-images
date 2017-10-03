@@ -9,7 +9,7 @@ ENV POSTGIS_VERSION 2.3.3
 RUN if which apt-get > /dev/null ; then \
       apt-get update \
       && apt-get install -y --no-install-recommends \
-           postgis wget \
+           postgresql-$PG_MAJOR-postgis-2.3 postgresql-$PG_MAJOR-postgis-2.3-scripts postgis wget \
       && rm -rf /var/lib/apt/lists/* \
     ; else \
       apk add --no-cache --virtual .fetch-deps \
