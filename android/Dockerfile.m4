@@ -63,6 +63,7 @@ RUN sdkmanager \
   "build-tools;25.0.1" \
   "build-tools;25.0.2" \
   "build-tools;25.0.3" \
-  "build-tools;26.0.1"
+  "build-tools;26.0.1" \
+  "build-tools;26.0.2"
 
 RUN sdkmanager "platforms;android-API_LEVEL"
