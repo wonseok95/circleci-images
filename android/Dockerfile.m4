@@ -66,7 +66,7 @@ ENV PATH=${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bi
 
 RUN mkdir ~/.android && echo '### User Sources for Android SDK Manager' > ~/.android/repositories.cfg
 
-RUN sdkmanager --update && yes | sdkmanager --licenses
+RUN yes | sdkmanager --licenses && sdkmanager --update
 
 # Update SDK manager and install system image, platform and build tools
 RUN sdkmanager \
@@ -82,6 +82,7 @@ RUN sdkmanager \
   "build-tools;25.0.1" \
   "build-tools;25.0.2" \
   "build-tools;25.0.3" \
-  "build-tools;26.0.1"
+  "build-tools;26.0.1" \
+  "build-tools;26.0.2"
 
 RUN sdkmanager "platforms;android-API_LEVEL"
