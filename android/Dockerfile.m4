@@ -47,7 +47,7 @@ ENV PATH=${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bi
 
 RUN mkdir ~/.android && echo '### User Sources for Android SDK Manager' > ~/.android/repositories.cfg
 
-RUN sdkmanager --update && yes | sdkmanager --licenses
+RUN yes | sdkmanager --licenses && sdkmanager --update
 
 # Update SDK manager and install system image, platform and build tools
 RUN sdkmanager \
