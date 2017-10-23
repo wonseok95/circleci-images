@@ -2,6 +2,7 @@
 
 NAME=Python
 BASE_REPO=python
-VARIANTS=(browsers)
+VARIANTS=(browsers node node-browsers)
 
+source ../shared/images/generate-node.sh
 source ../shared/images/generate.sh
