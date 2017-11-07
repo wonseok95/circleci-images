@@ -37,6 +37,6 @@ function generate_node_browser_variant() {
 }
 
 mkdir -p resources
-generate_node_variant "latest" > resources/Dockerfile-node.template
+generate_node_variant "carbon$" > resources/Dockerfile-node.template
 generate_node_browser_variant > resources/Dockerfile-node-browsers.template
 
