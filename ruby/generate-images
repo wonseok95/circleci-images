@@ -4,7 +4,7 @@ NAME=Ruby
 BASE_REPO=ruby
 VARIANTS=(browsers node node-browsers)
 IMAGE_CUSTOMIZATIONS='
-RUN if [ "x$BUNDLER_VERSION" = "1.16.0" ] ; then echo Using current bundler ; else sudo gem uninstall -a -x --force bundler && gem install bundler -v "1.15.4" ; fi
+RUN if [ "x$BUNDLER_VERSION" = "1.16.0" ] ; then echo Using current bundler ; else sudo gem uninstall -a -x --force bundler && sudo gem install bundler -v "1.15.4" ; fi
 '
 
 source ../shared/images/generate-node.sh
