@@ -133,6 +133,13 @@ workflow_filters: &workflow_filters
 workflows:
   version: 2
   build_test_deploy:
+    triggers:
+      - schedule:
+          cron: "0 0 0 * *"
+          filters:
+            branches:
+              only:
+                - production
     jobs:
       - generate_dockerfiles
       - refresh_tools_cache:
