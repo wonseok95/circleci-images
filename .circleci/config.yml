@@ -85,6 +85,11 @@ jobs:
     environment:
       - PLATFORM: postgres
 
+  publish_mariadb:
+    <<: *publish_image
+    environment:
+      - PLATFORM: mariadb
+
   publish_mysql:
     <<: *publish_image
     environment:
@@ -158,6 +163,7 @@ workflows:
       - publish_golang:   *workflow_filters
       - publish_php:      *workflow_filters
       - publish_postgres: *workflow_filters
+      - publish_mariadb:  *workflow_filters
       - publish_mysql:    *workflow_filters
       - publish_mongo:    *workflow_filters
       - publish_elixir:   *workflow_filters
