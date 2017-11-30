@@ -3,5 +3,6 @@
 NAME=MongoDB
 BASE_REPO=mongo
 VARIANTS=(ram)
+TAG_FILTER="grep -v -i shared"
 
 source ../shared/images/generate.sh
