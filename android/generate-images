@@ -1,11 +1,16 @@
 #!/bin/bash
 set -ex
 
+source ../shared/images/generate-node.sh
+
 for API in 23 24 25 26 27; do
-  echo Generating Android ${API} Dockerfile
+  echo Generating Android ${API} Dockerfiles
   TAG=api-${API}-alpha
   mkdir -p images/${TAG}
   cp -r bin images/${TAG}
   echo "${TAG}" > images/${TAG}/TAG
   m4 -DAPI_LEVEL=${API} Dockerfile.m4 > images/${TAG}/Dockerfile
+  m4 -DAPI_LEVEL=${API} Dockerfile.m4 > images/${TAG}-node8/Dockerfile
+  generate_node_variant "carbon$" > resources/Dockerfile-node.template
+  cat resources/Dockerfile-node.template >> images/${TAG}-node8/Dockerfile
 done
