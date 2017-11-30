@@ -22,7 +22,7 @@ function find_tags_and_aliases() {
 
   curl --silent --location --fail --retry 3 "$MANIFEST_SOURCE" \
     | grep Tags \
-    | sed  's/Tags: //g' \
+    | sed  's/^.*Tags: //g' \
     | grep -v $ALPINE_TAG -e 'slim' -e 'onbuild' -e windows -e wheezy -e nanoserver \
     | ${TAG_FILTER} \
     | sed 's/, /:/' \
