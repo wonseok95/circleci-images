@@ -140,11 +140,38 @@ workflows:
   build_test_deploy:
     triggers:
       - schedule:
-          cron: "0 0 0 * *"
+          cron: "0 0 * * 0"
           filters:
             branches:
               only:
                 - production
+    jobs:
+      - generate_dockerfiles
+      - refresh_tools_cache:
+          requires:
+          - generate_dockerfiles
+          filters:
+            branches:
+              only:
+                - master
+                - production
+                - parallel
+      - publish_android:  *workflow_filters
+      - publish_node:     *workflow_filters
+      - publish_python:   *workflow_filters
+      - publish_ruby:     *workflow_filters
+      - publish_golang:   *workflow_filters
+      - publish_php:      *workflow_filters
+      - publish_postgres: *workflow_filters
+      - publish_mariadb:  *workflow_filters
+      - publish_mysql:    *workflow_filters
+      - publish_mongo:    *workflow_filters
+      - publish_elixir:   *workflow_filters
+      - publish_jruby:    *workflow_filters
+      - publish_clojure:  *workflow_filters
+      - publish_openjdk:  *workflow_filters
+      - publish_buildpack-deps:   *workflow_filters
+  commit:
     jobs:
       - generate_dockerfiles
       - refresh_tools_cache:
