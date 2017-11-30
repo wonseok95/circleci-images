@@ -33,7 +33,7 @@ jobs:
       - checkout
       - run:
           name: Docker Login
-          command: docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run:
           name: Build and Publish Images
           command: |
@@ -137,6 +137,9 @@ workflow_filters: &workflow_filters
 
 workflows:
   version: 2
+  build:
+    jobs:
+      - generate_dockerfiles
   build_test_deploy:
     triggers:
       - schedule:
