@@ -42,3 +42,6 @@ refresh_cache dockerize-latest.tar.gz \
 PHANTOMJS_VERSION=$(curl --location --fail --retry 3  https://api.github.com/repos/ariya/phantomjs/tags | jq -r '.[0].name')
 refresh_cache phantomjs-latest.tar.bz2 \
 	"https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${PHANTOMJS_VERSION}-linux-x86_64.tar.bz2"
+
+refresh_cache sbt-latest \
+	$(curl --location --fail --retry 3 https://api.github.com/repos/sbt/sbt/releases/latest  | grep browser_download_url | grep 'tgz"' | grep -o -e 'https.*.tgz')
