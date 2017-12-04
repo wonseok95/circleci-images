@@ -41,7 +41,11 @@ docker pull $IMAGE_NAME || true
 if is_variant
 then
     echo "image is a variant image"
-    docker build -t $IMAGE_NAME .
+
+    # retry building for transient failures; note docker cache kicks in
+    # and this should only restart with the last failed step
+    docker build -t $IMAGE_NAME . || (sleep 2; echo "retry building $IMAGE_NAME"; docker build -t $IMAGE_NAME .)
+
     docker push $IMAGE_NAME
 
     update_aliases
