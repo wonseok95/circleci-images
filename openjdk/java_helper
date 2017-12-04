@@ -40,7 +40,7 @@ def get_latest_version(url, pattern):
 
 def get_sbt_url(url, pattern):
     """Returns cached SBT from GitHub download to avoid GitHub rate limiting and the like"""
-    return "https://circle-downloads.s3.amazonaws.com/circleci-images/cache/linux-amd64/dockerize-latest.tar.gz"
+    return "https://circle-downloads.s3.amazonaws.com/circleci-images/cache/linux-amd64/sbt-latest.tgz"
     #raw_html = urllib2.urlopen(url).read()
     #raw_urls = re.findall(pattern, raw_html)
     #if (len(raw_urls) < 1):
