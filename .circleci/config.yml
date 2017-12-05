@@ -62,6 +62,7 @@ jobs:
 
   publish_python:
     <<: *publish_image
+    parallelism: 2
     environment:
       - PLATFORM: python
 
@@ -77,6 +78,7 @@ jobs:
 
   publish_php:
     <<: *publish_image
+    parallelism: 3
     environment:
       - PLATFORM: php
 
@@ -122,6 +124,7 @@ jobs:
 
   publish_buildpack-deps:
     <<: *publish_image
+    parallelism: 2
     environment:
       - PLATFORM: buildpack-deps
 
