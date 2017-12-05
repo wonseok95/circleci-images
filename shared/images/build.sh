@@ -55,7 +55,7 @@ then
 else
     # when building the new base image - always try to pull from latest
     # also keep new base images around for variants
-    docker build --pull -t $IMAGE_NAME .
+    docker build --pull -t $IMAGE_NAME . || (sleep 2; echo "retry building $IMAGE_NAME"; docker build --pull -t $IMAGE_NAME .)
     docker push $IMAGE_NAME
 
     update_aliases
