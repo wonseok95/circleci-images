@@ -45,7 +45,6 @@ jobs:
             export NEW_ORG=${NEW_ORG:-$COMPUTED_ORG}
 
             make -j $PLATFORM/publish_images
-            ./shared/images/manifest > manifest.json
       - store_artifacts:
           path: "."
           destination: circleci-bundles
