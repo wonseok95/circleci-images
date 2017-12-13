@@ -43,7 +43,7 @@ jobs:
             then
               export DOCKERFILES_BRANCH=staging
             fi
-            if [ -z "$DOCKERFILES_BRANCH" ]
+            if [ ! -e $DOCKERFILES_BRANCH ]
             then
               cd circleci-dockerfiles
               git add .
