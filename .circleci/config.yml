@@ -47,7 +47,7 @@ jobs:
             then
               cd circleci-dockerfiles
               git add .
-              git commit -m "Dockerfiles from commit $CIRCLE_SHA1"
+              git commit --allow-empty -m "Dockerfiles from commit $CIRCLE_SHA1"
               git push origin $DOCKERFILES_BRANCH
             fi
 
