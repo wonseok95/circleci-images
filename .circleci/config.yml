@@ -48,7 +48,7 @@ jobs:
             then
               git add .
               git checkout $DOCKERFILES_BRANCH
-              git commit --allow-empty -m "Dockerfiles from commit $CIRCLE_SHA1 (see $CIRCLE_BUILD_URL for details)"
+              git commit --allow-empty -m "Dockerfiles from $CIRCLE_BUILD_URL"
               git push -f origin $DOCKERFILES_BRANCH
             fi
 
