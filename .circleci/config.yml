@@ -30,10 +30,11 @@ jobs:
           name: git clone & cp
           command: |
             git clone git@github.com:CircleCI-Public/circleci-dockerfiles.git
-            cp -rf /tmp/dockerfiles/* circleci-dockerfiles
+            cp -rfv /tmp/dockerfiles/* circleci-dockerfiles
       # only push Dockerfiles to github on circleci-images pushes to "master" or "production"
       - run:
           name: branch control flow & git push
+          working_directory: circleci-dockerfiles
           command: |
             if [[ "$CIRCLE_BRANCH" == "production" ]]
             then
@@ -45,10 +46,9 @@ jobs:
             fi
             if [ ! -e $DOCKERFILES_BRANCH ]
             then
-              cd circleci-dockerfiles
               git add .
-              git commit --allow-empty -m "Dockerfiles from commit $CIRCLE_SHA1"
-              git push origin $DOCKERFILES_BRANCH
+              git commit --allow-empty -m "Dockerfiles from commit $CIRCLE_SHA1 (see $CIRCLE_BUILD_URL for details)"
+              git push -f origin $DOCKERFILES_BRANCH
             fi
 
   refresh_tools_cache:
