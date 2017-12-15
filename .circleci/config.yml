@@ -115,6 +115,11 @@ jobs:
     environment:
       - PLATFORM: php
 
+  publish_redis:
+    <<: *publish_image
+    environment:
+      - PLATFORM: redis
+
   publish_postgres:
     <<: *publish_image
     environment:
@@ -201,6 +206,7 @@ workflows:
       - publish_ruby:     *workflow_filters
       - publish_golang:   *workflow_filters
       - publish_php:      *workflow_filters
+      - publish_redis:    *workflow_filters
       - publish_postgres: *workflow_filters
       - publish_mariadb:  *workflow_filters
       - publish_mysql:    *workflow_filters
@@ -228,6 +234,7 @@ workflows:
       - publish_ruby:     *workflow_filters
       - publish_golang:   *workflow_filters
       - publish_php:      *workflow_filters
+      - publish_redis:    *workflow_filters
       - publish_postgres: *workflow_filters
       - publish_mariadb:  *workflow_filters
       - publish_mysql:    *workflow_filters
