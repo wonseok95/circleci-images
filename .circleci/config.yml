@@ -26,11 +26,7 @@ jobs:
           command: |
             git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
             git config --global user.name "$CIRCLE_USERNAME"
-      - run:
-          name: git clone & cp
-          command: |
-            git clone git@github.com:CircleCI-Public/circleci-dockerfiles.git
-            cp -rfv /tmp/dockerfiles/* circleci-dockerfiles
+      - run: git clone git@github.com:CircleCI-Public/circleci-dockerfiles.git
       # only push Dockerfiles to github on circleci-images pushes to "master" or "production"
       - run:
           name: branch control flow & git push
@@ -46,8 +42,9 @@ jobs:
             fi
             if [ ! -e $DOCKERFILES_BRANCH ]
             then
-              git add .
               git checkout $DOCKERFILES_BRANCH
+              cp -rfv /tmp/dockerfiles/* circleci-dockerfiles
+              git add .
               git commit --allow-empty -m "Dockerfiles from $CIRCLE_BUILD_URL"
               git push -f origin $DOCKERFILES_BRANCH
             fi
