@@ -43,7 +43,7 @@ jobs:
             if [ ! -e $DOCKERFILES_BRANCH ]
             then
               git checkout $DOCKERFILES_BRANCH
-              cp -rfv /tmp/dockerfiles/* circleci-dockerfiles
+              cp -rfv /tmp/dockerfiles/* ~/repo/circleci-dockerfiles
               git add .
               git commit --allow-empty -m "Dockerfiles from $CIRCLE_BUILD_URL"
               git push -f origin $DOCKERFILES_BRANCH
