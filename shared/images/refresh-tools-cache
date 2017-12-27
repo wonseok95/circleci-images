@@ -45,7 +45,7 @@ LATEST_PHANTOMJS_URL=$(curl --location --fail --retry 3  \
 	jq "map(select(contains(\"x86_64\")))" | jq '.[0]')
 
 refresh_cache phantomjs-latest.tar.bz2 \
-	"$(LATEST_PHANTOMJS_URL)"
+	${LATEST_PHANTOMJS_URL}
 
 # need to ignore Release candidate and milestone releases to get stable ones
 refresh_cache sbt-latest.tgz \
