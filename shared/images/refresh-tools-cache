@@ -42,7 +42,8 @@ refresh_cache dockerize-latest.tar.gz \
 LATEST_PHANTOMJS_URL=$(curl --location --fail --retry 3  \
 	https://api.bitbucket.org/2.0/repositories/ariya/phantomjs/downloads | \
 	jq '[.values[].links.self.href]' | jq "map(select(contains(\"beta\") | not))" | \
-	jq "map(select(contains(\"x86_64\")))" | jq '.[0]')
+	jq "map(select(contains(\"x86_64\")))" | jq '.[0]' | \
+	sed 's/\"//g')
 
 refresh_cache phantomjs-latest.tar.bz2 \
 	${LATEST_PHANTOMJS_URL}
