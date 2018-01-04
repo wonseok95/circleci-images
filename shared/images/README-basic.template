@@ -30,3 +30,8 @@ This image makes browser testing easier.  It extends the defacto image and insta
 
 If you have any problems with or questions about this image, please contact us on [CircleCI Discuss Forum](https://discuss.circleci.com/c/circleci-2-0).
 
+# Source
+
+The Dockerfiles aren't available on Dockerhub. Currently, they can only be uploaded with Dockerhub's automated builder, which requires one Git repo per Dockerhub image type.
+
+Source: https://github.com/circleci/circleci-images
