@@ -13,6 +13,9 @@ INCLUDE_ALPINE=${INCLUDE_ALPINE:-false}
 
 TAG_FILTER="${TAG_FILTER:-cat}"
 
+CIRCLE_NODE_TOTAL=${CIRCLE_NODE_TOTAL:-1}
+CIRCLE_NODE_INDEX=${CIRCLE_NODE_INDEX:-0}
+
 function find_tags_and_aliases() {
   ALPINE_TAG="-e alpine"
   if [[ $INCLUDE_ALPINE == "true" ]]
@@ -22,11 +25,13 @@ function find_tags_and_aliases() {
 
   curl --silent --location --fail --retry 3 "$MANIFEST_SOURCE" \
     | grep Tags \
-    | sed  's/Tags: //g' \
+    | sed  's/^.*Tags: //g' \
     | grep -v $ALPINE_TAG -e 'slim' -e 'onbuild' -e windows -e wheezy -e nanoserver \
     | ${TAG_FILTER} \
     | sed 's/, /:/' \
-    | sed 's/, /,/g'
+    | sed 's/, /,/g' \
+    | sort | awk "NR % ${CIRCLE_NODE_TOTAL} == ${CIRCLE_NODE_INDEX}"
+
 }
 
 SHARED_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

@@ -2,7 +2,7 @@
 
 NAME=Java
 BASE_REPO=openjdk
-VARIANTS=(browsers)
+VARIANTS=(browsers node node-browsers)
 
 TAG_FILTER="grep -v -e ^7 -e ^6 -e jre"
 
@@ -14,6 +14,17 @@ function generate_customizations() {
   SBT_URL=$(./java_helper sbt)
 
   cat <<EOF
+
+# cacerts from OpenJDK 9-slim to workaround http://bugs.java.com/view_bug.do?bug_id=8189357
+# AND https://github.com/docker-library/openjdk/issues/145
+#
+# Created by running:
+# docker run --rm openjdk:9-slim cat /etc/ssl/certs/java/cacerts | \
+#   aws s3 cp - s3://circle-downloads/circleci-images/cache/linux-amd64/openjdk-9-slim-cacerts --acl public-read
+RUN if java -fullversion 2>&1 | grep -q '"9.'; then \
+  curl --silent --show-error --location --fail --retry 3 --output /etc/ssl/certs/java/cacerts \
+       https://circle-downloads.s3.amazonaws.com/circleci-images/cache/linux-amd64/openjdk-9-slim-cacerts; \
+ fi
 
 # Install Maven Version: $MAVEN_VERSION
 RUN curl --silent --show-error --location --fail --retry 3 --output /tmp/apache-maven.tar.gz \
@@ -55,14 +66,15 @@ EOF
 ENV PATH="/opt/sbt/bin:/opt/apache-maven/bin:/opt/apache-ant/bin:/opt/gradle/bin:$PATH"
 
 # smoke test with path
-RUN mvn -version
-RUN ant -version
-RUN gradle -version
-RUN sbt sbtVersion
+RUN mvn -version \
+  && ant -version \
+  && gradle -version \
+  && sbt sbtVersion
 
 EOF
 }
 
 IMAGE_CUSTOMIZATIONS=$(generate_customizations)
 
+source ../shared/images/generate-node.sh
 source ../shared/images/generate.sh

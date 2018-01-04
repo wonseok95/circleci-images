@@ -24,12 +24,7 @@ https://hub.docker.com/explore/
 CircleCI supported images are here:
 https://hub.docker.com/r/circleci/
 
-To view the Dockerfiles for CircleCI images, check the artifacts tab of the latest green job for this repo:
-https://circleci.com/gh/circleci/circleci-images/tree/master
-
-The Dockerfiles aren't available on Dockerhub.  Currently, they can only be uploaded with Dockerhub's automated builder, which requires one Git repo per Dockerhub image type.
-
-
+To view the Dockerfiles for CircleCI images, visit the [CircleCI-Public/circleci-dockerfiles](https://github.com/circleci-public/circleci-dockerfiles) repository.
 
 # How to add a bundle with images
 

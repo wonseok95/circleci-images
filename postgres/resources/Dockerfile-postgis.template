@@ -1,12 +1,12 @@
 FROM {{BASE_IMAGE}}
 
 ENV PGUSER $POSTGRES_USER
-ENV POSTGIS_VERSION 2.3.3
+ENV POSTGIS_VERSION 2.4.2
 
 RUN if which apt-get > /dev/null ; then \
       apt-get update \
       && apt-get install -y --no-install-recommends \
-           postgresql-$PG_MAJOR-postgis-2.3 postgresql-$PG_MAJOR-postgis-2.3-scripts postgis wget \
+           postgresql-$PG_MAJOR-postgis-2.4 postgresql-$PG_MAJOR-postgis-2.4-scripts postgis \
       && rm -rf /var/lib/apt/lists/* \
     ; else \
       apk add --no-cache --virtual .fetch-deps \
@@ -59,6 +59,7 @@ RUN if which apt-get > /dev/null ; then \
       && apk del .fetch-deps .build-deps .build-deps-testing \
     ; fi
 
-RUN wget --no-check-certificate https://raw.githubusercontent.com/appropriate/docker-postgis/master/initdb-postgis.sh -O /docker-entrypoint-initdb.d/postgis.sh 
+ADD https://raw.githubusercontent.com/appropriate/docker-postgis/master/initdb-postgis.sh /docker-entrypoint-initdb.d/postgis.sh 
+ADD https://raw.githubusercontent.com/appropriate/docker-postgis/master/update-postgis.sh /usr/local/bin/update-postgis.sh
 
-RUN wget --no-check-certificate https://raw.githubusercontent.com/appropriate/docker-postgis/master/update-postgis.sh -O /usr/local/bin/update-postgis.sh
+RUN chmod +rx /docker-entrypoint-initdb.d/postgis.sh /usr/local/bin/update-postgis.sh
