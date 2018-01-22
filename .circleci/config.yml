@@ -175,9 +175,6 @@ workflow_filters: &workflow_filters
 
 workflows:
   version: 2
-  build:
-    jobs:
-      - generate_dockerfiles
   build_test_deploy:
     triggers:
       - schedule:
