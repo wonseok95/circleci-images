@@ -1,27 +1,27 @@
-Experimental CircleCI images for {{NAME}}.
+# CircleCI images for {{NAME}}
 
-Extends the official image of [{{NAME}}](https://dockerhub.com/_/{{BASE_REPO}}) to be friendly to use in CircleCI for testing.
+***Note:** due to Docker Hub limitations, there may be more variants available than are displayed on the Tags page. For a complete list, along with Dockerfiles, see our [circleci-public/circleci-dockerfiles](https://github.com/CircleCI-Public/circleci-dockerfiles) repository.*
 
-The following is the customizations CircleCI applies in a `Dockerfile`:
+## Why
+
+Extends the official image of [{{NAME}}](https://dockerhub.com/_/{{BASE_REPO}}) for better use on CircleCI.
+
+Following are some of the customizations CircleCI applies in its `Dockerfile`:
 
 ```dockerfile
 {{DOCKERFILE_BASIC_SAMPLE}}
 ```
 
-Aiming to have CircleCI extended images ease adoption of Docker and CircleCI.  Once users are successful, we encourage users to build and customize their images to suite their individual project needs.
+We aim to have CircleCI-extended images ease adoption of Docker and CircleCI. Once users are successful, we encourage them to build and customize images to suit their individual projects' needs.
 
-# Experimental
+## Experimental
 
-CircleCI is experimenting with this service image and we may change it in future in an incompatible way.  Users should consider building their own image or locking the image digest in CircleCI configuration files.
+CircleCI is experimenting with this image and we may change it in future in an incompatible way. Users should consider building their own image or pinning a specific image's `sha256` digest in their CircleCI configuration file.
 
-# User Feedback
+## User Feedback
 
-## Issues
+If you have any problems with or questions about this image, please contact us on [CircleCI's Discuss forum](https://discuss.circleci.com/c/circleci-2-0).
 
-If you have any problems with or questions about this image, please contact us on [CircleCI Discuss Forum](https://discuss.circleci.com/c/circleci-2-0).
+## Source
 
-# Source
-
-The Dockerfiles aren't available on Dockerhub. Currently, they can only be uploaded with Dockerhub's automated builder, which requires one Git repo per Dockerhub image type.
-
-Source: https://github.com/circleci/circleci-images
+https://github.com/circleci/circleci-images
