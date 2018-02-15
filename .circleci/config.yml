@@ -68,7 +68,7 @@ jobs:
       - run:
           name: Build and Publish Images
           command: |
-            export COMPUTED_ORG=notnoopci
+            export COMPUTED_ORG=ccistaging
             if [[ "$CIRCLE_BRANCH" == "production" ]]
             then
               export COMPUTED_ORG=circleci
