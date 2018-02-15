@@ -51,10 +51,10 @@ jobs:
 
   refresh_tools_cache:
     docker:
-    - image: circleci/python:latest
+    - image: cibuilds/aws:latest
     steps:
     - checkout
-    - run: sudo pip install awscli
+    # - run: sudo pip install awscli
     - run: cd ./shared/images; ./refresh-tools-cache
 
   publish_image: &publish_image
