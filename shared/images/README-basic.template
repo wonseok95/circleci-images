@@ -21,17 +21,9 @@ We aim to have CircleCI-extended images ease adoption of Docker and CircleCI. On
 
 *This is the defacto image. If you are unsure what your needs are, you probably want to use this one.*
 
-```dockerfile
-{{DOCKERFILE_BASIC_SAMPLE}}
-```
-
 ### `{{BASE_REPO}}:<version>-browsers`
 
 *This image makes browser testing easier. It extends the defacto image and installs Firefox and Chrome/chromedriver and configures them to run in a containerized environment.*
-
-```dockerfile
-{{DOCKERFILE_BROWSERS_SAMPLE}}
-```
 
 ## Experimental
 

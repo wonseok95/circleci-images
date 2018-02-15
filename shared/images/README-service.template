@@ -6,12 +6,6 @@
 
 Extends the official image of [{{NAME}}](https://dockerhub.com/_/{{BASE_REPO}}) for better use on CircleCI.
 
-Following are some of the customizations CircleCI applies in its `Dockerfile`:
-
-```dockerfile
-{{DOCKERFILE_BASIC_SAMPLE}}
-```
-
 We aim to have CircleCI-extended images ease adoption of Docker and CircleCI. Once users are successful, we encourage them to build and customize images to suit their individual projects' needs.
 
 ## Experimental
