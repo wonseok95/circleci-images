@@ -142,6 +142,11 @@ jobs:
     environment:
       - PLATFORM: elixir
 
+  publish_rust:
+    <<: *publish_image
+    environment:
+      - PLATFORM: rust
+
   publish_jruby:
     <<: *publish_image
     environment:
@@ -237,4 +242,5 @@ workflows:
       - publish_jruby:    *workflow_filters
       - publish_clojure:  *workflow_filters
       - publish_openjdk:  *workflow_filters
+      - publish_rust:  *workflow_filters
       - publish_buildpack-deps:   *workflow_filters
