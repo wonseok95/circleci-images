@@ -30,7 +30,7 @@ To view the Dockerfiles for CircleCI images, visit the [CircleCI-Public/circleci
 
 A bundle is a top-level subfolder in this repository (e.g. `postgres`).
 
-For the image Dockerfiles, we use a WIP templating mechanism.  Each bundle should contain a `generate-images` script for generating the Dockerfiles.  You can use [`postgres/generate-images`](postgres/generate-images) and [`node/generate-images`](node/generate-images) for inspiration.  The pattern is is executable script of the following sample:
+For the image Dockerfiles, we use a WIP templating mechanism.  Each bundle should contain a `generate-images` script for generating the Dockerfiles.  You can use [`postgres/generate-images`](postgres/generate-images) and [`node/generate-images`](node/generate-images) for inspiration.  The pattern is executable script of the following sample:
 
 
 ```bash
