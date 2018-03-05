@@ -266,8 +266,9 @@ workflows:
   commit:
     jobs:
       - generate_dockerfiles
+      - generate_automated_build_images
       - refresh_tools_cache:
-          requires:
+          requires:`
           - generate_dockerfiles
           filters:
             branches:
