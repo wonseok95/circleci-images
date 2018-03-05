@@ -49,6 +49,53 @@ jobs:
               git push -f origin $DOCKERFILES_BRANCH
             fi
 
+  generate_automated_build_images:
+    working_directory: ~/repo
+    docker:
+      - image: gcc:7
+    steps:
+      - checkout
+      - run:
+          name: Generate Dockerfiles, READMEs for automated builds
+          command: |
+            mkdir /tmp/example-images
+            make -j
+            make example_images
+      - store_artifacts:
+          path: /tmp/example-images
+      - add_ssh_keys:
+          fingerprints:
+            - "9c:e2:cf:bb:f2:25:4d:05:d9:b0:30:bf:73:c5:7d:8f"
+      - run:
+          name: git config
+          command: |
+            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
+            git config --global user.name "$CIRCLE_USERNAME"
+
+      - run: git clone git@github.com:CircleCI-Public/example-images.git
+
+      # only push example Dockerfiles/READMEs to github on circleci-images pushes to "master" or "production"
+      - run:
+          name: branch control flow & git push
+          working_directory: example-images
+          command: |
+            if [[ "$CIRCLE_BRANCH" == "production" ]]
+            then
+              export DOCKERFILES_BRANCH=master
+            fi
+            if [[ "$CIRCLE_BRANCH" == "master" ]]
+            then
+              export DOCKERFILES_BRANCH=staging
+            fi
+            if [ ! -e $DOCKERFILES_BRANCH ]
+            then
+              git checkout $DOCKERFILES_BRANCH
+              cp -rfv /tmp/example-images/* ~/repo/example-images
+              git add .
+              git commit --allow-empty -m "example images from $CIRCLE_BUILD_URL"
+              git push -f origin $DOCKERFILES_BRANCH
+            fi
+
   refresh_tools_cache:
     docker:
       - image: circleci/python:latest
