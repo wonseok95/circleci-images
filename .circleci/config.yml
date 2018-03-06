@@ -81,19 +81,19 @@ jobs:
           command: |
             if [[ "$CIRCLE_BRANCH" == "production" ]]
             then
-              export DOCKERFILES_BRANCH=master
+              export EXAMPLE_IMAGES_BRANCH=master
             fi
-            if [[ "$CIRCLE_BRANCH" == "master" ]]
+            if [[ "$CIRCLE_BRANCH" == "automated_builds" ]]
             then
-              export DOCKERFILES_BRANCH=staging
+              export EXAMPLE_IMAGES_BRANCH=staging
             fi
-            if [ ! -e $DOCKERFILES_BRANCH ]
+            if [ ! -e $EXAMPLE_IMAGES_BRANCH ]
             then
-              git checkout $DOCKERFILES_BRANCH
+              git checkout $EXAMPLE_IMAGES_BRANCH
               cp -rfv /tmp/example-images/* ~/repo/example-images
               git add .
               git commit --allow-empty -m "example images from $CIRCLE_BUILD_URL"
-              git push -f origin $DOCKERFILES_BRANCH
+              git push -f origin $EXAMPLE_IMAGES_BRANCH
             fi
 
   refresh_tools_cache:
