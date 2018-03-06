@@ -7,7 +7,7 @@ LABEL maintainer="marc@circleci.com"
 
 # Initial Command run as `root`.
 
-ADD bin/circle-android /bin/circle-android
+ADD https://raw.githubusercontent.com/circleci/circleci-images/master/android/bin/circle-android /bin/circle-android
 
 # Skip the first line of the Dockerfile template (FROM ${BASE})
 syscmd(`tail -n +2 ../shared/images/Dockerfile-basic.template')
