@@ -83,7 +83,7 @@ jobs:
             then
               export EXAMPLE_IMAGES_BRANCH=master
             fi
-            if [[ "$CIRCLE_BRANCH" == "automated_builds" ]]
+            if [[ "$CIRCLE_BRANCH" == "master" ]]
             then
               export EXAMPLE_IMAGES_BRANCH=staging
             fi
