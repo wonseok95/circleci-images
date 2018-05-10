@@ -58,7 +58,6 @@ jobs:
       - run:
           name: Generate Dockerfiles, READMEs for automated builds
           command: |
-            mkdir /tmp/example-images
             make -j
             make example_images
       - store_artifacts:
