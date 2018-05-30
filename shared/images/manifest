@@ -30,7 +30,7 @@ However, we frequently found them lacking some tools making them appropriate for
 1. Common tools used in development and CI are installed e.g. `git`, `ssh`, `tar`, `ca-certificates`, `curl`, `wget`.
 2. Docker tools: latest `docker`, `docker-compose`, and `dockerize` are installed
 3. Variants for common use cases, e.g. images with common browsers installed and configured to run in a containized environment
-4. Use a non-root user (namely `circleci`) by default.  Many applications refuse to run as run (e.g. `chrome`) or their behavior differs when run as root (e.g. `tar` file ownership behavior)
+4. Use a non-root user (namely `circleci`) by default.  Many applications refuse to run as root (e.g. `chrome`) or their behavior differs when run as root (e.g. `tar` file ownership behavior)
 
 Aiming to have CircleCI extended images ease adoption of Docker and CircleCI.  Once users are successful, we encourage users to build and customize their images to suite their individual project needs.
 
