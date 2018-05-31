@@ -2,6 +2,6 @@
 
 NAME="buildpack-deps"
 BASE_REPO=buildpack-deps
-VARIANTS=(browsers dind)
+VARIANTS=(browsers)
 
 source ../shared/images/generate.sh
