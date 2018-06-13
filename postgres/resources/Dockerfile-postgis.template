@@ -1,7 +1,7 @@
 FROM {{BASE_IMAGE}}
 
 ENV PGUSER $POSTGRES_USER
-ENV POSTGIS_VERSION 2.4.2
+ENV POSTGIS_VERSION 2.4.4
 
 RUN if which apt-get > /dev/null ; then \
       apt-get update \
@@ -35,6 +35,7 @@ RUN if which apt-get > /dev/null ; then \
       \
       && apk add --no-cache --virtual .build-deps-testing \
           --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \
+          --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
           gdal-dev \
           geos-dev \
           proj4-dev \
@@ -62,4 +63,4 @@ RUN if which apt-get > /dev/null ; then \
 ADD https://raw.githubusercontent.com/appropriate/docker-postgis/master/initdb-postgis.sh /docker-entrypoint-initdb.d/postgis.sh 
 ADD https://raw.githubusercontent.com/appropriate/docker-postgis/master/update-postgis.sh /usr/local/bin/update-postgis.sh
 
-RUN chmod +rx /docker-entrypoint-initdb.d/postgis.sh /usr/local/bin/update-postgis.sh
+RUN chmod +r /docker-entrypoint-initdb.d/postgis.sh && chmod +rx /usr/local/bin/update-postgis.sh
