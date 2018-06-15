@@ -74,7 +74,7 @@ Also, add the bundle name to in Makefile `BUNDLES` field.
 ## Limitations
 * The template language is WIP - it only supports `{{BASE_IMAGE}}` template.  We should extend this.
 * Generated Dockerfiles isn't checked into repo.  Since we track moving set of tags, checking into repository can create lots of unnecessary changes.
-* By default, this pushes to `notnoopci/` Docker Hub org (treated as staging).  Once we get some test builds with these images, we can promote them to `circleci` Docker Hub org.
+* By default, the `master` branch of this repository pushes to the [`ccistaging` Docker Hub org](https://hub.docker.com/r/ccistaging).  Once we get some test builds with these images, we can promote them to the [`circleci` Docker Hub org](https://hub.docker.com/r/circleci) by merging changes from the `master` branch into the `production` branch.
 
 ## Licensing
 The `circleci-images` repository is licensed under The MIT License. See [LICENSE](https://github.com/moby/moby/blob/master/LICENSE) for the full license text.
