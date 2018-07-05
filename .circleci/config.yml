@@ -97,7 +97,7 @@ jobs:
 
   refresh_tools_cache:
     docker:
-      - image: circleci/python:latest
+      - image: circleci/python:3.6.6 # aws cli dependenncy pyaml does not yet support 3.7 - https://github.com/aws/aws-cli/issues/3427
     steps:
       - checkout
       - run: sudo pip install awscli==1.14.17
