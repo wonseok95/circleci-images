@@ -1,0 +1,7 @@
+#!/bin/bash
+
+NAME=DynamoDB
+BASE_REPO=openjdk
+VARIANTS=()
+
+source ../shared/images/generate.sh
