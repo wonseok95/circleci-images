@@ -238,7 +238,7 @@ workflows:
       - generate_dockerfiles
       - refresh_tools_cache:
           requires:
-          - generate_dockerfiles
+            - generate_dockerfiles
           filters:
             branches:
               only:
@@ -265,10 +265,18 @@ workflows:
   commit:
     jobs:
       - generate_dockerfiles
-      - generate_automated_build_images
+      - generate_automated_build_images:
+          requires:
+            - generate_dockerfiles
+          filters:
+            branches:
+              only:
+                - master
+                - production
+                - parallel
       - refresh_tools_cache:
           requires:
-          - generate_dockerfiles
+            - generate_dockerfiles
           filters:
             branches:
               only:
