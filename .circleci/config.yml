@@ -193,6 +193,11 @@ jobs:
     environment:
       - PLATFORM: rust
 
+  publish_dynamodb:
+    <<: *publish_image
+    environment:
+      - PLATFORM: dynamodb
+
   publish_jruby:
     <<: *publish_image
     environment:
@@ -260,6 +265,7 @@ workflows:
       - publish_jruby:    *workflow_filters
       - publish_clojure:  *workflow_filters
       - publish_openjdk:  *workflow_filters
+      - publish_dynamodb:     *workflow_filters
       - publish_rust:     *workflow_filters
       - publish_buildpack-deps:   *workflow_filters
   commit:
@@ -299,4 +305,5 @@ workflows:
       - publish_clojure:  *workflow_filters
       - publish_openjdk:  *workflow_filters
       - publish_rust:     *workflow_filters
+      - publish_dynamodb:     *workflow_filters
       - publish_buildpack-deps:   *workflow_filters
