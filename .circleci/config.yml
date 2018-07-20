@@ -193,6 +193,11 @@ jobs:
     environment:
       - PLATFORM: rust
 
+  publish_dynamodb:
+    <<: *publish_image
+    environment:
+      - PLATFORM: dynamodb
+
   publish_jruby:
     <<: *publish_image
     environment:
@@ -237,7 +242,7 @@ workflows:
       - generate_dockerfiles
       - refresh_tools_cache:
           requires:
-          - generate_dockerfiles
+            - generate_dockerfiles
           filters:
             branches:
               only:
@@ -258,15 +263,24 @@ workflows:
       - publish_jruby:    *workflow_filters
       - publish_clojure:  *workflow_filters
       - publish_openjdk:  *workflow_filters
+      - publish_dynamodb:     *workflow_filters
       - publish_rust:     *workflow_filters
       - publish_buildpack-deps:   *workflow_filters
   commit:
     jobs:
       - generate_dockerfiles
-      - generate_automated_build_images
+      - generate_automated_build_images:
+          requires:
+            - generate_dockerfiles
+          filters:
+            branches:
+              only:
+                - master
+                - production
+                - parallel
       - refresh_tools_cache:
           requires:
-          - generate_dockerfiles
+            - generate_dockerfiles
           filters:
             branches:
               only:
@@ -288,4 +302,5 @@ workflows:
       - publish_clojure:  *workflow_filters
       - publish_openjdk:  *workflow_filters
       - publish_rust:     *workflow_filters
+      - publish_dynamodb:     *workflow_filters
       - publish_buildpack-deps:   *workflow_filters
