@@ -275,9 +275,8 @@ workflows:
           filters:
             branches:
               only:
+                - staging
                 - master
-                - production
-                - parallel
       - refresh_tools_cache:
           requires:
             - generate_dockerfiles
