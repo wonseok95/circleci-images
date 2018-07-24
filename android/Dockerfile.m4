@@ -75,7 +75,7 @@ RUN sudo mkdir -p ${android_ndk_home} && \
     sudo chown -R circleci:circleci ${android_ndk_home} && \
     curl --silent --show-error --location --fail --retry 3 --output  /tmp/${ndk_version} https://dl.google.com/android/repository/${ndk_version} && \
     unzip -q /tmp/${ndk_version} -d ${android_ndk_home} && \
-    mv "${android_ndk_home}/${ndk_version}/*" "${android_ndk_home}/" && rmdir "${android_ndk_home}/${ndk_version}" && \
+    mv ${android_ndk_home}/${ndk_version}/* ${android_ndk_home}/ && rmdir ${android_ndk_home}/${ndk_version} && \
     rm /tmp/${ndk_version}
 
 # Set environmental variables
