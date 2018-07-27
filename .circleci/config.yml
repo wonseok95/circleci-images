@@ -111,6 +111,21 @@ jobs:
       - run:
           name: Docker Login
           command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+
+      - run:
+          name: only proceed if `$PLATFORM` or `shared` or `Makefile` were modified
+          command: |
+            # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
+
+            COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
+            echo "Commit range: "$COMMIT_RANGE"
+
+            git diff $COMMIT_RANGE --name-status
+
+            if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "$PLATFORM" -e "shared" -e "Makefile") ]]; then
+              circleci step halt
+            fi
+
       - run:
           name: Build and Publish Images
           command: |
