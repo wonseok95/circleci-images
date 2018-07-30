@@ -1,5 +1,12 @@
 # CircleCI Images [![CircleCI Build Status](https://circleci.com/gh/circleci/circleci-images.svg?style=shield)](https://circleci.com/gh/circleci/circleci-images) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/circleci/circleci-docs/master/LICENSE) [![CircleCI Community](https://img.shields.io/badge/community-CircleCI%20Discuss-343434.svg)](https://discuss.circleci.com)
 
+**Notice:** Images with browser variants will see an upgrade to Firefox 56+ and Chrome 59+ on Monday, September 3, 2018. To avoid any changes to the image you're using please lock your configurations to the sha256 of an image.
+
+```
+Example:
+  image: redis@sha256:54057dd7e125ca41afe526a877e8bd35ec2cdd33b9217e022ed37bdcf7d09673
+```
+
 A set of convenience images that work better in context of CI.  This repo contains the official set of images that CircleCI maintains.  It contains language as well as services images:
 
 * Language images (e.g. `ruby`, `python`, `node`) are images targeted for common programming languages with the common tools pre-installed.  They primarily extend the [official images](#official-images) and install additional tools (e.g. browsers) that we find very useful in context of CI.
