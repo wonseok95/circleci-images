@@ -119,7 +119,7 @@ jobs:
             # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
 
             COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
-            echo "Commit range: "$COMMIT_RANGE"
+            echo "Commit range: $COMMIT_RANGE"
 
             git diff $COMMIT_RANGE --name-status
 
