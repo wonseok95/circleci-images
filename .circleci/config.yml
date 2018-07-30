@@ -115,6 +115,7 @@ jobs:
       - run:
           name: only proceed if `$PLATFORM` or `shared` or `Makefile` were modified
           command: |
+            set -u
             # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
 
             COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
