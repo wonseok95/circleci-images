@@ -25,4 +25,4 @@ publish_images: images
 clean: $(foreach b, $(BUNDLES), $(b)/clean)
 
 %/clean:
-	cd $(@D) ; rm -r images || true
+	cd $(@D) ; rm -r images resources || true
