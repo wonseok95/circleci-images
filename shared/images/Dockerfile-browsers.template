@@ -13,28 +13,32 @@ RUN if grep -q Debian /etc/os-release && grep -q jessie /etc/os-release; then \
     && sudo apt-get update; sudo apt-get install -y openjdk-8-jre openjdk-8-jre-headless openjdk-8-jdk openjdk-8-jdk-headless \
   ; else \
     sudo apt-get update; sudo apt-get install -y openjdk-8-jre openjdk-8-jre-headless openjdk-8-jdk openjdk-8-jdk-headless \
-  ; fi
+  ; fi \
+  && sudo apt-get install -y bzip2 libgconf-2-4 # for extracting firefox and running chrome, respectively
 
 # install firefox
 #
 RUN FIREFOX_URL="https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US" \
-  && curl --silent --show-error --location --fail --retry 3 --output /tmp/firefox.tar.bz2 $FIREFOX_URL \
-  && tar -xvjf /tmp/firefox.tar.bz2 \
-  && sudo dpkg -i /tmp/firefox.deb || sudo apt-get -f install  \
+  && ACTUAL_URL=$(curl -Ls -o /dev/null -w %{url_effective} $FIREFOX_URL) \
+  && curl --silent --show-error --location --fail --retry 3 --output /tmp/firefox.tar.bz2 $ACTUAL_URL \
+  && curl --silent --show-error --location --fail --retry 3 --output /tmp/firefox.asc $ACTUAL_URL.asc \
+  && gpg --verify /tmp/firefox.asc /tmp/firefox.tar.bz2 2>&1 1>&/dev/null || (gpg  --recv-key $(gpg --verify /tmp/firefox.asc /tmp/firefox.tar.bz2 2>&1 | head -1 | awk '{print $14}') && gpg --verify /tmp/firefox.asc /tmp/firefox.tar.bz2) \
+  && sudo tar -xvjf /tmp/firefox.tar.bz2 -C /opt \
+  && sudo ln -s /opt/firefox/firefox /usr/local/bin/firefox \
   && sudo apt-get install -y libgtk3.0-cil-dev libasound2 libasound2 libdbus-glib-1-2 libdbus-1-3 \
-  && rm -rf /tmp/firefox.deb \
+  && rm -rf /tmp/firefox.* \
   && firefox --version
 
-# install geckodriver—disabling this temporarily, we will likely want this code in the future, but until we're ready to upgrade our version of firefox to 53+, geckodriver wont' be compatible...
+# install geckodriver
 
-# RUN export GECKODRIVER_LATEST_RELEASE_URL=$(curl https://api.github.com/repos/mozilla/geckodriver/releases/latest | jq -r ".assets[] | select(.name | test(\"linux64\")) | .browser_download_url") \
-#      && curl --silent --show-error --location --fail --retry 3 --output /tmp/geckodriver_linux64.tar.gz "$GECKODRIVER_LATEST_RELEASE_URL" \
-#      && cd /tmp \
-#      && tar xf geckodriver_linux64.tar.gz \
-#      && rm -rf geckodriver_linux64.tar.gz \
-#      && sudo mv geckodriver /usr/local/bin/geckodriver \
-#      && sudo chmod +x /usr/local/bin/geckodriver \
-#      && geckodriver --version
+RUN export GECKODRIVER_LATEST_RELEASE_URL=$(curl https://api.github.com/repos/mozilla/geckodriver/releases/latest | jq -r ".assets[] | select(.name | test(\"linux64\")) | .browser_download_url") \
+     && curl --silent --show-error --location --fail --retry 3 --output /tmp/geckodriver_linux64.tar.gz "$GECKODRIVER_LATEST_RELEASE_URL" \
+     && cd /tmp \
+     && tar xf geckodriver_linux64.tar.gz \
+     && rm -rf geckodriver_linux64.tar.gz \
+     && sudo mv geckodriver /usr/local/bin/geckodriver \
+     && sudo chmod +x /usr/local/bin/geckodriver \
+     && geckodriver --version
 
 # install chrome
 
@@ -53,9 +57,6 @@ RUN export CHROMEDRIVER_RELEASE=$(curl --location --fail --retry 3 http://chrome
       && sudo mv chromedriver /usr/local/bin/chromedriver \
       && sudo chmod +x /usr/local/bin/chromedriver \
       && chromedriver --version
-      
-# install libgconf-2-4 manually since chrome no longer pulls it in automatically
-RUN sudo apt-get install -y libgconf-2-4
 
 # start xvfb automatically to avoid needing to express in circle.yml
 ENV DISPLAY :99
