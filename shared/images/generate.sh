@@ -37,10 +37,10 @@ function find_tags_and_aliases() {
 SHARED_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 TEMPLATE=${TEMPLATE:-basic}
+VARIANTS=${VARIANTS:-none}
 if [[ ${VARIANTS[@]} = *"browsers"* ]]
   then VARIANTS=($(echo ${VARIANTS[@]} | sed -E 's/([^ ]*browsers)/\1 \1-legacy/g')) 
 fi
-VARIANTS=${VARIANTS:-none}
 
 function find_template() {
   # find the right template - start with invoker path
