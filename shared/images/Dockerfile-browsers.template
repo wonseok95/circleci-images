@@ -21,8 +21,6 @@ RUN if grep -q Debian /etc/os-release && grep -q jessie /etc/os-release; then \
 RUN FIREFOX_URL="https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US" \
   && ACTUAL_URL=$(curl -Ls -o /dev/null -w %{url_effective} $FIREFOX_URL) \
   && curl --silent --show-error --location --fail --retry 3 --output /tmp/firefox.tar.bz2 $ACTUAL_URL \
-  && curl --silent --show-error --location --fail --retry 3 --output /tmp/firefox.asc $ACTUAL_URL.asc \
-  && gpg --verify /tmp/firefox.asc /tmp/firefox.tar.bz2 2>/dev/null || (gpg  --recv-key $(gpg --verify /tmp/firefox.asc /tmp/firefox.tar.bz2 2>&1 | head -1 | awk '{print $14}') && gpg --verify /tmp/firefox.asc /tmp/firefox.tar.bz2) \
   && sudo tar -xvjf /tmp/firefox.tar.bz2 -C /opt \
   && sudo ln -s /opt/firefox/firefox /usr/local/bin/firefox \
   && sudo apt-get install -y libgtk3.0-cil-dev libasound2 libasound2 libdbus-glib-1-2 libdbus-1-3 \
