@@ -1,7 +1,5 @@
 # CircleCI Images [![CircleCI Build Status](https://circleci.com/gh/circleci/circleci-images.svg?style=shield)](https://circleci.com/gh/circleci/circleci-images) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/circleci/circleci-docs/master/LICENSE) [![CircleCI Community](https://img.shields.io/badge/community-CircleCI%20Discuss-343434.svg)](https://discuss.circleci.com)
 
-**Notice:** Images with browser variants will see an upgrade to Firefox 56+ and Chrome 59+ on Monday, September 3, 2018. To avoid any changes to the image you're using please lock your configurations to the sha256 of an image.
-
 ```
 Example:
   image: redis@sha256:54057dd7e125ca41afe526a877e8bd35ec2cdd33b9217e022ed37bdcf7d09673
@@ -82,6 +80,7 @@ Also, add the bundle name to in Makefile `BUNDLES` field.
 * The template language is WIP - it only supports `{{BASE_IMAGE}}` template.  We should extend this.
 * Generated Dockerfiles isn't checked into repo.  Since we track moving set of tags, checking into repository can create lots of unnecessary changes.
 * By default, the `staging` branch of this repository pushes to the [`ccistaging` Docker Hub org](https://hub.docker.com/r/ccistaging).  Once we get some test builds with these images, we can promote them to the [`circleci` Docker Hub org](https://hub.docker.com/r/circleci) by merging changes from the `staging` branch into the `master` branch.
+* We cannot support Oracle JDK for licensing reasons. See [Oracle's Binary Code License Agreement for the Java SE Platform](http://oracle.com/technetwork/java/javase/terms/license/index.html) and [Stack Exchange: Is there no Oracle JDK for docker?](https://devops.stackexchange.com/questions/433/is-there-no-oracle-jdk-for-docker) for details.
 
 ## Licensing
 The `circleci-images` repository is licensed under The MIT License. See [LICENSE](https://github.com/moby/moby/blob/master/LICENSE) for the full license text.
