@@ -1,7 +1,5 @@
 # CircleCI Images [![CircleCI Build Status](https://circleci.com/gh/circleci/circleci-images.svg?style=shield)](https://circleci.com/gh/circleci/circleci-images) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/circleci/circleci-docs/master/LICENSE) [![CircleCI Community](https://img.shields.io/badge/community-CircleCI%20Discuss-343434.svg)](https://discuss.circleci.com)
 
-**Notice:** Images with browser variants will see an upgrade to Firefox 56+ and Chrome 59+ on Monday, September 3, 2018. To avoid any changes to the image you're using please lock your configurations to the sha256 of an image.
-
 ```
 Example:
   image: redis@sha256:54057dd7e125ca41afe526a877e8bd35ec2cdd33b9217e022ed37bdcf7d09673
@@ -78,10 +76,60 @@ To build all images - push a commit with `[build-images]` text appearing in the 
 
 Also, add the bundle name to in Makefile `BUNDLES` field.
 
+
+## Development
+
+*This section is a work in progress*
+
+This project's build system is managed with `Make`.
+It generates Dockerfiles and builds images based off of upstream Docker Library base images, variant images that upstream may have, variant images that CircleCI provides, as well as tools common for testing projects in various programming languages.
+
+### Generate Dockerfiles
+
+Use `make <base-image>/generate_images` to generate of all of the Dockerfiles for a specific base image.
+For example, to generate all of the Dockerfils for the `circleci/golang` image, you would run `make golang/generate_images`.
+
+Use `make images` to generate Dockerfiles for **every** base image we have.
+This process is fairly fast with decent Internet connection.
+
+Once generated, Dockerfiles for each image will be in the images folder for that base image (e.g. ./python/images/).
+
+### Build Images
+
+#### Build a single Dockerfile
+
+You can build a single image, with a throway name and the `docker build` command.
+`docker build -t <throw-away-img-name> <directory-containing-dockerfile>` 
+Here's how you would build the "regular" Go v1.11 CircleCI image:
+
+`docker build -t test/golang:latest golang/images/1.11.0/`
+
+The image name and tag (`test/golang:latest`) can be whatever name you want, it's just for local dev and can be deleted.
+
+#### Build all Dockerfiles for a base image
+
+Use `make <base-image>/publish_images` to `docker build` all of the Dockerfiles for that base image.
+There's a couple things to note here:
+
+1. Each base image has **a lot** of images.
+Building them will end up taking several GBs of disk space, and can take quit a while to run.
+Make sure you want to do this before you do it.
+1. The build script will also try to run `docker push`.
+If you don't work for CircleCI, this will fail and that's okay.
+It's safe to ignore.
+
+#### Build all Dockerfiles for every base image
+
+Don't do it.
+If you have an Ultrabook laptop, it won't be happy.
+If you really want to do it, look at the `Makefile`.
+
+
 ## Limitations
 * The template language is WIP - it only supports `{{BASE_IMAGE}}` template.  We should extend this.
 * Generated Dockerfiles isn't checked into repo.  Since we track moving set of tags, checking into repository can create lots of unnecessary changes.
 * By default, the `staging` branch of this repository pushes to the [`ccistaging` Docker Hub org](https://hub.docker.com/r/ccistaging).  Once we get some test builds with these images, we can promote them to the [`circleci` Docker Hub org](https://hub.docker.com/r/circleci) by merging changes from the `staging` branch into the `master` branch.
+* We cannot support Oracle JDK for licensing reasons. See [Oracle's Binary Code License Agreement for the Java SE Platform](http://oracle.com/technetwork/java/javase/terms/license/index.html) and [Stack Exchange: Is there no Oracle JDK for docker?](https://devops.stackexchange.com/questions/433/is-there-no-oracle-jdk-for-docker) for details.
 
 ## Licensing
 The `circleci-images` repository is licensed under The MIT License. See [LICENSE](https://github.com/moby/moby/blob/master/LICENSE) for the full license text.
