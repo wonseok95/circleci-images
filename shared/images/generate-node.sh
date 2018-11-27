@@ -10,6 +10,9 @@ function generate_node_variant() {
 
 FROM {{BASE_IMAGE}}
 
+# Verify the circleci user exists before proceeding
+RUN whoami
+
 # node installations command expect to run as root
 USER root
 EOF
@@ -20,7 +23,7 @@ EOF
 
   NODE_DOCKERFILE_URL="https://raw.githubusercontent.com/nodejs/docker-node/${NODE_GIT_COMMIT}/${NODE_DIRECTORY}/Dockerfile"
   echo "## Using node installation from $NODE_DOCKERFILE_URL"
-  curl --silent --location --fail --retry 3 "$NODE_DOCKERFILE_URL" | grep -v -e '^FROM buildpack-deps:jessie' -e '^CMD'
+  curl --silent --location --fail --retry 3 "$NODE_DOCKERFILE_URL" | grep -v -e '^FROM buildpack-deps' -e '^CMD'
 
   echo ''
   echo '# Basic smoke test'
