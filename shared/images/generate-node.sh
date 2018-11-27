@@ -10,6 +10,9 @@ function generate_node_variant() {
 
 FROM {{BASE_IMAGE}}
 
+# Verify the circleci user exists before proceeding
+RUN whoami
+
 # node installations command expect to run as root
 USER root
 EOF
