@@ -4,7 +4,7 @@ NAME=Java
 BASE_REPO=openjdk
 VARIANTS=(browsers node node-browsers)
 
-TAG_FILTER="grep -v -e ^7 -e ^6 -e jre"
+TAG_FILTER="grep -v -e ^7 -e ^6 -e jre -e oraclelinux"
 
 function generate_customizations() {
 
