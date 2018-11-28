@@ -8,6 +8,8 @@ TAG_FILTER="grep -v -e rc -e beta"
 
 IMAGE_CUSTOMIZATIONS=$(cat <<'EOF'
 
+RUN echo 'Defaults    env_keep += "PHP_INI_DIR"' >> /etc/sudoers.d/env_keep
+
 # Install composer
 RUN php -r "copy('https://raw.githubusercontent.com/composer/getcomposer.org/master/web/installer', 'composer-setup.php');" && \
     php composer-setup.php && \
