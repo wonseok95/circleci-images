@@ -1,4 +1,8 @@
-version: 2
+version: 2.1
+
+orbs:
+  circle-compare-url: iynere/compare-url@0.1.2
+
 jobs:
   generate_dockerfiles:
     working_directory: ~/repo
@@ -112,17 +116,23 @@ jobs:
           name: Docker Login
           command: docker login -u $DOCKER_USER -p $DOCKER_PASS
 
+      - circle-compare-url/reconstruct
+
       - run:
           name: only proceed if `$PLATFORM` or `shared` or `Makefile` were modified (unless we're on master)
           command: |
             set -u
+
+            # save value stored in file to a local env var
+            CIRCLE_COMPARE_URL=$(cat CIRCLE_COMPARE_URL.txt)
+
             # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
 
             COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
             echo "Commit range: $COMMIT_RANGE"
 
             git diff $COMMIT_RANGE --name-status
-            
+
             if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "$PLATFORM" -e "shared" -e "Makefile") && "$CIRCLE_BRANCH" != "master" ]]; then
               circleci step halt
             fi

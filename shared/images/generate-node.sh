@@ -10,6 +10,9 @@ function generate_node_variant() {
 
 FROM {{BASE_IMAGE}}
 
+# Verify the circleci user exists before proceeding
+RUN whoami
+
 # node installations command expect to run as root
 USER root
 EOF
@@ -20,7 +23,7 @@ EOF
 
   NODE_DOCKERFILE_URL="https://raw.githubusercontent.com/nodejs/docker-node/${NODE_GIT_COMMIT}/${NODE_DIRECTORY}/Dockerfile"
   echo "## Using node installation from $NODE_DOCKERFILE_URL"
-  curl --silent --location --fail --retry 3 "$NODE_DOCKERFILE_URL" | grep -v -e '^FROM buildpack-deps:jessie' -e '^CMD'
+  curl --silent --location --fail --retry 3 "$NODE_DOCKERFILE_URL" | grep -v -e '^FROM buildpack-deps' -e '^CMD'
 
   echo ''
   echo '# Basic smoke test'
@@ -43,7 +46,7 @@ function generate_node_browser_legacy_variant() {
 }
 
 mkdir -p resources
-generate_node_variant "carbon$" > resources/Dockerfile-node.template
+generate_node_variant "lts$" > resources/Dockerfile-node.template
 generate_node_browser_variant > resources/Dockerfile-node-browsers.template
 generate_node_browser_legacy_variant > resources/Dockerfile-node-browsers-legacy.template
 
