@@ -110,39 +110,44 @@ jobs:
   publish_image: &publish_image
     machine: true
     working_directory: ~/circleci-bundles
+    parameters:
+      scheduled-workflow:
+        type: boolean
+        default: false
     steps:
       - checkout
       - run:
           name: Docker Login
           command: docker login -u $DOCKER_USER -p $DOCKER_PASS
 
-      - circle-compare-url/reconstruct
+      - unless:
+          condition: <<parameters.scheduled-workflow>>
+          steps:
+            - circle-compare-url/reconstruct
+            - run:
+                name: only proceed if `$PLATFORM` or `shared` or `Makefile` were modified (unless we're on master)
+                command: |
+                  set -u
 
-      - run:
-          name: only proceed if `$PLATFORM` or `shared` or `Makefile` were modified (unless we're on master)
-          command: |
-            set -u
+                  # save value stored in file to a local env var
+                  CIRCLE_COMPARE_URL=$(cat CIRCLE_COMPARE_URL.txt)
 
-            # save value stored in file to a local env var
-            CIRCLE_COMPARE_URL=$(cat CIRCLE_COMPARE_URL.txt)
+                  # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
 
-            # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
+                  COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
+                  echo "Commit range: $COMMIT_RANGE"
 
-            COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
-            echo "Commit range: $COMMIT_RANGE"
+                  git diff $COMMIT_RANGE --name-status
 
-            git diff $COMMIT_RANGE --name-status
-
-            if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "$PLATFORM" -e "shared" -e "Makefile") && "$CIRCLE_BRANCH" != "master" ]]; then
-              circleci step halt
-            fi
+                  if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "$PLATFORM" -e "shared" -e "Makefile") && "$CIRCLE_BRANCH" != "master" ]]; then
+                    circleci step halt
+                  fi
 
       - run:
           name: Build and Publish Images
           command: |
             export COMPUTED_ORG=ccistaging
-            if [[ "$CIRCLE_BRANCH" == "master" ]]
-            then
+            if [[ "$CIRCLE_BRANCH" == "master" ]]; then
               export COMPUTED_ORG=circleci
             fi
             export NEW_ORG=${NEW_ORG:-$COMPUTED_ORG}
@@ -245,7 +250,13 @@ jobs:
     environment:
       - PLATFORM: buildpack-deps
 
-workflow_filters: &workflow_filters
+cron_workflow_filters: &cron_workflow_filters
+  scheduled-workflow: true
+  requires:
+    - refresh_tools_cache
+
+commit_workflow_filters: &commit_workflow_filters
+  scheduled-workflow: false
   requires:
     - refresh_tools_cache
   filters:
@@ -269,29 +280,25 @@ workflows:
       - refresh_tools_cache:
           requires:
             - generate_dockerfiles
-          filters:
-            branches:
-              only:
-                - staging
-                - master
-      - publish_android:  *workflow_filters
-      - publish_node:     *workflow_filters
-      - publish_python:   *workflow_filters
-      - publish_ruby:     *workflow_filters
-      - publish_golang:   *workflow_filters
-      - publish_php:      *workflow_filters
-      - publish_redis:    *workflow_filters
-      - publish_postgres: *workflow_filters
-      - publish_mariadb:  *workflow_filters
-      - publish_mysql:    *workflow_filters
-      - publish_mongo:    *workflow_filters
-      - publish_elixir:   *workflow_filters
-      - publish_jruby:    *workflow_filters
-      - publish_clojure:  *workflow_filters
-      - publish_openjdk:  *workflow_filters
-      - publish_dynamodb:     *workflow_filters
-      - publish_rust:     *workflow_filters
-      - publish_buildpack-deps:   *workflow_filters
+      - publish_android:        *cron_workflow_filters
+      - publish_node:           *cron_workflow_filters
+      - publish_python:         *cron_workflow_filters
+      - publish_ruby:           *cron_workflow_filters
+      - publish_golang:         *cron_workflow_filters
+      - publish_php:            *cron_workflow_filters
+      - publish_redis:          *cron_workflow_filters
+      - publish_postgres:       *cron_workflow_filters
+      - publish_mariadb:        *cron_workflow_filters
+      - publish_mysql:          *cron_workflow_filters
+      - publish_mongo:          *cron_workflow_filters
+      - publish_elixir:         *cron_workflow_filters
+      - publish_jruby:          *cron_workflow_filters
+      - publish_clojure:        *cron_workflow_filters
+      - publish_openjdk:        *cron_workflow_filters
+      - publish_dynamodb:       *cron_workflow_filters
+      - publish_rust:           *cron_workflow_filters
+      - publish_buildpack-deps: *cron_workflow_filters
+
   commit:
     jobs:
       - generate_dockerfiles
@@ -311,21 +318,21 @@ workflows:
               only:
                 - staging
                 - master
-      - publish_android:  *workflow_filters
-      - publish_node:     *workflow_filters
-      - publish_python:   *workflow_filters
-      - publish_ruby:     *workflow_filters
-      - publish_golang:   *workflow_filters
-      - publish_php:      *workflow_filters
-      - publish_redis:    *workflow_filters
-      - publish_postgres: *workflow_filters
-      - publish_mariadb:  *workflow_filters
-      - publish_mysql:    *workflow_filters
-      - publish_mongo:    *workflow_filters
-      - publish_elixir:   *workflow_filters
-      - publish_jruby:    *workflow_filters
-      - publish_clojure:  *workflow_filters
-      - publish_openjdk:  *workflow_filters
-      - publish_rust:     *workflow_filters
-      - publish_dynamodb:     *workflow_filters
-      - publish_buildpack-deps:   *workflow_filters
+      - publish_android:        *commit_workflow_filters
+      - publish_node:           *commit_workflow_filters
+      - publish_python:         *commit_workflow_filters
+      - publish_ruby:           *commit_workflow_filters
+      - publish_golang:         *commit_workflow_filters
+      - publish_php:            *commit_workflow_filters
+      - publish_redis:          *commit_workflow_filters
+      - publish_postgres:       *commit_workflow_filters
+      - publish_mariadb:        *commit_workflow_filters
+      - publish_mysql:          *commit_workflow_filters
+      - publish_mongo:          *commit_workflow_filters
+      - publish_elixir:         *commit_workflow_filters
+      - publish_jruby:          *commit_workflow_filters
+      - publish_clojure:        *commit_workflow_filters
+      - publish_openjdk:        *commit_workflow_filters
+      - publish_rust:           *commit_workflow_filters
+      - publish_dynamodb:       *commit_workflow_filters
+      - publish_buildpack-deps: *commit_workflow_filters
