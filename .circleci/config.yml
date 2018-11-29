@@ -157,93 +157,95 @@ jobs:
     environment:
       - PLATFORM: android
 
-  publish_node:
+  publish_buildpack-deps:
     <<: *publish_image
+    parallelism: 4
     environment:
-      - PLATFORM: node
-
-  publish_python:
-    <<: *publish_image
-    parallelism: 2
-    environment:
-      - PLATFORM: python
-
-  publish_ruby:
-    <<: *publish_image
-    environment:
-      - PLATFORM: ruby
-
-  publish_golang:
-    <<: *publish_image
-    environment:
-      - PLATFORM: golang
-
-  publish_php:
-    <<: *publish_image
-    parallelism: 3
-    environment:
-      - PLATFORM: php
-
-  publish_redis:
-    <<: *publish_image
-    environment:
-      - PLATFORM: redis
-
-  publish_postgres:
-    <<: *publish_image
-    environment:
-      - PLATFORM: postgres
-
-  publish_mariadb:
-    <<: *publish_image
-    environment:
-      - PLATFORM: mariadb
-
-  publish_mysql:
-    <<: *publish_image
-    environment:
-      - PLATFORM: mysql
-
-  publish_mongo:
-    <<: *publish_image
-    environment:
-      - PLATFORM: mongo
-
-  publish_elixir:
-    <<: *publish_image
-    environment:
-      - PLATFORM: elixir
-
-  publish_rust:
-    <<: *publish_image
-    environment:
-      - PLATFORM: rust
-
-  publish_dynamodb:
-    <<: *publish_image
-    environment:
-      - PLATFORM: dynamodb
-
-  publish_jruby:
-    <<: *publish_image
-    environment:
-      - PLATFORM: jruby
+      - PLATFORM: buildpack-deps
 
   publish_clojure:
     <<: *publish_image
     environment:
       - PLATFORM: clojure
 
+  publish_dynamodb:
+    <<: *publish_image
+    environment:
+      - PLATFORM: dynamodb
+
+  publish_elixir:
+    <<: *publish_image
+    environment:
+      - PLATFORM: elixir
+
+  publish_golang:
+    <<: *publish_image
+    parallelism: 2
+    environment:
+      - PLATFORM: golang
+
+  publish_jruby:
+    <<: *publish_image
+    environment:
+      - PLATFORM: jruby
+
+  publish_mariadb:
+    <<: *publish_image
+    environment:
+      - PLATFORM: mariadb
+
+  publish_mongo:
+    <<: *publish_image
+    environment:
+      - PLATFORM: mongo
+
+  publish_mysql:
+    <<: *publish_image
+    environment:
+      - PLATFORM: mysql
+
+  publish_node:
+    <<: *publish_image
+    environment:
+      - PLATFORM: node
+
   publish_openjdk:
     <<: *publish_image
     environment:
       - PLATFORM: openjdk
 
-  publish_buildpack-deps:
+  publish_php:
+    <<: *publish_image
+    parallelism: 6
+    environment:
+      - PLATFORM: php
+
+  publish_postgres:
+    <<: *publish_image
+    environment:
+      - PLATFORM: postgres
+
+  publish_python:
+    <<: *publish_image
+    parallelism: 3
+    environment:
+      - PLATFORM: python
+
+  publish_redis:
+    <<: *publish_image
+    environment:
+      - PLATFORM: redis
+
+  publish_ruby:
     <<: *publish_image
     parallelism: 2
     environment:
-      - PLATFORM: buildpack-deps
+      - PLATFORM: ruby
+
+  publish_rust:
+    <<: *publish_image
+    environment:
+      - PLATFORM: rust
 
 workflow_filters: &workflow_filters
   requires:
