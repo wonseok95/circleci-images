@@ -21,7 +21,7 @@ for API in 23 24 25 26 27 28; do
   echo Generating Android ${API} Dockerfiles
 
   tag=api-${API}-alpha
-  node_variant_tag=api-${API}-node8-alpha
+  node_variant_tag=api-${API}-node-alpha
   ndk_variant_tag=api-${API}-ndk-r17b
 
   generate_dockerfile ${API} ${tag}
