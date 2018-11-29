@@ -186,6 +186,7 @@ jobs:
 
   publish_jruby:
     <<: *publish_image
+    parallelism: 2
     environment:
       - PLATFORM: jruby
 
@@ -206,11 +207,13 @@ jobs:
 
   publish_node:
     <<: *publish_image
+    parallelism: 2
     environment:
       - PLATFORM: node
 
   publish_openjdk:
     <<: *publish_image
+    parallelism: 2
     environment:
       - PLATFORM: openjdk
 
@@ -227,7 +230,7 @@ jobs:
 
   publish_python:
     <<: *publish_image
-    parallelism: 3
+    parallelism: 4
     environment:
       - PLATFORM: python
 
@@ -238,7 +241,7 @@ jobs:
 
   publish_ruby:
     <<: *publish_image
-    parallelism: 2
+    parallelism: 4
     environment:
       - PLATFORM: ruby
 
