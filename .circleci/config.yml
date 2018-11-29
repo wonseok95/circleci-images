@@ -123,7 +123,9 @@ jobs:
       - unless:
           condition: <<parameters.scheduled-workflow>>
           steps:
-            - circle-compare-url/reconstruct
+            - circle-compare-url/reconstruct:
+                project-path: ~/circleci-bundles
+
             - run:
                 name: only proceed if `$PLATFORM` or `shared` or `Makefile` were modified (unless we're on master)
                 command: |
