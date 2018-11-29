@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  circle-compare-url: iynere/compare-url@0.1.4
+  circle-compare-url: iynere/compare-url@0.1.5
 
 jobs:
   generate_dockerfiles:
