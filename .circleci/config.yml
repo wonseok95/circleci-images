@@ -111,6 +111,9 @@ jobs:
     machine: true
     working_directory: ~/circleci-bundles
     shell: /bin/bash -eol pipefail
+    environment:
+      GOSS_FILES_PATH: ~/circleci-bundles/shared/images
+      GOSS_FILES_STRATEGY: cp
     parameters:
       scheduled-workflow:
         type: boolean
@@ -151,14 +154,12 @@ jobs:
           command: |
             # rather than give internet scripts SU rights, we install to local user bin and add to path
 
-            mkdir ~/bin
             export GOSS_DST=~/bin
-            export PATH=$PATH:~/bin
             curl -fsSL https://goss.rocks/install | sh
             goss -version
 
       - run:
-          name: Build and Publish Images
+          name: Build, Test, Publish Images
           command: |
             export COMPUTED_ORG=ccistaging
             if [[ "$CIRCLE_BRANCH" == "master" ]]; then
@@ -167,6 +168,7 @@ jobs:
             export NEW_ORG=${NEW_ORG:-$COMPUTED_ORG}
 
             make -j $PLATFORM/publish_images
+
       - store_artifacts:
           path: "."
           destination: circleci-bundles
