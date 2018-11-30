@@ -110,6 +110,7 @@ jobs:
   publish_image: &publish_image
     machine: true
     working_directory: ~/circleci-bundles
+    shell: /bin/bash -eol pipefail
     parameters:
       scheduled-workflow:
         type: boolean
