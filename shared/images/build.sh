@@ -35,6 +35,10 @@ function update_aliases() {
     done
 }
 
+function run_goss_tests() {
+    dgoss run $1
+}
+
 # pull to get cache and avoid recreating images unnecessarily
 docker pull $IMAGE_NAME || true
 
@@ -46,6 +50,9 @@ then
     # and this should only restart with the last failed step
     docker build -t $IMAGE_NAME . || (sleep 2; echo "retry building $IMAGE_NAME"; docker build -t $IMAGE_NAME .)
 
+    # => docker run test goes here
+    run_goss_tests $IMAGE_NAME
+
     docker push $IMAGE_NAME
 
     update_aliases
@@ -56,6 +63,10 @@ else
     # when building the new base image - always try to pull from latest
     # also keep new base images around for variants
     docker build --pull -t $IMAGE_NAME . || (sleep 2; echo "retry building $IMAGE_NAME"; docker build --pull -t $IMAGE_NAME .)
+
+    # => docker run test goes here
+    run_goss_tests $IMAGE_NAME
+
     docker push $IMAGE_NAME
 
     update_aliases
