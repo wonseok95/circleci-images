@@ -155,9 +155,9 @@ jobs:
             # rather than give internet scripts SU rights, we install to local user bin and add to path
 
             # can't set these as normal job env vars, b/c they're overriden by the env section in the platform-specific jobs
-            export GOSS_DST="~/bin"
-            export GOSS_FILES_PATH="~/circleci-bundles/shared/images"
-            export GOSS_FILES_STRATEGY="cp"
+            export GOSS_DST=~/bin
+            export GOSS_FILES_PATH=~/circleci-bundles/shared/images
+            export GOSS_FILES_STRATEGY=cp
 
             curl -fsSL https://goss.rocks/install | sh
             goss -version
