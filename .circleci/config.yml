@@ -156,13 +156,10 @@ jobs:
 
             # can't set these as normal job env vars, b/c they're overriden by the env section in the platform-specific jobs
             export GOSS_DST=~/bin
-            export GOSS_FILES_PATH=~/circleci-bundles/shared/images
             export GOSS_FILES_STRATEGY=cp
 
             curl -fsSL https://goss.rocks/install | sh
             goss -version
-
-
 
       - run:
           name: Build, Test, Publish Images
