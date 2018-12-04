@@ -36,7 +36,7 @@ function update_aliases() {
 }
 
 function run_goss_tests() {
-    GOSS_FILES_PATH=~/circleci-bundles/shared/images dgoss rundgoss run $1
+    GOSS_FILES_PATH=~/circleci-bundles/shared/images dgoss run $1
 }
 
 # pull to get cache and avoid recreating images unnecessarily
