@@ -35,6 +35,7 @@ function update_aliases() {
     done
 }
 
+# test images
 function run_goss_tests() {
     dgoss run $1
 }
