@@ -16,16 +16,7 @@ function repo_name() {
 
 REPO_NAME=$(repo_name)
 
-# modified to support new ccitest org, which will handle images created on any non-master/staging branches
-
-# for these images, we want to know what branch (& commit) they came from, & since they are far from customer-facing, we don't care if the tags are annoyingly verbose
-
-if [[ "$CIRCLE_BRANCH" == "master" || "$CIRCLE_BRANCH" == "staging" ]]; then
-  IMAGE_NAME=${REPO_NAME}:$(cat TAG)
-else
-  IMAGE_NAME=${REPO_NAME}:$(cat TAG)-${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:12}
-fi
-
+IMAGE_NAME=${REPO_NAME}:$(cat TAG)
 
 echo "OFFICIAL IMAGE REF: $IMAGE_NAME"
 
@@ -41,12 +32,21 @@ function update_aliases() {
         if [[ "$CIRCLE_BRANCH" == "master" || "$CIRCLE_BRANCH" == "staging" ]]; then
           ALIAS_NAME=${REPO_NAME}:${alias}
         else
-          ALIAS_NAME=${REPO_NAME}:${alias}-${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:12}
+          # we need to push tags w/o the branch/commit otherwise our FROM statements will break, but let's also push the branch/commit tags for visibility (it's test, verbosity doesn't matter)
+          ALIAS_NAME=${REPO_NAME}:${alias}
+          ALIAS_NAME_BRANCH_COMMIT=${REPO_NAME}:${alias}-${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:12}
         fi
 
         docker tag ${IMAGE_NAME} ${ALIAS_NAME}
         docker push ${ALIAS_NAME}
         docker image rm ${ALIAS_NAME}
+
+        # because we're in a for loop, this var will be set from previous iterations, so grep for the current ALIAS_NAME (which gets reset on every iteration)
+        if [[ $(echo $ALIAS_NAME_BRANCH_COMMIT | grep $ALIAS_NAME) ]]; then
+          docker tag ${IMAGE_NAME} ${ALIAS_NAME_BRANCH_COMMIT}
+          docker push ${ALIAS_NAME_BRANCH_COMMIT}
+          docker image rm ${ALIAS_NAME_BRANCH_COMMIT}
+        fi
     done
 }
 
@@ -56,6 +56,18 @@ function run_goss_tests() {
 
 # pull to get cache and avoid recreating images unnecessarily
 docker pull $IMAGE_NAME || true
+
+
+# function to support new ccitest org, which will handle images created on any non-master/staging branches
+# for these images, we want to know what branch (& commit) they came from, & since they are far from customer-facing, we don't care if the tags are annoyingly verbose
+# however, we also need the regular tag, b/c images depend on them in their Dockerfile FROM statements
+function handle_ccitest_org_images() {
+    if [[ ! "$CIRCLE_BRANCH" == "master" && ! "$CIRCLE_BRANCH" == "staging" ]]; then
+        IMAGE_NAME_BRANCH_COMMIT=${REPO_NAME}:$(cat TAG)-${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:12}
+        docker tag ${IMAGE_NAME} ${IMAGE_NAME_BRANCH_COMMIT}
+        docker push $IMAGE_NAME_BRANCH_COMMIT
+    fi
+}
 
 if is_variant
 then
@@ -71,6 +83,8 @@ then
 
     docker push $IMAGE_NAME
 
+    handle_ccitest_org_images
+
     update_aliases
 
     # variants don't get reused, clean them up
@@ -85,6 +99,8 @@ else
     # run_goss_tests $IMAGE_NAME
 
     docker push $IMAGE_NAME
+
+    handle_ccitest_org_images
 
     update_aliases
 fi
