@@ -282,11 +282,6 @@ commit_workflow_filters: &commit_workflow_filters
   scheduled-workflow: false
   requires:
     - refresh_tools_cache
-  filters:
-    branches:
-      only:
-        - staging
-        - master
 
 workflows:
   version: 2
@@ -336,11 +331,6 @@ workflows:
       - refresh_tools_cache:
           requires:
             - generate_dockerfiles
-          filters:
-            branches:
-              only:
-                - staging
-                - master
       - publish_android:        *commit_workflow_filters
       - publish_node:           *commit_workflow_filters
       - publish_python:         *commit_workflow_filters
