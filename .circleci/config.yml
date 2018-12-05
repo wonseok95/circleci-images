@@ -111,9 +111,6 @@ jobs:
     machine: true
     working_directory: ~/circleci-bundles
     shell: /bin/bash -eol pipefail
-    environment:
-      GOSS_FILES_PATH: ~/circleci-bundles/shared/images
-      GOSS_FILES_STRATEGY: cp
     parameters:
       scheduled-workflow:
         type: boolean
@@ -164,9 +161,11 @@ jobs:
       - run:
           name: Build, Test, Publish Images
           command: |
-            export COMPUTED_ORG=ccistaging
+            export COMPUTED_ORG=ccitest
             if [[ "$CIRCLE_BRANCH" == "master" ]]; then
               export COMPUTED_ORG=circleci
+            elif [[ "$CIRCLE_BRANCH" == "staging" ]]; then
+              export COMPUTED_ORG=ccistaging
             fi
             export NEW_ORG=${NEW_ORG:-$COMPUTED_ORG}
 
