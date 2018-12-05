@@ -37,7 +37,13 @@ function update_aliases() {
     for alias in $(cat ALIASES | sed 's/,/ /g')
     do
         echo handling alias ${alias}
-        ALIAS_NAME=${REPO_NAME}:${alias}
+
+        if [[ "$CIRCLE_BRANCH" == "master" || "$CIRCLE_BRANCH" == "staging" ]]; then
+          ALIAS_NAME=${REPO_NAME}:${alias}
+        else
+          ALIAS_NAME=${REPO_NAME}:${alias}-${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:12}
+        fi
+
         docker tag ${IMAGE_NAME} ${ALIAS_NAME}
         docker push ${ALIAS_NAME}
         docker image rm ${ALIAS_NAME}
