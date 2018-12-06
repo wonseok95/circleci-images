@@ -31,27 +31,19 @@ jobs:
             git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
             git config --global user.name "$CIRCLE_USERNAME"
       - run: git clone git@github.com:CircleCI-Public/circleci-dockerfiles.git
-      # only push Dockerfiles to github on circleci-images pushes to "staging" or "master"
+
+      # push Dockerfiles to github on circleci-images pushes to all branches
+      # checkout the equivalent branch on circleci-dockerfiiles
+      # create it if it doesn't exist
       - run:
           name: branch control flow & git push
           working_directory: circleci-dockerfiles
           command: |
-            if [[ "$CIRCLE_BRANCH" == "master" ]]
-            then
-              export DOCKERFILES_BRANCH=master
-            fi
-            if [[ "$CIRCLE_BRANCH" == "staging" ]]
-            then
-              export DOCKERFILES_BRANCH=staging
-            fi
-            if [ ! -e $DOCKERFILES_BRANCH ]
-            then
-              git checkout $DOCKERFILES_BRANCH
-              cp -rfv /tmp/dockerfiles/* ~/repo/circleci-dockerfiles
-              git add .
-              git commit --allow-empty -m "Dockerfiles from $CIRCLE_BUILD_URL"
-              git push -f origin $DOCKERFILES_BRANCH
-            fi
+            git checkout $(git show-ref --verify --quiet refs/heads/$CIRCLE_BRANCH || echo '-b') $CIRCLE_BRANCH
+            cp -rfv /tmp/dockerfiles/* ~/repo/circleci-dockerfiles
+            git add .
+            git commit --allow-empty -m "Dockerfiles from $CIRCLE_BUILD_URL"
+            git push -f origin $CIRCLE_BRANCH
 
   generate_automated_build_images:
     working_directory: ~/repo
