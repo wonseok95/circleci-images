@@ -86,6 +86,7 @@ jobs:
             else
               git tag ccitest
               git push -f origin ccitest
+            fi
 
   refresh_tools_cache:
     docker:
