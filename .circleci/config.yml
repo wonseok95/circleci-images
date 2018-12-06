@@ -32,9 +32,11 @@ jobs:
             git config --global user.name "$CIRCLE_USERNAME"
       - run: git clone git@github.com:CircleCI-Public/circleci-dockerfiles.git
 
-      # push Dockerfiles to github on circleci-images pushes to all branches
+      # push Dockerfiles to CircleCI-Public/circleci-dockerfiles on circleci-images pushes to all branches
       # checkout the equivalent branch on circleci-dockerfiiles
-      # create it if it doesn't exist
+      # if it doesn't exist, create it
+      # eventually, some kind of cron job that prunes branches would be helpful, but populating that repo with tons of branches of dockerfiles isn't that annoying & will be helpful for development
+
       - run:
           name: branch control flow & git push
           working_directory: circleci-dockerfiles
@@ -69,27 +71,21 @@ jobs:
 
       - run: git clone git@github.com:CircleCI-Public/example-images.git
 
-      # only push example Dockerfiles/READMEs to GitHub on circleci-images pushes to "staging" or "master"
+      # push example Dockerfiles/READMEs to GitHub on circleci-images pushes to all branches
       - run:
           name: branch control flow & git push
           working_directory: example-images
           command: |
-            if [[ "$CIRCLE_BRANCH" == "master" ]]
-            then
-              export EXAMPLE_IMAGES_BRANCH=master
-            fi
-            if [[ "$CIRCLE_BRANCH" == "staging" ]]
-            then
-              export EXAMPLE_IMAGES_BRANCH=staging
-            fi
-            if [ ! -e $EXAMPLE_IMAGES_BRANCH ]
-            then
-              git checkout $EXAMPLE_IMAGES_BRANCH
-              cp -rfv /tmp/example-images/* ~/repo/example-images
-              git add .
-              git commit --allow-empty -m "example images from $CIRCLE_BUILD_URL"
-              git push -f origin $EXAMPLE_IMAGES_BRANCH
-            fi
+            git checkout $(git show-ref --verify --quiet refs/heads/$CIRCLE_BRANCH || echo '-b') $CIRCLE_BRANCH
+            cp -rfv /tmp/example-images/* ~/repo/example-images
+            git add .
+            git commit --allow-empty -m "example images from $CIRCLE_BUILD_URL"
+
+            if [[ "$CIRCLE_BRANCH" == "master" || "$CIRCLE_BRANCH" == "staging" ]]
+              git push -f origin $CIRCLE_BRANCH
+            else
+              git tag ccitest
+              git push -f origin ccitest
 
   refresh_tools_cache:
     docker:
@@ -169,17 +165,19 @@ jobs:
 
   publish_android:
     <<: *publish_image
+    parallelism: 2
     environment:
       - PLATFORM: android
 
   publish_buildpack-deps:
     <<: *publish_image
-    parallelism: 4
+    parallelism: 7
     environment:
       - PLATFORM: buildpack-deps
 
   publish_clojure:
     <<: *publish_image
+    parallelism: 2
     environment:
       - PLATFORM: clojure
 
@@ -245,7 +243,7 @@ jobs:
 
   publish_python:
     <<: *publish_image
-    parallelism: 4
+    parallelism: 8
     environment:
       - PLATFORM: python
 
@@ -315,14 +313,9 @@ workflows:
       - generate_automated_build_images:
           requires:
             - generate_dockerfiles
-          filters:
-            branches:
-              only:
-                - staging
-                - master
       - refresh_tools_cache:
           requires:
-            - generate_dockerfiles
+            - generate_automated_build_images
       - publish_android:        *commit_workflow_filters
       - publish_node:           *commit_workflow_filters
       - publish_python:         *commit_workflow_filters
