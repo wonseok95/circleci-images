@@ -2,7 +2,6 @@
 file:
   /bin/sh:
     exists: true
-    filetype: file
 
 # ensure circleci user exists
 user:
@@ -13,4 +12,3 @@ user:
 file:
   /home/circleci:
     exists: true
-    filetype: directory

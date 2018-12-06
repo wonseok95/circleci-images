@@ -111,9 +111,6 @@ jobs:
     machine: true
     working_directory: ~/circleci-bundles
     shell: /bin/bash -eol pipefail
-    environment:
-      GOSS_FILES_PATH: ~/circleci-bundles/shared/images
-      GOSS_FILES_STRATEGY: cp
     parameters:
       scheduled-workflow:
         type: boolean
@@ -164,9 +161,11 @@ jobs:
       - run:
           name: Build, Test, Publish Images
           command: |
-            export COMPUTED_ORG=ccistaging
+            export COMPUTED_ORG=ccitest
             if [[ "$CIRCLE_BRANCH" == "master" ]]; then
               export COMPUTED_ORG=circleci
+            elif [[ "$CIRCLE_BRANCH" == "staging" ]]; then
+              export COMPUTED_ORG=ccistaging
             fi
             export NEW_ORG=${NEW_ORG:-$COMPUTED_ORG}
 
@@ -283,11 +282,6 @@ commit_workflow_filters: &commit_workflow_filters
   scheduled-workflow: false
   requires:
     - refresh_tools_cache
-  filters:
-    branches:
-      only:
-        - staging
-        - master
 
 workflows:
   version: 2
@@ -337,11 +331,6 @@ workflows:
       - refresh_tools_cache:
           requires:
             - generate_dockerfiles
-          filters:
-            branches:
-              only:
-                - staging
-                - master
       - publish_android:        *commit_workflow_filters
       - publish_node:           *commit_workflow_filters
       - publish_python:         *commit_workflow_filters

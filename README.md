@@ -99,7 +99,7 @@ Once generated, Dockerfiles for each image will be in the images folder for that
 #### Build a single Dockerfile
 
 You can build a single image, with a throway name and the `docker build` command.
-`docker build -t <throw-away-img-name> <directory-containing-dockerfile>` 
+`docker build -t <throw-away-img-name> <directory-containing-dockerfile>`
 Here's how you would build the "regular" Go v1.11 CircleCI image:
 
 `docker build -t test/golang:latest golang/images/1.11.0/`
@@ -128,7 +128,7 @@ If you really want to do it, look at the `Makefile`.
 ## Limitations
 * The template language is WIP - it only supports `{{BASE_IMAGE}}` template.  We should extend this.
 * Generated Dockerfiles isn't checked into repo.  Since we track moving set of tags, checking into repository can create lots of unnecessary changes.
-* By default, the `staging` branch of this repository pushes to the [`ccistaging` Docker Hub org](https://hub.docker.com/r/ccistaging).  Once we get some test builds with these images, we can promote them to the [`circleci` Docker Hub org](https://hub.docker.com/r/circleci) by merging changes from the `staging` branch into the `master` branch.
+* By default, a given branch will push images to the [`ccitest` Docker Hub org](https://hub.docker.com/r/ccitest), with the branch name appended to all image tags. Once a given branch is merged to staging, staging will then push images to the [`ccistaging` Docker Hub org](https://hub.docker.com/r/ccistaging). Finally, we can rebuild those images on the [`circleci` Docker Hub org](https://hub.docker.com/r/circleci) by merging changes from `staging` into the `master` branch.
 * We cannot support Oracle JDK for licensing reasons. See [Oracle's Binary Code License Agreement for the Java SE Platform](http://oracle.com/technetwork/java/javase/terms/license/index.html) and [Stack Exchange: Is there no Oracle JDK for docker?](https://devops.stackexchange.com/questions/433/is-there-no-oracle-jdk-for-docker) for details.
 
 ## Licensing
