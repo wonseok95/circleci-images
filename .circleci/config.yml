@@ -232,7 +232,7 @@ jobs:
 
   publish_php:
     <<: *publish_image
-    parallelism: 6
+    parallelism: 13
     environment:
       - PLATFORM: php
 
