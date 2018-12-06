@@ -81,7 +81,7 @@ jobs:
             git add .
             git commit --allow-empty -m "example images from $CIRCLE_BUILD_URL"
 
-            if [[ "$CIRCLE_BRANCH" == "master" || "$CIRCLE_BRANCH" == "staging" ]]
+            if [[ "$CIRCLE_BRANCH" == "master" || "$CIRCLE_BRANCH" == "staging" ]]; then
               git push -f origin $CIRCLE_BRANCH
             else
               git tag ccitest
