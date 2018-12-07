@@ -85,7 +85,7 @@ jobs:
               git push -f origin $CIRCLE_BRANCH
             else
               git tag ccitest
-              git push -f origin ccitest
+              git push -f --tags
             fi
 
   refresh_tools_cache:
