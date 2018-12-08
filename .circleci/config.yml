@@ -86,7 +86,7 @@ jobs:
             else
               git tag -d ccitest
               git tag ccitest
-              git push origin ccitest
+              git push origin :refs/tags/ccitest
             fi
 
   refresh_tools_cache:
