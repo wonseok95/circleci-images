@@ -84,9 +84,9 @@ jobs:
             if [[ "$CIRCLE_BRANCH" == "master" || "$CIRCLE_BRANCH" == "staging" ]]; then
               git push -f origin $CIRCLE_BRANCH
             else
-              git tag -d ccitest
-              git tag ccitest
-              git push origin :refs/tags/ccitest
+              CCITEST_TAG=$CIRCLE_BRANCH-${CIRCLE_SHA1:0:12}
+              git tag ccitest-$CCITEST_TAG
+              git push origin $CCITEST_TAG
             fi
 
   refresh_tools_cache:
