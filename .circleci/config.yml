@@ -84,6 +84,10 @@ jobs:
             if [[ "$CIRCLE_BRANCH" == "master" || "$CIRCLE_BRANCH" == "staging" ]]; then
               git push -f origin $CIRCLE_BRANCH
             else
+              # docker hub automated builds on the ccitest org are looking for tags of the following pattern:
+              # /ccitest-*/
+              # append the branch (since that org pulls from all non-master/staging branches) & SHA1
+
               CCITEST_TAG=ccitest-$CIRCLE_BRANCH-${CIRCLE_SHA1:0:7}
               git tag $CCITEST_TAG
               git push origin $CCITEST_TAG
