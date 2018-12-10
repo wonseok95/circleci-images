@@ -6,6 +6,7 @@ orbs:
 jobs:
   generate_dockerfiles:
     working_directory: ~/repo
+    resource_class: small
     docker:
       - image: gcc:7
     steps:
@@ -49,6 +50,7 @@ jobs:
 
   generate_automated_build_images:
     working_directory: ~/repo
+    resource_class: small
     docker:
       - image: gcc:7
     steps:
@@ -94,6 +96,7 @@ jobs:
             fi
 
   refresh_tools_cache:
+    resource_class: small
     docker:
       - image: circleci/python:3.6.6 # aws cli dependenncy pyaml does not yet support 3.7 - https://github.com/aws/aws-cli/issues/3427
     steps:
@@ -240,7 +243,7 @@ jobs:
 
   publish_php:
     <<: *publish_image
-    parallelism: 13
+    parallelism: 15
     environment:
       - PLATFORM: php
 
