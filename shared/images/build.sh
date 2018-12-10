@@ -57,36 +57,37 @@ function run_goss_tests() {
     mkdir $GOSS_DOCKERFILE_PATH
 
     echo "----------------------------------------------------------------------------------------------------"
-    echo "copying Dockerfile to $GOSS_DOCKERFILE_PATH for testing modifications"
+    echo "copying Dockerfile to $GOSS_DOCKERFILE_PATH for testing modifications..."
     cp ~/circleci-bundles/$DOCKERFILE_PATH $GOSS_DOCKERFILE_PATH
 
     # cat our additions onto the Dockerfile copy
     echo "----------------------------------------------------------------------------------------------------"
-    echo "adding the following modifications to copied Dockerfile:"
+    echo "adding the following modifications to copied Dockerfile..."
     echo "----------------------------------------------------------------------------------------------------"
     cat ~/circleci-bundles/shared/goss/goss-add.Dockerfile
     cat ~/circleci-bundles/shared/goss/goss-add.Dockerfile >> $GOSS_DOCKERFILE_PATH/Dockerfile
 
     echo "----------------------------------------------------------------------------------------------------"
-    echo "copying custom entrypoint for testing:"
+    echo "copying custom entrypoint for testing..."
     echo "----------------------------------------------------------------------------------------------------"
     cat ~/circleci-bundles/shared/goss/goss-entrypoint.sh
     cp ~/circleci-bundles/shared/goss/goss-entrypoint.sh $GOSS_DOCKERFILE_PATH
 
     # build our test image
     echo "----------------------------------------------------------------------------------------------------"
-    echo "building modified test image: $IMAGE_NAME-goss"
+    echo "building modified test image: $IMAGE_NAME-goss..."
     echo "----------------------------------------------------------------------------------------------------"
     docker build -t $IMAGE_NAME-goss $GOSS_DOCKERFILE_PATH || (sleep 2; echo "retry building $IMAGE_NAME-goss"; docker build -t $IMAGE_NAME-goss $GOSS_DOCKERFILE_PATH)
 
     # run goss tests
     echo "----------------------------------------------------------------------------------------------------"
-    echo "running goss tests on $IMAGE_NAME-goss"
+    echo "running goss tests on $IMAGE_NAME-goss..."
     echo "----------------------------------------------------------------------------------------------------"
     dgoss run $IMAGE_NAME-goss
 
     echo "----------------------------------------------------------------------------------------------------"
-    echo "removing goss variant"
+    echo "removing goss variant..."
+    echo "----------------------------------------------------------------------------------------------------"
     docker image rm $IMAGE_NAME-goss
     echo "----------------------------------------------------------------------------------------------------"
 }

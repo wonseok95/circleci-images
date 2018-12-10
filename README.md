@@ -124,6 +124,22 @@ Don't do it.
 If you have an Ultrabook laptop, it won't be happy.
 If you really want to do it, look at the `Makefile`.
 
+### Testing
+There is automated testing for every variant of every image!
+
+Tests run with [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss).
+
+Tests are platform-specific (e.g., PHP and Android have their own distinct sets of tests)—see the `goss.yaml` file in each image directory.
+
+The testing logic is currently in `shared/images/build.sh`, as it is nestled between the existing automated `docker build` and `docker push` functionality. In short, for a particular variant of an image, we make a copy of its Dockerfile, append some Dockerfile syntax to add a custom entrypoint that allows us to execute tests against the running container, build a special, temporary version of the image (added time is insignificant, as most of the Dockerfile steps are cached), and run the tests.
+
+A particular variant is pushed to Docker Hub only if tests pass; if not, the same process restarts for the next variant, etc.
+
+#### Remaining work
+
+- Tests are very bare-bones right now and could use image-specific additions
+- It is possible to convert `goss` test output to JUnit XML—it would be great to aggregate all this output and store it via CircleCI's Test Summary section
+- The testing code is spread across the repository and is a bit confusing; some refactoring would help
 
 ## Limitations
 * The template language is WIP - it only supports `{{BASE_IMAGE}}` template.  We should extend this.
