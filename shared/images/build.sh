@@ -95,7 +95,6 @@ function run_goss_tests() {
 # pull to get cache and avoid recreating images unnecessarily
 docker pull $IMAGE_NAME || true
 
-
 # function to support new ccitest org, which will handle images created on any non-master/staging branches
 # for these images, we want to know what branch (& commit) they came from, & since they are far from customer-facing, we don't care if the tags are annoyingly verbose
 # however, we also need the regular tag, b/c images depend on them in their Dockerfile FROM statements
