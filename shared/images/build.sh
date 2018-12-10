@@ -53,7 +53,7 @@ function update_aliases() {
 function run_goss_tests() {
     # make a copy of the Dockerfile in question, so we can modify the entrypoint, etc.
     GOSS_DOCKERFILE_PATH=$(echo ${DOCKERFILE_PATH} | sed 's|/Dockerfile|/goss.Dockerfile|g')
-    cp $DOCKERFILE_PATH $GOSS_DOCKERFILE_PATH
+    cp ~/circleci-bundles/$DOCKERFILE_PATH ~/circleci-bundles/$GOSS_DOCKERFILE_PATH
 
     # cat our additions onto the Dockerfile copy
     cat ~/circleci-bundles/shared/goss/goss-add.Dockerfile >> $GOSS_DOCKERFILE_PATH
