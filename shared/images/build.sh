@@ -56,10 +56,10 @@ function run_goss_tests() {
 
     mkdir $GOSS_DOCKERFILE_PATH
 
-    cp ~/circleci-bundles/$DOCKERFILE_PATH ~/circleci-bundles/$GOSS_DOCKERFILE_PATH
+    cp ~/circleci-bundles/$DOCKERFILE_PATH $GOSS_DOCKERFILE_PATH
 
     # cat our additions onto the Dockerfile copy
-    cat ~/circleci-bundles/shared/goss/goss-add.Dockerfile >> ~/circleci-bundles/$GOSS_DOCKERFILE_PATH/Dockerfile
+    cat ~/circleci-bundles/shared/goss/goss-add.Dockerfile >> $GOSS_DOCKERFILE_PATH/Dockerfile
     cp ~/circleci-bundles/shared/goss/goss-entrypoint.sh $GOSS_DOCKERFILE_PATH
 
     # build our test image
