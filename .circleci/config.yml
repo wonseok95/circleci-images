@@ -177,6 +177,7 @@ jobs:
   publish_android:
     <<: *publish_image
     parallelism: 2
+    resource_class: large
     environment:
       - PLATFORM: android
 
@@ -200,6 +201,7 @@ jobs:
 
   publish_elixir:
     <<: *publish_image
+    parallelism: 2
     environment:
       - PLATFORM: elixir
 
@@ -236,6 +238,7 @@ jobs:
   publish_node:
     <<: *publish_image
     parallelism: 2
+    resource_class: large
     environment:
       - PLATFORM: node
 
