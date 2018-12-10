@@ -83,7 +83,7 @@ function run_goss_tests() {
     echo "----------------------------------------------------------------------------------------------------"
     echo "running goss tests on $IMAGE_NAME-goss"
     echo "----------------------------------------------------------------------------------------------------"
-    dgoss run $1
+    dgoss run $IMAGE_NAME-goss
 
     echo "----------------------------------------------------------------------------------------------------"
     echo "removing goss variant"
@@ -116,7 +116,7 @@ then
 
     # => tests turned off because they are still brokennnnn
 
-    run_goss_tests $IMAGE_NAME-goss
+    run_goss_tests
 
     docker push $IMAGE_NAME
 
@@ -133,7 +133,7 @@ else
 
     # => tests turned off because they are still brokennnnn
 
-    run_goss_tests $IMAGE_NAME
+    run_goss_tests
 
     docker push $IMAGE_NAME
 
