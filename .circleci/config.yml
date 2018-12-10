@@ -164,6 +164,8 @@ jobs:
 
             export GOSS_FILES_PATH=~/circleci-bundles/shared/goss
             export GOSS_FILES_STRATEGY=cp
+            export GOSS_OPTS="--color --format documentation --retry-timeout 120s --sleep 10s"
+            export GOSS_SLEEP=5s
             make -j $PLATFORM/publish_images
 
       - store_artifacts:

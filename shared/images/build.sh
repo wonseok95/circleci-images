@@ -83,8 +83,7 @@ function run_goss_tests() {
     echo "----------------------------------------------------------------------------------------------------"
     echo "running goss tests on $IMAGE_NAME-goss"
     echo "----------------------------------------------------------------------------------------------------"
-    GOSS_OPTS="--color --format documentation --retry-timeout 120s -sleep 10s" \
-      dgoss run $1
+    dgoss run $1
 
     echo "----------------------------------------------------------------------------------------------------"
     echo "removing goss variant"
