@@ -147,13 +147,9 @@ jobs:
 
             # can't set these as normal job env vars, b/c they're overriden by the env section in the platform-specific jobs
             export GOSS_DST=~/bin
-            export GOSS_FILES_STRATEGY=cp
 
             curl -fsSL https://goss.rocks/install | sh
             goss -version
-
-            # set up goss entrypoint file
-            cp shared/goss/goss-entrypoint.sh .
 
       - run:
           name: Build, Test, Publish Images
@@ -166,6 +162,8 @@ jobs:
             fi
             export NEW_ORG=${NEW_ORG:-$COMPUTED_ORG}
 
+            export GOSS_FILES_PATH=~/circleci-bundles/shared/goss
+            export GOSS_FILES_STRATEGY=cp
             make -j $PLATFORM/publish_images
 
       - store_artifacts:

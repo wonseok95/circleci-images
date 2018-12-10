@@ -58,20 +58,19 @@ function run_goss_tests() {
 
     echo "----------------------------------------------------------------------------------------------------"
     echo "copying Dockerfile to $GOSS_DOCKERFILE_PATH for testing modifications"
-    echo "----------------------------------------------------------------------------------------------------"
     cp ~/circleci-bundles/$DOCKERFILE_PATH $GOSS_DOCKERFILE_PATH
 
     # cat our additions onto the Dockerfile copy
     echo "----------------------------------------------------------------------------------------------------"
-    echo "adding the following modifications to Dockerfile copy:"
-    cat ~/circleci-bundles/shared/goss/goss-add.Dockerfile
+    echo "adding the following modifications to copied Dockerfile:"
     echo "----------------------------------------------------------------------------------------------------"
+    cat ~/circleci-bundles/shared/goss/goss-add.Dockerfile
     cat ~/circleci-bundles/shared/goss/goss-add.Dockerfile >> $GOSS_DOCKERFILE_PATH/Dockerfile
 
     echo "----------------------------------------------------------------------------------------------------"
     echo "copying custom entrypoint for testing:"
-    cat ~/circleci-bundles/shared/goss/goss-entrypoint.sh
     echo "----------------------------------------------------------------------------------------------------"
+    cat ~/circleci-bundles/shared/goss/goss-entrypoint.sh
     cp ~/circleci-bundles/shared/goss/goss-entrypoint.sh $GOSS_DOCKERFILE_PATH
 
     # build our test image
@@ -84,7 +83,8 @@ function run_goss_tests() {
     echo "----------------------------------------------------------------------------------------------------"
     echo "running goss tests on $IMAGE_NAME-goss"
     echo "----------------------------------------------------------------------------------------------------"
-    GOSS_FILES_PATH="~/circleci-bundles/shared/goss" GOSS_OPTS="--color --format documentation --retry-timeout 120s" dgoss run $1
+    GOSS_OPTS="--color --format documentation --retry-timeout 120s" \
+      dgoss run $1
 
     echo "----------------------------------------------------------------------------------------------------"
     echo "removing goss variant"
