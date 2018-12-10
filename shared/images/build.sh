@@ -56,17 +56,28 @@ function run_goss_tests() {
 
     mkdir $GOSS_DOCKERFILE_PATH
 
+    echo "copying Dockerfile to $GOSS_DOCKERFILE_PATH for testing modifications"
     cp ~/circleci-bundles/$DOCKERFILE_PATH $GOSS_DOCKERFILE_PATH
 
     # cat our additions onto the Dockerfile copy
+    echo "adding the following modifications to Dockerfile copy:"
+    cat ~/circleci-bundles/shared/goss/goss-add.Dockerfile
     cat ~/circleci-bundles/shared/goss/goss-add.Dockerfile >> $GOSS_DOCKERFILE_PATH/Dockerfile
+
+    echo "copying custom entrypoint for testing:"
+    cat ~/circleci-bundles/shared/goss/goss-entrypoint.sh
     cp ~/circleci-bundles/shared/goss/goss-entrypoint.sh $GOSS_DOCKERFILE_PATH
 
     # build our test image
+    echo "building modified test image: $IMAGE_NAME-goss"
     docker build -t $IMAGE_NAME-goss $GOSS_DOCKERFILE_PATH || (sleep 2; echo "retry building $IMAGE_NAME-goss"; docker build -t $IMAGE_NAME-goss $GOSS_DOCKERFILE_PATH)
 
     # run goss tests
-    GOSS_FILES_PATH=~/circleci-bundles/shared/goss dgoss run $1
+    echo "running goss tests on $IMAGE_NAME-goss"
+    GOSS_FILES_PATH="~/circleci-bundles/shared/goss" GOSS_OPTS="--color --format documentation --retry-timeout 120" dgoss run $1
+
+    echo "removing goss variant"
+    docker image rm $IMAGE_NAME-goss
 }
 
 # pull to get cache and avoid recreating images unnecessarily
