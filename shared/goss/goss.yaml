@@ -7,7 +7,7 @@ file:
   /home/circleci:
     exists: true
 
-# ensure circleci user exists
 user:
+  # ensure circleci user exists
   circleci:
     exists: true
