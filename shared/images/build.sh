@@ -51,7 +51,18 @@ function update_aliases() {
 }
 
 function run_goss_tests() {
-    GOSS_FILES_PATH=~/circleci-bundles/shared/images dgoss run $1
+    # make a copy of the Dockerfile in question, so we can modify the entrypoint, etc.
+    GOSS_DOCKERFILE_PATH=$(echo ${DOCKERFILE_PATH} | sed 's|/Dockerfile|/goss.Dockerfile|g')
+    cp $DOCKERFILE_PATH $GOSS_DOCKERFILE_PATH
+
+    # cat our additions onto the Dockerfile copy
+    cat ~/circleci-bundles/shared/goss/goss-add.Dockerfile >> $GOSS_DOCKERFILE_PATH
+
+    # build our test image
+    docker build -t $IMAGE_NAME-goss . || (sleep 2; echo "retry building $IMAGE_NAME-goss"; docker build -t $IMAGE_NAME-goss .)
+
+    # run goss tests
+    GOSS_FILES_PATH=~/circleci-bundles/shared/goss dgoss run $1
 }
 
 # pull to get cache and avoid recreating images unnecessarily
@@ -79,7 +90,7 @@ then
 
     # => tests turned off because they are still brokennnnn
 
-    # run_goss_tests $IMAGE_NAME
+    run_goss_tests $IMAGE_NAME-goss
 
     docker push $IMAGE_NAME
 
@@ -96,7 +107,7 @@ else
 
     # => tests turned off because they are still brokennnnn
 
-    # run_goss_tests $IMAGE_NAME
+    run_goss_tests $IMAGE_NAME
 
     docker push $IMAGE_NAME
 
