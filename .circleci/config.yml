@@ -176,8 +176,7 @@ jobs:
 
   publish_android:
     <<: *publish_image
-    parallelism: 2
-    resource_class: large
+    parallelism: 4
     environment:
       - PLATFORM: android
 
@@ -195,7 +194,6 @@ jobs:
 
   publish_dynamodb:
     <<: *publish_image
-    resource_class: small
     environment:
       - PLATFORM: dynamodb
 
@@ -219,26 +217,22 @@ jobs:
 
   publish_mariadb:
     <<: *publish_image
-    resource_class: small
     environment:
       - PLATFORM: mariadb
 
   publish_mongo:
     <<: *publish_image
-    resource_class: small
     environment:
       - PLATFORM: mongo
 
   publish_mysql:
     <<: *publish_image
-    resource_class: small
     environment:
       - PLATFORM: mysql
 
   publish_node:
     <<: *publish_image
-    parallelism: 2
-    resource_class: large
+    parallelism: 4
     environment:
       - PLATFORM: node
 
@@ -250,8 +244,7 @@ jobs:
 
   publish_php:
     <<: *publish_image
-    parallelism: 15
-    resource_class: large
+    parallelism: 20
     environment:
       - PLATFORM: php
 
@@ -268,7 +261,6 @@ jobs:
 
   publish_redis:
     <<: *publish_image
-    resource_class: small
     environment:
       - PLATFORM: redis
 
