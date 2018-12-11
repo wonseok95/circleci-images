@@ -188,7 +188,7 @@ jobs:
 
   publish_android:
     <<: *publish_image
-    parallelism: 4
+    parallelism: 7
     environment:
       - PLATFORM: android
 
@@ -200,7 +200,7 @@ jobs:
 
   publish_clojure:
     <<: *publish_image
-    parallelism: 2
+    parallelism: 3
     environment:
       - PLATFORM: clojure
 
@@ -211,7 +211,7 @@ jobs:
 
   publish_elixir:
     <<: *publish_image
-    parallelism: 2
+    parallelism: 3
     environment:
       - PLATFORM: elixir
 
