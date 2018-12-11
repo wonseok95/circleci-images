@@ -92,10 +92,10 @@ function run_goss_tests() {
     results=$(dgoss run $IMAGE_NAME-goss)
 
     echo '<?xml version="1.0" encoding="UTF-8"?>' > \
-      test-results/$PLATFORM/$TAG.xml
+      test-results/$PLATFORM/$(cat TAG).xml
     echo "${results#*<?xml version=\"1.0\" encoding=\"UTF-8\"?>}" | \
       sed "s|testsuite name=\"goss\"|testsuite name=\"$IMAGE_NAME\"|g" >> \
-      ~/circleci-bundles/test-results/$PLATFORM/$TAG.xml
+      ~/circleci-bundles/test-results/$PLATFORM/$(cat TAG).xml
 
     echo "----------------------------------------------------------------------------------------------------"
     echo "removing goss variant..."
