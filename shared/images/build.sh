@@ -90,11 +90,12 @@ function run_goss_tests() {
     # save JUnit output to variable so we can control what we store
     export GOSS_OPTS="--format junit"
     results=$(dgoss run $IMAGE_NAME-goss)
+
     echo '<?xml version="1.0" encoding="UTF-8"?>' > \
-      test-results/$PLATFORM/results-$IMAGE_NAME.xml
+      test-results/$PLATFORM/$TAG.xml
     echo "${results#*<?xml version=\"1.0\" encoding=\"UTF-8\"?>}" | \
       sed "s|testsuite name=\"goss\"|testsuite name=\"$IMAGE_NAME\"|g" >> \
-      ~/circleci-bundles/test-results/$PLATFORM/results-$IMAGE_NAME.xml
+      ~/circleci-bundles/test-results/$PLATFORM/$TAG.xml
 
     echo "----------------------------------------------------------------------------------------------------"
     echo "removing goss variant..."
