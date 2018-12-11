@@ -37,15 +37,20 @@ function update_aliases() {
           ALIAS_NAME_BRANCH_COMMIT=${REPO_NAME}:${alias}-${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:12}
         fi
 
-        docker tag ${IMAGE_NAME} ${ALIAS_NAME}
-        docker push ${ALIAS_NAME}
-        docker image rm ${ALIAS_NAME}
-
-        # because we're in a for loop, this var will be set from previous iterations, so grep for the current ALIAS_NAME (which gets reset on every iteration)
-        if [[ $(echo $ALIAS_NAME_BRANCH_COMMIT | grep $ALIAS_NAME) ]]; then
-          docker tag ${IMAGE_NAME} ${ALIAS_NAME_BRANCH_COMMIT}
-          docker push ${ALIAS_NAME_BRANCH_COMMIT}
-          docker image rm ${ALIAS_NAME_BRANCH_COMMIT}
+        if [[ "$CIRCLE_BRANCH" == "master" || "$CIRCLE_BRANCH" == "staging" ]]; then
+          docker tag ${IMAGE_NAME} ${ALIAS_NAME}
+          docker push ${ALIAS_NAME}
+          docker image rm ${ALIAS_NAME}
+        else
+          # because we're in a for loop, this var will be set from previous iterations, so grep for the current ALIAS_NAME (which gets reset on every iteration)
+          if [[ $(echo $ALIAS_NAME_BRANCH_COMMIT | grep $ALIAS_NAME) ]]; then
+            docker tag ${IMAGE_NAME} ${ALIAS_NAME}
+            docker push ${ALIAS_NAME}
+            docker image rm ${ALIAS_NAME}
+            docker tag ${IMAGE_NAME} ${ALIAS_NAME_BRANCH_COMMIT}
+            docker push ${ALIAS_NAME_BRANCH_COMMIT}
+            docker image rm ${ALIAS_NAME_BRANCH_COMMIT}
+          fi
         fi
     done
 }
