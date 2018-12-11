@@ -83,7 +83,10 @@ function run_goss_tests() {
     echo "----------------------------------------------------------------------------------------------------"
     echo "running goss tests on $IMAGE_NAME-goss..."
     echo "----------------------------------------------------------------------------------------------------"
-    dgoss run $IMAGE_NAME-goss
+
+    # save JUnit output to variable so we can control what we store
+    results=$(dgoss run $IMAGE_NAME-goss)
+    echo "${results#*<?xml version=\"1.0\" encoding=\"UTF-8\"?>}" >> ~/circleci-bundles/test-results/$PLATFORM/results.xml
 
     echo "----------------------------------------------------------------------------------------------------"
     echo "removing goss variant..."

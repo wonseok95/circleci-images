@@ -155,6 +155,11 @@ jobs:
             goss -version
 
       - run:
+          name: setup test results dir
+          command: |
+            mkdir test-results
+
+      - run:
           name: Build, Test, Publish Images
           command: |
             export COMPUTED_ORG=ccitest
@@ -167,12 +172,22 @@ jobs:
 
             export GOSS_FILES_PATH=~/circleci-bundles/$PLATFORM
             export GOSS_FILES_STRATEGY=cp
-            export GOSS_SLEEP=5s
+            export GOSS_SLEEP=2s
+            export GOSS_OPTS="--format junit"
+
+            # setup test results for $PLATFORM
+            mkdir test-results/$PLATFORM
+            echo '<?xml version="1.0" encoding="UTF-8"?>' > \
+              test-results/$PLATFORM/results.xml
+
             make -j $PLATFORM/publish_images
 
       - store_artifacts:
           path: "."
           destination: circleci-bundles
+
+      - store_test_results:
+          path: test-results
 
   publish_android:
     <<: *publish_image
