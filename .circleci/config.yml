@@ -172,8 +172,7 @@ jobs:
 
             export GOSS_FILES_PATH=~/circleci-bundles/$PLATFORM
             export GOSS_FILES_STRATEGY=cp
-            export GOSS_SLEEP=2s
-            export GOSS_OPTS="--format junit"
+            export GOSS_SLEEP=1s
 
             # setup test results for $PLATFORM
             mkdir test-results/$PLATFORM
