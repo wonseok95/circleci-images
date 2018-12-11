@@ -186,7 +186,7 @@ jobs:
 
   publish_android:
     <<: *publish_image
-    parallelism: 7
+    parallelism: 13
     environment:
       - PLATFORM: android
 
@@ -265,7 +265,7 @@ jobs:
 
   publish_python:
     <<: *publish_image
-    parallelism: 8
+    parallelism: 7
     environment:
       - PLATFORM: python
 
