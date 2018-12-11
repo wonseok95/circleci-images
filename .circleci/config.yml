@@ -6,6 +6,7 @@ orbs:
 jobs:
   generate_dockerfiles:
     working_directory: ~/repo
+    resource_class: small
     docker:
       - image: gcc:7
     steps:
@@ -49,6 +50,7 @@ jobs:
 
   generate_automated_build_images:
     working_directory: ~/repo
+    resource_class: small
     docker:
       - image: gcc:7
     steps:
@@ -94,6 +96,7 @@ jobs:
             fi
 
   refresh_tools_cache:
+    resource_class: small
     docker:
       - image: circleci/python:3.6.6 # aws cli dependenncy pyaml does not yet support 3.7 - https://github.com/aws/aws-cli/issues/3427
     steps:
@@ -147,10 +150,14 @@ jobs:
 
             # can't set these as normal job env vars, b/c they're overriden by the env section in the platform-specific jobs
             export GOSS_DST=~/bin
-            export GOSS_FILES_STRATEGY=cp
 
             curl -fsSL https://goss.rocks/install | sh
             goss -version
+
+      - run:
+          name: setup test results dir
+          command: |
+            mkdir test-results
 
       - run:
           name: Build, Test, Publish Images
@@ -163,15 +170,25 @@ jobs:
             fi
             export NEW_ORG=${NEW_ORG:-$COMPUTED_ORG}
 
+            export GOSS_FILES_PATH=~/circleci-bundles/$PLATFORM
+            export GOSS_FILES_STRATEGY=cp
+            export GOSS_SLEEP=1s
+
+            # setup test results for $PLATFORM
+            mkdir test-results/$PLATFORM
+
             make -j $PLATFORM/publish_images
 
       - store_artifacts:
           path: "."
           destination: circleci-bundles
 
+      - store_test_results:
+          path: test-results
+
   publish_android:
     <<: *publish_image
-    parallelism: 2
+    parallelism: 7
     environment:
       - PLATFORM: android
 
@@ -183,7 +200,7 @@ jobs:
 
   publish_clojure:
     <<: *publish_image
-    parallelism: 2
+    parallelism: 3
     environment:
       - PLATFORM: clojure
 
@@ -194,6 +211,7 @@ jobs:
 
   publish_elixir:
     <<: *publish_image
+    parallelism: 3
     environment:
       - PLATFORM: elixir
 
@@ -226,7 +244,7 @@ jobs:
 
   publish_node:
     <<: *publish_image
-    parallelism: 2
+    parallelism: 4
     environment:
       - PLATFORM: node
 
@@ -238,7 +256,7 @@ jobs:
 
   publish_php:
     <<: *publish_image
-    parallelism: 13
+    parallelism: 20
     environment:
       - PLATFORM: php
 
