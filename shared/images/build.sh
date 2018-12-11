@@ -91,11 +91,13 @@ function run_goss_tests() {
     export GOSS_OPTS="--format junit"
     results=$(dgoss run $IMAGE_NAME-goss)
 
+    RESULTS_FILE=${IMAGE_NAME#*:}
+
     echo '<?xml version="1.0" encoding="UTF-8"?>' > \
-      test-results/$PLATFORM/$(cat TAG).xml
+      test-results/$PLATFORM/$RESULTS_FILE.xml
     echo "${results#*<?xml version=\"1.0\" encoding=\"UTF-8\"?>}" | \
       sed "s|testsuite name=\"goss\"|testsuite name=\"$IMAGE_NAME\"|g" >> \
-      ~/circleci-bundles/test-results/$PLATFORM/$(cat TAG).xml
+      ~/circleci-bundles/test-results/$PLATFORM/$RESULTS_FILE.xml
 
     echo "----------------------------------------------------------------------------------------------------"
     echo "removing goss variant..."
