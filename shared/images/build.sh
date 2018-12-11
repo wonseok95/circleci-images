@@ -91,7 +91,7 @@ function run_goss_tests() {
     export GOSS_OPTS="--format junit"
     results=$(dgoss run $IMAGE_NAME-goss)
     echo "${results#*<?xml version=\"1.0\" encoding=\"UTF-8\"?>}" | \
-      sed 's|testsuite name="goss"|testsuite name="$IMAGE_NAME"|g' >> \
+      sed "s|testsuite name=\"goss\"|testsuite name=\"$IMAGE_NAME\"|g" >> \
       ~/circleci-bundles/test-results/$PLATFORM/results.xml
 
     echo "----------------------------------------------------------------------------------------------------"
