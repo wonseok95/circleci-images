@@ -93,7 +93,7 @@ function run_goss_tests() {
 
     RESULTS_FILE=${IMAGE_NAME#*:}
 
-    echo '<?xml version="1.0" encoding="UTF-8"?>' > \
+    echo '<?xml version="1.0" encoding="UTF-8"?>' >> \
       test-results/$PLATFORM/$RESULTS_FILE.xml
     echo "${results#*<?xml version=\"1.0\" encoding=\"UTF-8\"?>}" | \
       sed "s|testsuite name=\"goss\"|testsuite name=\"$IMAGE_NAME\"|g" >> \
