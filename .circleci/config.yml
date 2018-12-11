@@ -137,8 +137,6 @@ jobs:
                   COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
                   echo "Commit range: $COMMIT_RANGE"
 
-                  git diff $COMMIT_RANGE --name-status | grep -e "$PLATFORM" -e "shared" -e "Makefile"
-
                   if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "$PLATFORM" -e "shared" -e "Makefile") && "$CIRCLE_BRANCH" != "master" ]]; then
                     circleci step halt
                   fi
