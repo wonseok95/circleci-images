@@ -176,8 +176,6 @@ jobs:
 
             # setup test results for $PLATFORM
             mkdir test-results/$PLATFORM
-            echo '<?xml version="1.0" encoding="UTF-8"?>' > \
-              test-results/$PLATFORM/results.xml
 
             make -j $PLATFORM/publish_images
 

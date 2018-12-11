@@ -135,10 +135,11 @@ The testing logic is currently in `shared/images/build.sh`, as it is nestled bet
 
 A particular variant is pushed to Docker Hub only if tests pass; if not, the same process restarts for the next variant, etc.
 
+Tests run twice: once for `stdout`, and again, with JUnit formatting, for `store_test_results` (after some post-processing [due to how goss outputs JUnit XML](https://github.com/aelsabbahy/goss/blob/master/outputs/junit.go)...). With test runtimes at essentially zero seconds, running everything twice has a negligible effect on job runtime.
+
 #### Remaining work
 
-- Tests are very bare-bones right now and could use image-specific additions
-- It is possible to convert `goss` test output to JUnit XML—it would be great to aggregate all this output and store it via CircleCI's Test Summary section
+- Tests are very bare-bones right now and could use image-specific additions—please add things to each image's `goss.yml` file and the existing logic will take care of the rest!
 - The testing code is spread across the repository and is a bit confusing; some refactoring would help
 
 ## Limitations
