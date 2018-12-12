@@ -4,7 +4,6 @@
 # For images with a language advocate, recommend them instead.
 
 ruby/*      @zzak
-clojure/*   @technomancy
 openjdk/*   @eddiewebb
 golang/*    @felicianotech
 php/*       @ryanwohara
