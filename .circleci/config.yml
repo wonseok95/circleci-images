@@ -175,7 +175,7 @@ jobs:
             # setup test results for $PLATFORM
             mkdir test-results/$PLATFORM
 
-            make -j $PLATFORM/publish_images
+            make -j -w -d $PLATFORM/publish_images
 
       - store_artifacts:
           path: "."
