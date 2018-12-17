@@ -26,12 +26,6 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "af:0a:93:75:51:75:1f:16:90:d9:97:b1:7a:bb:f0:27"
-      - run:
-          name: git config
-          command: |
-            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
-            git config --global user.name "$CIRCLE_USERNAME"
-      - run: git clone git@github.com:CircleCI-Public/circleci-dockerfiles.git
 
       # push Dockerfiles to CircleCI-Public/circleci-dockerfiles on circleci-images pushes to all branches
       # checkout the equivalent branch on circleci-dockerfiiles
@@ -39,11 +33,26 @@ jobs:
       # eventually, some kind of cron job that prunes branches would be helpful, but populating that repo with tons of branches of dockerfiles isn't that annoying & will be helpful for development
 
       - run:
-          name: branch control flow & git push
+          name: git config, git clone, git push
           working_directory: circleci-dockerfiles
           command: |
+            # if this is a forked PR, stop this step;
+            # community contributors won't have perms to push to dockerfiles repo
+
+            if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
+              circleci step halt
+              echo "this is a forked PR; skipping push to circleci-dockeriles repo"
+            fi
+
+            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
+            git config --global user.name "$CIRCLE_USERNAME"
+
+            git clone git@github.com:CircleCI-Public/circleci-dockerfiles.git
+
             git checkout $(git show-ref --verify --quiet refs/heads/$CIRCLE_BRANCH || echo '-b') $CIRCLE_BRANCH
+
             cp -rfv /tmp/dockerfiles/* ~/repo/circleci-dockerfiles
+
             git add .
             git commit --allow-empty -m "Dockerfiles from $CIRCLE_BUILD_URL"
             git push -f origin $CIRCLE_BRANCH
@@ -55,29 +64,37 @@ jobs:
       - image: gcc:7
     steps:
       - checkout
+
       - run:
           name: Generate Dockerfiles, READMEs for automated builds
           command: |
             make -j
             make example_images
+
       - store_artifacts:
           path: /tmp/example-images
+
       - add_ssh_keys:
           fingerprints:
             - "9c:e2:cf:bb:f2:25:4d:05:d9:b0:30:bf:73:c5:7d:8f"
+
       - run:
-          name: git config
+          name: git config, git clone, git push
+          working_directory: example-images
           command: |
+            # if this is a forked PR, stop this step;
+            # community contributors won't have perms to push to example-images repo
+
+            if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
+              circleci step halt
+              echo "this is a forked PR; skipping push to example-images repo"
+            fi
+
             git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
             git config --global user.name "$CIRCLE_USERNAME"
 
-      - run: git clone git@github.com:CircleCI-Public/example-images.git
+            git clone git@github.com:CircleCI-Public/example-images.git
 
-      # push example Dockerfiles/READMEs to GitHub on circleci-images pushes to all branches
-      - run:
-          name: branch control flow & git push
-          working_directory: example-images
-          command: |
             git checkout $(git show-ref --verify --quiet refs/heads/$CIRCLE_BRANCH || echo '-b') $CIRCLE_BRANCH
             cp -rfv /tmp/example-images/* ~/repo/example-images
             git add .
@@ -174,6 +191,16 @@ jobs:
 
             # setup test results for $PLATFORM
             mkdir test-results/$PLATFORM
+
+            # push images by default
+            export PUSH_IMAGES=true
+
+            # forked PR? set PUSH_IMAGES to false (build/test but don't push)
+            # community contributors won't have perms to push to our docker hub
+            if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
+              export PUSH_IMAGES=false
+              echo "forked PR: building/testing images; skipping `docker push`"
+            fi
 
             make -j -w -d $PLATFORM/publish_images
 
