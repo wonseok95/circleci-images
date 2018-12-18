@@ -153,7 +153,17 @@ jobs:
       - checkout
       - run:
           name: Docker Login
-          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+          command: |
+            # if this is a forked PR, stop this step;
+            # community contributors won't have our Docker perms
+
+            if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
+              echo "this is a forked PR; skipping Docker login"
+              circleci step halt
+              exit 0
+            fi
+
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
 
       - unless:
           condition: <<parameters.scheduled-workflow>>
