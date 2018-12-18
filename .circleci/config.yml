@@ -48,17 +48,18 @@ jobs:
             # community contributors won't have perms to push to dockerfiles repo
 
             if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
-              circleci step halt
               echo "this is a forked PR; skipping push to circleci-dockeriles repo"
+              # circleci step halt
+              # ^^ this seems broken right now
+            else
+              git checkout $(git show-ref --verify --quiet refs/heads/$CIRCLE_BRANCH || echo '-b') $CIRCLE_BRANCH
+
+              cp -rfv /tmp/dockerfiles/* ~/repo/circleci-dockerfiles
+
+              git add .
+              git commit --allow-empty -m "Dockerfiles from $CIRCLE_BUILD_URL"
+              git push -f origin $CIRCLE_BRANCH
             fi
-
-            git checkout $(git show-ref --verify --quiet refs/heads/$CIRCLE_BRANCH || echo '-b') $CIRCLE_BRANCH
-
-            cp -rfv /tmp/dockerfiles/* ~/repo/circleci-dockerfiles
-
-            git add .
-            git commit --allow-empty -m "Dockerfiles from $CIRCLE_BUILD_URL"
-            git push -f origin $CIRCLE_BRANCH
 
   generate_automated_build_images:
     working_directory: ~/repo
@@ -97,25 +98,28 @@ jobs:
             # community contributors won't have perms to push to example-images repo
 
             if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
-              circleci step halt
               echo "this is a forked PR; skipping push to example-images repo"
-            fi
-
-            git checkout $(git show-ref --verify --quiet refs/heads/$CIRCLE_BRANCH || echo '-b') $CIRCLE_BRANCH
-            cp -rfv /tmp/example-images/* ~/repo/example-images
-            git add .
-            git commit --allow-empty -m "example images from $CIRCLE_BUILD_URL"
-
-            if [[ "$CIRCLE_BRANCH" == "master" || "$CIRCLE_BRANCH" == "staging" ]]; then
-              git push -f origin $CIRCLE_BRANCH
+              # circleci step halt
+              # ^^ this seems broken right now
             else
-              # docker hub automated builds on the ccitest org are looking for tags of the following pattern:
-              # /ccitest-*/
-              # append the branch (since that org pulls from all non-master/staging branches) & SHA1
+              git checkout $(git show-ref --verify --quiet refs/heads/$CIRCLE_BRANCH || echo '-b') $CIRCLE_BRANCH
 
-              CCITEST_TAG=ccitest-$CIRCLE_BRANCH-${CIRCLE_SHA1:0:7}
-              git tag $CCITEST_TAG
-              git push origin $CCITEST_TAG
+              cp -rfv /tmp/example-images/* ~/repo/example-images
+
+              git add .
+              git commit --allow-empty -m "example images from $CIRCLE_BUILD_URL"
+
+              if [[ "$CIRCLE_BRANCH" == "master" || "$CIRCLE_BRANCH" == "staging" ]]; then
+                git push -f origin $CIRCLE_BRANCH
+              else
+                # docker hub automated builds on the ccitest org are looking for tags of the following pattern:
+                # /ccitest-*/
+                # append the branch (since that org pulls from all non-master/staging branches) & SHA1
+
+                CCITEST_TAG=ccitest-$CIRCLE_BRANCH-${CIRCLE_SHA1:0:7}
+                git tag $CCITEST_TAG
+                git push origin $CCITEST_TAG
+              fi
             fi
 
   refresh_tools_cache:
@@ -219,7 +223,7 @@ jobs:
 
   publish_android:
     <<: *publish_image
-    parallelism: 13
+    parallelism: 20
     environment:
       - PLATFORM: android
 
