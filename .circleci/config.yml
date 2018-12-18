@@ -82,7 +82,15 @@ jobs:
             - "9c:e2:cf:bb:f2:25:4d:05:d9:b0:30:bf:73:c5:7d:8f"
 
       - run:
-          name: git config, git clone, git push
+          name: git config, git clone
+          command: |
+            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
+            git config --global user.name "$CIRCLE_USERNAME"
+
+            git clone git@github.com:CircleCI-Public/example-images.git
+
+      - run:
+          name: git checkout, git push
           working_directory: example-images
           command: |
             # if this is a forked PR, stop this step;
@@ -92,11 +100,6 @@ jobs:
               circleci step halt
               echo "this is a forked PR; skipping push to example-images repo"
             fi
-
-            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
-            git config --global user.name "$CIRCLE_USERNAME"
-
-            git clone git@github.com:CircleCI-Public/example-images.git
 
             git checkout $(git show-ref --verify --quiet refs/heads/$CIRCLE_BRANCH || echo '-b') $CIRCLE_BRANCH
             cp -rfv /tmp/example-images/* ~/repo/example-images

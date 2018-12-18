@@ -137,15 +137,16 @@ A particular variant is pushed to Docker Hub only if tests pass; if not, the sam
 
 Tests run twice: once for `stdout`, and again, with JUnit formatting, for `store_test_results` (after some post-processing [due to how goss outputs JUnit XML](https://github.com/aelsabbahy/goss/blob/master/outputs/junit.go)...). With test runtimes at essentially zero seconds, running everything twice has a negligible effect on job runtime.
 
+By default, a given branch will push images to the [`ccitest` Docker Hub org](https://hub.docker.com/r/ccitest), with the branch name appended to all image tags. Once a given branch is merged to staging, staging will then push images to the [`ccistaging` Docker Hub org](https://hub.docker.com/r/ccistaging). Finally, we can rebuild those images on the [`circleci` Docker Hub org](https://hub.docker.com/r/circleci) by merging changes from `staging` into the `master` branch. See below for note on forked pull requests.
+
 #### Remaining work
 
 - Tests are very bare-bones right now and could use image-specific additions—please add things to each image's `goss.yml` file and the existing logic will take care of the rest!
 - The testing code is spread across the repository and is a bit confusing; some refactoring would help
 
 ## Limitations
-* The template language is WIP - it only supports `{{BASE_IMAGE}}` template.  We should extend this.
-* Generated Dockerfiles isn't checked into repo.  Since we track moving set of tags, checking into repository can create lots of unnecessary changes.
-* By default, a given branch will push images to the [`ccitest` Docker Hub org](https://hub.docker.com/r/ccitest), with the branch name appended to all image tags. Once a given branch is merged to staging, staging will then push images to the [`ccistaging` Docker Hub org](https://hub.docker.com/r/ccistaging). Finally, we can rebuild those images on the [`circleci` Docker Hub org](https://hub.docker.com/r/circleci) by merging changes from `staging` into the `master` branch.
+* We welcome and appreciate contributions (issues, PRs) from the community! However, for security reasons, forked pull requests will not push Dockerfiles to [CircleCI-Public/circleci-dockerfiles](https://github.com/CircleCI-Public/circleci-dockerfiles), example images to [CircleCI-Public/example-images](https://github.com/CircleCI-Public/example-images), or images to Docker Hub. All Dockerfiles, example image Dockerfiles/READMEs, and images will generate/build in forked PR jobs as expected; however, nothing will be pushed to external CircleCI resources.
+* The template language is a WIP—it only supports `{{BASE_IMAGE}}` template. We should extend this.
 * We cannot support Oracle JDK for licensing reasons. See [Oracle's Binary Code License Agreement for the Java SE Platform](http://oracle.com/technetwork/java/javase/terms/license/index.html) and [Stack Exchange: Is there no Oracle JDK for docker?](https://devops.stackexchange.com/questions/433/is-there-no-oracle-jdk-for-docker) for details.
 
 ## Licensing
