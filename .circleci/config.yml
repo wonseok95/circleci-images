@@ -49,7 +49,8 @@ jobs:
 
             if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
               echo "this is a forked PR; skipping push to circleci-dockeriles repo"
-              circleci step halt
+              # circleci step halt
+              # ^^ this seems broken right now
             else
               git checkout $(git show-ref --verify --quiet refs/heads/$CIRCLE_BRANCH || echo '-b') $CIRCLE_BRANCH
 
@@ -98,7 +99,8 @@ jobs:
 
             if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
               echo "this is a forked PR; skipping push to example-images repo"
-              circleci step halt
+              # circleci step halt
+              # ^^ this seems broken right now
             else
               git checkout $(git show-ref --verify --quiet refs/heads/$CIRCLE_BRANCH || echo '-b') $CIRCLE_BRANCH
 
