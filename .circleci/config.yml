@@ -33,7 +33,15 @@ jobs:
       # eventually, some kind of cron job that prunes branches would be helpful, but populating that repo with tons of branches of dockerfiles isn't that annoying & will be helpful for development
 
       - run:
-          name: git config, git clone, git push
+          name: git config, git clone
+          command: |
+            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
+            git config --global user.name "$CIRCLE_USERNAME"
+
+            git clone git@github.com:CircleCI-Public/circleci-dockerfiles.git
+
+      - run:
+          name: git checkout, git push
           working_directory: circleci-dockerfiles
           command: |
             # if this is a forked PR, stop this step;
@@ -43,11 +51,6 @@ jobs:
               circleci step halt
               echo "this is a forked PR; skipping push to circleci-dockeriles repo"
             fi
-
-            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
-            git config --global user.name "$CIRCLE_USERNAME"
-
-            git clone git@github.com:CircleCI-Public/circleci-dockerfiles.git
 
             git checkout $(git show-ref --verify --quiet refs/heads/$CIRCLE_BRANCH || echo '-b') $CIRCLE_BRANCH
 
