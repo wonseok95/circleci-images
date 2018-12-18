@@ -135,14 +135,22 @@ then
 
     run_goss_tests
 
-    docker push $IMAGE_NAME
+    # provide an option to build but not push images
+    # this can be used to build/test images on forked PRs
+    # or just to skip pushing if desired
 
-    handle_ccitest_org_images
+    if [[ $PUSH_IMAGES == true ]]; then
+        docker push $IMAGE_NAME
 
-    update_aliases
+        handle_ccitest_org_images
+
+        update_aliases
+    fi
 
     # variants don't get reused, clean them up
     docker image rm $IMAGE_NAME
+
+    popd
 else
     # when building the new base image - always try to pull from latest
     # also keep new base images around for variants
@@ -150,11 +158,17 @@ else
 
     run_goss_tests
 
-    docker push $IMAGE_NAME
+    # provide an option to build but not push images
+    # this can be used to build/test images on forked PRs
+    # or just to skip pushing if desired
 
-    handle_ccitest_org_images
+    if [[ $PUSH_IMAGES == true ]]; then
+        docker push $IMAGE_NAME
 
-    update_aliases
+        handle_ccitest_org_images
+
+        update_aliases
+    fi
+
+    popd
 fi
-
-popd
