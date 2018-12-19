@@ -28,7 +28,7 @@ jobs:
 
       # skip pushing identical dockerfiles to circleci-dockerfiles if relevant code is unchanged
       - run:
-          name: only proceed if `$PLATFORM` or `shared` or `Makefile` were modified (unless we're on master)
+          name: only proceed if `shared` or `Makefile` or any image dirs were modified (unless we're on master)
           command: |
             # save value stored in file to a local env var
             CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
@@ -44,7 +44,8 @@ jobs:
             if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
               echo "this is a forked PR; skipping push to circleci-dockerfiles repo"
             else
-              if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "$PLATFORM" -e "shared" -e "Makefile") && "$CIRCLE_BRANCH" != "master" ]]; then
+              make list_bundles
+              if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "shared" -e "Makefile" -f BUNDLES.txt) && "$CIRCLE_BRANCH" != "master" ]]; then
                 circleci step halt
                 exit 0
               fi
@@ -103,7 +104,7 @@ jobs:
       # skip pushing identical Dockerfiles/READMEs to example-images if relevant code is unchanged
       # will also avoid tons of unecessary queueing in our Docker Hub automated builds
       - run:
-          name: only proceed if `$PLATFORM` or `shared` or `Makefile` were modified (unless we're on master)
+          name: only proceed if `shared` or `Makefile` or any image dirs were modified (unless we're on master)
           command: |
             # save value stored in file to a local env var
             CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
@@ -119,7 +120,8 @@ jobs:
             if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
               echo "this is a forked PR; skipping push to example-images repo"
             else
-              if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "$PLATFORM" -e "shared" -e "Makefile") && "$CIRCLE_BRANCH" != "master" ]]; then
+              make list_bundles
+              if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "shared" -e "Makefile" -f BUNDLES.txt) && "$CIRCLE_BRANCH" != "master" ]]; then
                 circleci step halt
                 exit 0
               fi
