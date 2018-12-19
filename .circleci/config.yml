@@ -353,7 +353,7 @@ commit_workflow_filters: &commit_workflow_filters
   scheduled-workflow: false
   requires:
     - refresh_tools_cache
-    - circle-compare-url/reconstruct
+    - reconstruct_compare_url
 
 workflows:
   version: 2
@@ -399,6 +399,7 @@ workflows:
           requires:
             - generate_automated_build_images
       - circle-compare-url/reconstruct:
+          name: reconstruct_compare_url
           resource-class: small
           requires:
             - generate_automated_build_images
