@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  circle-compare-url: iynere/compare-url@dev:refactor-add-job-ebdd88320adc203366cdb654db0ebd21741f578a
+  circle-compare-url: iynere/compare-url@dev:refactor-add-job-4477a0b7c744362ef6f51d9e6e566e067ebcb58c
 
 jobs:
   generate_dockerfiles:
@@ -179,8 +179,18 @@ jobs:
             COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
             echo "Commit range: $COMMIT_RANGE"
 
-            if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "$PLATFORM" -e "shared" -e "Makefile") && "$CIRCLE_BRANCH" != "master" ]]; then
-              circleci step halt
+            # if this is a forked PR, skip commit range logic;
+            # it doesn't handle forks well, plus we likely want to
+            # always build all images on forks anyway, to help
+            # community members assess their PRs and ultimately be
+            # able to make meaningful contributions to the repo
+
+            if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
+              echo "this is a forked PR; building/testing all images"
+            else
+              if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "$PLATFORM" -e "shared" -e "Makefile") && "$CIRCLE_BRANCH" != "master" ]]; then
+                circleci step halt
+              fi
             fi
 
       - run:
@@ -392,6 +402,7 @@ workflows:
           requires:
             - generate_automated_build_images
       - circle-compare-url/reconstruct:
+          resource-class: small
           requires:
             - generate_automated_build_images
       - publish_android:        *commit_workflow_filters
