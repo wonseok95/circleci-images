@@ -22,12 +22,40 @@ jobs:
       - store_artifacts:
           path: /tmp/dockerfiles
           destination: Dockerfiles
-      # upload Dockerfiles to circleci-public/circleci-dockerfiles repo
+
+      - attach_workspace:
+          at: workspace
+
+      # skip pushing identical dockerfiles to circleci-dockerfiles if relevant code is unchanged
+      - run:
+          name: only proceed if `$PLATFORM` or `shared` or `Makefile` were modified (unless we're on master)
+          command: |
+            # save value stored in file to a local env var
+            CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
+
+            # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
+
+            COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
+            echo "Commit range: $COMMIT_RANGE"
+
+            # if this is a forked PR, skip commit range logic; it doesn't handle forks well
+            # community contributors won't have perms to push to dockerfiles repo anyway
+
+            if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
+              echo "this is a forked PR; skipping push to circleci-dockerfiles repo"
+            else
+              if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "$PLATFORM" -e "shared" -e "Makefile") && "$CIRCLE_BRANCH" != "master" ]]; then
+                circleci step halt
+                exit 0
+              fi
+            fi
+
+      # otherwise, upload Dockerfiles to circleci-public/circleci-dockerfiles repo
       - add_ssh_keys:
           fingerprints:
             - "af:0a:93:75:51:75:1f:16:90:d9:97:b1:7a:bb:f0:27"
 
-      # push Dockerfiles to CircleCI-Public/circleci-dockerfiles on circleci-images pushes to all branches
+      # potentailly push Dockerfiles to CircleCI-Public/circleci-dockerfiles on circleci-images pushes to any branch
       # checkout the equivalent branch on circleci-dockerfiiles
       # if it doesn't exist, create it
       # eventually, some kind of cron job that prunes branches would be helpful, but populating that repo with tons of branches of dockerfiles isn't that annoying & will be helpful for development
@@ -44,15 +72,6 @@ jobs:
           name: git checkout, git push
           working_directory: circleci-dockerfiles
           command: |
-            # if this is a forked PR, stop this step;
-            # community contributors won't have perms to push to dockerfiles repo
-
-            if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
-              echo "this is a forked PR; skipping push to circleci-dockeriles repo"
-              circleci step halt
-              exit 0
-            fi
-
             git checkout $(git show-ref --verify --quiet refs/heads/$CIRCLE_BRANCH || echo '-b') $CIRCLE_BRANCH
 
             cp -rfv /tmp/dockerfiles/* ~/repo/circleci-dockerfiles
@@ -78,6 +97,34 @@ jobs:
       - store_artifacts:
           path: /tmp/example-images
 
+      - attach_workspace:
+          at: workspace
+
+      # skip pushing identical Dockerfiles/READMEs to example-images if relevant code is unchanged
+      # will also avoid tons of unecessary queueing in our Docker Hub automated builds
+      - run:
+          name: only proceed if `$PLATFORM` or `shared` or `Makefile` were modified (unless we're on master)
+          command: |
+            # save value stored in file to a local env var
+            CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
+
+            # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
+
+            COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
+            echo "Commit range: $COMMIT_RANGE"
+
+            # if this is a forked PR, skip commit range logic; it doesn't handle forks well
+            # community contributors won't have perms to push to example-images repo anyway
+
+            if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
+              echo "this is a forked PR; skipping push to example-images repo"
+            else
+              if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "$PLATFORM" -e "shared" -e "Makefile") && "$CIRCLE_BRANCH" != "master" ]]; then
+                circleci step halt
+                exit 0
+              fi
+            fi
+
       - add_ssh_keys:
           fingerprints:
             - "9c:e2:cf:bb:f2:25:4d:05:d9:b0:30:bf:73:c5:7d:8f"
@@ -94,15 +141,6 @@ jobs:
           name: git checkout, git push
           working_directory: example-images
           command: |
-            # if this is a forked PR, stop this step;
-            # community contributors won't have perms to push to example-images repo
-
-            if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
-              echo "this is a forked PR; skipping push to example-images repo"
-              circleci step halt
-              exit 0
-            fi
-
             git checkout $(git show-ref --verify --quiet refs/heads/$CIRCLE_BRANCH || echo '-b') $CIRCLE_BRANCH
 
             cp -rfv /tmp/example-images/* ~/repo/example-images
@@ -125,7 +163,7 @@ jobs:
   refresh_tools_cache:
     resource_class: small
     docker:
-      - image: circleci/python:3.6.6 # aws cli dependenncy pyaml does not yet support 3.7 - https://github.com/aws/aws-cli/issues/3427
+      - image: circleci/python:3.6.6 # aws cli dependency pyaml does not yet support 3.7 - https://github.com/aws/aws-cli/issues/3427
     steps:
       - checkout
       - run: sudo pip install awscli==1.14.17
@@ -353,7 +391,6 @@ commit_workflow_filters: &commit_workflow_filters
   scheduled-workflow: false
   requires:
     - refresh_tools_cache
-    - reconstruct_compare_url
 
 workflows:
   version: 2
@@ -391,15 +428,16 @@ workflows:
 
   commit:
     jobs:
-      - generate_dockerfiles
-      - generate_automated_build_images
-      - refresh_tools_cache:
-          requires:
-            - generate_dockerfiles
-            - generate_automated_build_images
       - circle-compare-url/reconstruct:
           name: reconstruct_compare_url
           resource-class: small
+      - generate_dockerfiles:
+          requires:
+            - reconstruct_compare_url
+      - generate_automated_build_images:
+          requires:
+            - reconstruct_compare_url
+      - refresh_tools_cache:
           requires:
             - generate_dockerfiles
             - generate_automated_build_images
