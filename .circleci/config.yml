@@ -169,8 +169,6 @@ jobs:
       - run:
           name: only proceed if `$PLATFORM` or `shared` or `Makefile` were modified (unless we're on master)
           command: |
-            set -u
-
             # save value stored in file to a local env var
             CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
 
