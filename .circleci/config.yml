@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  circle-compare-url: iynere/compare-url@0.1.5
+  circle-compare-url: iynere/compare-url@dev:refactor-add-job-ebdd88320adc203366cdb654db0ebd21741f578a
 
 jobs:
   generate_dockerfiles:
@@ -163,28 +163,25 @@ jobs:
               docker login -u $DOCKER_USER -p $DOCKER_PASS
             fi
 
-      - unless:
-          condition: <<parameters.scheduled-workflow>>
-          steps:
-            - circle-compare-url/reconstruct:
-                project-path: ~/circleci-bundles
+      - attach_workspace:
+          at: workspace
 
-            - run:
-                name: only proceed if `$PLATFORM` or `shared` or `Makefile` were modified (unless we're on master)
-                command: |
-                  set -u
+      - run:
+          name: only proceed if `$PLATFORM` or `shared` or `Makefile` were modified (unless we're on master)
+          command: |
+            set -u
 
-                  # save value stored in file to a local env var
-                  CIRCLE_COMPARE_URL=$(cat CIRCLE_COMPARE_URL.txt)
+            # save value stored in file to a local env var
+            CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
 
-                  # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
+            # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
 
-                  COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
-                  echo "Commit range: $COMMIT_RANGE"
+            COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
+            echo "Commit range: $COMMIT_RANGE"
 
-                  if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "$PLATFORM" -e "shared" -e "Makefile") && "$CIRCLE_BRANCH" != "master" ]]; then
-                    circleci step halt
-                  fi
+            if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "$PLATFORM" -e "shared" -e "Makefile") && "$CIRCLE_BRANCH" != "master" ]]; then
+              circleci step halt
+            fi
 
       - run:
           name: Install goss & dgoss (orbify this later)
@@ -349,6 +346,7 @@ commit_workflow_filters: &commit_workflow_filters
   scheduled-workflow: false
   requires:
     - refresh_tools_cache
+    - circle-compare-url/reconstruct
 
 workflows:
   version: 2
@@ -391,6 +389,9 @@ workflows:
           requires:
             - generate_dockerfiles
       - refresh_tools_cache:
+          requires:
+            - generate_automated_build_images
+      - circle-compare-url/reconstruct:
           requires:
             - generate_automated_build_images
       - publish_android:        *commit_workflow_filters
