@@ -177,11 +177,10 @@ jobs:
             COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
             echo "Commit range: $COMMIT_RANGE"
 
-            # if this is a forked PR, skip commit range logic;
-            # it doesn't handle forks well, plus we likely want to
-            # always build all images on forks anyway, to help
-            # community members assess their PRs and ultimately be
-            # able to make meaningful contributions to the repo
+            # if this is a forked PR, skip commit range logic; it doesn't handle forks well,
+            # plus we likely want to always build all images on forks anyway,
+            # to help community members assess their PRs and ultimately
+            # be able to make meaningful contributions to the repo
 
             if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
               echo "this is a forked PR; building/testing all images"
