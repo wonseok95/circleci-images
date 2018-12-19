@@ -43,6 +43,8 @@ jobs:
 
             if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
               echo "this is a forked PR; skipping push to circleci-dockerfiles repo"
+              circleci step halt
+              exit 0
             else
               make list_bundles
               if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "shared" -e "Makefile" -f BUNDLES.txt) && "$CIRCLE_BRANCH" != "master" ]]; then
@@ -119,6 +121,8 @@ jobs:
 
             if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
               echo "this is a forked PR; skipping push to example-images repo"
+              circleci step halt
+              exit 0
             else
               make list_bundles
               if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "shared" -e "Makefile" -f BUNDLES.txt) && "$CIRCLE_BRANCH" != "master" ]]; then
