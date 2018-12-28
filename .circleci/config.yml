@@ -388,6 +388,11 @@ jobs:
     environment:
       - PLATFORM: rust
 
+  publish_erlang:
+    <<: *publish_image
+    environment:
+      - PLATFORM: erlang
+
 cron_workflow_filters: &cron_workflow_filters
   scheduled-workflow: true
   requires:
@@ -431,6 +436,7 @@ workflows:
       - publish_dynamodb:       *cron_workflow_filters
       - publish_rust:           *cron_workflow_filters
       - publish_buildpack-deps: *cron_workflow_filters
+      - publish_erlang:         *commit_workflow_filters
 
   commit:
     jobs:
@@ -465,3 +471,4 @@ workflows:
       - publish_rust:           *commit_workflow_filters
       - publish_dynamodb:       *commit_workflow_filters
       - publish_buildpack-deps: *commit_workflow_filters
+      - publish_erlang:         *commit_workflow_filters
