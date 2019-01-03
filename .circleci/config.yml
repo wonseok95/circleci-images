@@ -275,7 +275,7 @@ jobs:
             # community contributors won't have perms to push to our docker hub
             if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
               export PUSH_IMAGES=false
-              echo "forked PR: building/testing images; skipping `docker push`"
+              echo "forked PR: building/testing images; skipping docker push"
             fi
 
             make -j $PLATFORM/publish_images # add -w -d for debug info
