@@ -1,2 +1,14 @@
 /*/images/
 *.DS_Store
+BUNDLES.txt
+
+android/resources/
+clojure/resources/
+elixir/resources/
+golang/resources/
+jruby/resources/
+openjdk/resources/
+php/resources/
+python/resources/
+ruby/resources/
+rust/resources/

@@ -1,6 +1,6 @@
 BUNDLES = \
   android node python ruby golang php \
-  postgres mariadb mysql mongo dynamodb elixir \
+  postgres mariadb mysql mongo dynamodb elixir erlang \
   jruby clojure openjdk buildpack-deps redis rust
 
 images: $(foreach b, $(BUNDLES), $(b)/generate_images)
@@ -26,3 +26,8 @@ clean: $(foreach b, $(BUNDLES), $(b)/clean)
 
 %/clean:
 	cd $(@D) ; rm -r images || true
+
+list_bundles: $(foreach b, $(BUNDLES), $(b)/echo_bundle)
+
+%/echo_bundle:
+	echo $(@D) >> BUNDLES.txt
