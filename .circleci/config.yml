@@ -289,7 +289,7 @@ jobs:
 
   publish_android:
     <<: *publish_image
-    parallelism: 20
+    parallelism: 25
     environment:
       - PLATFORM: android
 
@@ -414,7 +414,12 @@ workflows:
               only:
                 - master
     jobs:
-      - generate_dockerfiles
+      - circle-compare-url/reconstruct:
+          name: reconstruct_compare_url
+          resource-class: small
+      - generate_dockerfiles:
+          requires:
+            - reconstruct_compare_url
       - refresh_tools_cache:
           requires:
             - generate_dockerfiles
