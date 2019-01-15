@@ -289,7 +289,7 @@ jobs:
 
   publish_android:
     <<: *publish_image
-    parallelism: 20
+    parallelism: 25
     environment:
       - PLATFORM: android
 
