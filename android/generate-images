@@ -39,6 +39,7 @@ if [[ "$CIRCLE_NODE_TOTAL" -gt 1 ]]; then
 
   # create specific NDK dockerfiles (call m4 here when we want multiple NDK versions)
   cat Dockerfile-ndk.template >> "${ndk_variant_dockerfile}"
+else
   for API in 23 24 25 26 27 28; do
     echo Generating Android ${API} Dockerfiles
 
