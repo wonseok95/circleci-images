@@ -289,7 +289,8 @@ jobs:
 
   publish_android:
     <<: *publish_image
-    parallelism: 25
+    # parallelism: 25 disable this until we can actually parallelize android,
+    # which uses different build logic than other images
     environment:
       - PLATFORM: android
 
