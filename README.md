@@ -1,16 +1,24 @@
 # CircleCI Images [![CircleCI Build Status](https://circleci.com/gh/circleci/circleci-images.svg?style=shield)](https://circleci.com/gh/circleci/circleci-images) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/circleci/circleci-docs/master/LICENSE) [![CircleCI Community](https://img.shields.io/badge/community-CircleCI%20Discuss-343434.svg)](https://discuss.circleci.com)
 
-```
-Example:
-  image: redis@sha256:54057dd7e125ca41afe526a877e8bd35ec2cdd33b9217e022ed37bdcf7d09673
-```
+## Stay informed about CircleCI image changes/announcements
 
-A set of convenience images that work better in context of CI.  This repo contains the official set of images that CircleCI maintains.  It contains language as well as services images:
+As part of regular maintenance, changes are occassionally made to various images, from updating images' contents, to changing how image variants are tagged. With the exception of bugfixes or security patches, these changes will always be announced in advance. Changes are posted in the Announcements section of CircleCI Discuss; relevant posts will always have a `convenience-images` tag:
 
-* Language images (e.g. `ruby`, `python`, `node`) are images targeted for common programming languages with the common tools pre-installed.  They primarily extend the [official images](#official-images) and install additional tools (e.g. browsers) that we find very useful in context of CI.
-* Service images (e.g. `mongo`, `postgres`) are images that have the services pre-configured with development/CI mode.  They also primarily extend the corresponding [official images](#official-images) but with sensible development/CI defaults (e.g. disable production checks, default to nojournal to speed up tests)
+- https://discuss.circleci.com/c/announcements
+- https://discuss.circleci.com/tags/convenience-images
 
-## Official Images
+By creating a Discuss account, you can subscribe to these posts, in order to receive notifications via email:
+
+https://discuss.circleci.com
+
+## Overview
+
+A set of convenience images that work better in context of CI. This repo contains the official set of images that CircleCI maintains. It contains language as well as services images:
+
+* Language images (e.g. `ruby`, `python`, `node`) are images targeted for common programming languages with the common tools pre-installed. They primarily extend the [official images](#official-images) and install additional tools (e.g. browsers) that we find very useful in context of CI.
+* Service images (e.g. `mongo`, `postgres`) are images that have the services pre-configured with development/CI mode. They also primarily extend the corresponding [official images](#official-images) but with sensible development/CI defaults (e.g. disable production checks, default to nojournal to speed up tests)
+
+## Official images
 
 We extend [Docker Official Repositories](https://docs.docker.com/docker-hub/official_repos/) in order to start with the same consistent set of images.
 
@@ -94,7 +102,7 @@ This process is fairly fast with decent Internet connection.
 
 Once generated, Dockerfiles for each image will be in the images folder for that base image (e.g. ./python/images/).
 
-### Build Images
+### Build images
 
 #### Build a single Dockerfile
 
