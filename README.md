@@ -109,7 +109,7 @@ The image name and tag (`test/golang:latest`) can be whatever name you want, it'
 #### Build all Dockerfiles for a base image
 Use `make <base-image>/publish_images` to `docker build` all of the Dockerfiles for that base image. There's a couple things to note here:
 
-1. Each base image has **a lot** of images. Building them will end up taking several GBs of disk space, and can take quit a while to run. Make sure you want to do this before you do it.
+1. Each base image has **a lot** of images. Building them will end up taking several GBs of disk space, and can take quite a while to run. Make sure you want to do this before you do it.
 1. The build script will also try to run `docker push`. If you don't work for CircleCI, this will fail and that's okay. It's safe to ignore.
 
 #### Build all Dockerfiles for every base image
