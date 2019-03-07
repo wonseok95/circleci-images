@@ -7,8 +7,7 @@ jobs:
   generate_dockerfiles:
     working_directory: ~/repo
     resource_class: small
-    docker:
-      - image: gcc:7
+    docker: [image: gcc:7]
     steps:
       - checkout
       - run:
