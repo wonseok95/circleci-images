@@ -416,9 +416,7 @@ workflows:
       # - circle-compare-url/reconstruct:
       #     name: reconstruct_compare_url
       #     resource-class: small
-      - generate_dockerfiles:
-          requires:
-            - reconstruct_compare_url
+      - generate_dockerfiles
       - refresh_tools_cache:
           requires:
             - generate_dockerfiles
