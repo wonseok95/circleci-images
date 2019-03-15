@@ -30,6 +30,13 @@ jobs:
       - run:
           name: only proceed if `shared` or `Makefile` or any image dirs were modified (unless we're on master)
           command: |
+            # Sometimes we have the "compare-url" functionality off. If so, the 
+            # file below won't exists. If that's the case, skip it.
+            if [ ! -f workspace/CIRCLE_COMPARE_URL.txt ]; then
+              circleci step halt
+              exit 0
+            fi
+
             # save value stored in file to a local env var
             CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
 
@@ -108,6 +115,13 @@ jobs:
       - run:
           name: only proceed if `shared` or `Makefile` or any image dirs were modified (unless we're on master)
           command: |
+            # Sometimes we have the "compare-url" functionality off. If so, the 
+            # file below won't exists. If that's the case, skip it.
+            if [ ! -f workspace/CIRCLE_COMPARE_URL.txt ]; then
+              circleci step halt
+              exit 0
+            fi
+
             # save value stored in file to a local env var
             CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
 
@@ -213,6 +227,13 @@ jobs:
       - run:
           name: only proceed if `$PLATFORM` or `shared` or `Makefile` were modified (unless we're on master)
           command: |
+            # Sometimes we have the "compare-url" functionality off. If so, the 
+            # file below won't exists. If that's the case, skip it.
+            if [ ! -f workspace/CIRCLE_COMPARE_URL.txt ]; then
+              circleci step halt
+              exit 0
+            fi
+
             # save value stored in file to a local env var
             CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
 
@@ -414,12 +435,10 @@ workflows:
               only:
                 - master
     jobs:
-      - circle-compare-url/reconstruct:
-          name: reconstruct_compare_url
-          resource-class: small
-      - generate_dockerfiles:
-          requires:
-            - reconstruct_compare_url
+      #- circle-compare-url/reconstruct:
+      #    name: reconstruct_compare_url
+      #    resource-class: small
+      - generate_dockerfiles
       - refresh_tools_cache:
           requires:
             - generate_dockerfiles
@@ -445,15 +464,11 @@ workflows:
 
   commit:
     jobs:
-      - circle-compare-url/reconstruct:
-          name: reconstruct_compare_url
-          resource-class: small
-      - generate_dockerfiles:
-          requires:
-            - reconstruct_compare_url
-      - generate_automated_build_images:
-          requires:
-            - reconstruct_compare_url
+      #- circle-compare-url/reconstruct:
+      #    name: reconstruct_compare_url
+      #    resource-class: small
+      - generate_dockerfiles
+      - generate_automated_build_images
       - refresh_tools_cache:
           requires:
             - generate_dockerfiles
