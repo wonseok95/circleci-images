@@ -40,8 +40,6 @@ RUN export GECKODRIVER_LATEST_RELEASE_URL=$(curl https://api.github.com/repos/mo
 
 # install chrome
 
-ENV LATEST_RELEASE 2.45
-
 RUN curl --silent --show-error --location --fail --retry 3 --output /tmp/google-chrome-stable_current_amd64.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
       && (sudo dpkg -i /tmp/google-chrome-stable_current_amd64.deb || sudo apt-get -fy install)  \
       && rm -rf /tmp/google-chrome-stable_current_amd64.deb \
@@ -49,7 +47,8 @@ RUN curl --silent --show-error --location --fail --retry 3 --output /tmp/google-
            "/opt/google/chrome/google-chrome" \
       && google-chrome --version
 
-RUN export CHROMEDRIVER_RELEASE=$(curl --location --fail --retry 3 http://chromedriver.storage.googleapis.com/${LATEST_RELEASE}) \
+RUN export CHROMEDRIVER_RELEASE=$(2.45)
+      # && $(curl --location --fail --retry 3 http://chromedriver.storage.googleapis.com/LATEST_RELEASE) \
       && curl --silent --show-error --location --fail --retry 3 --output /tmp/chromedriver_linux64.zip "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_RELEASE/chromedriver_linux64.zip" \
       && cd /tmp \
       && unzip chromedriver_linux64.zip \
