@@ -230,7 +230,6 @@ jobs:
             # Sometimes we have the "compare-url" functionality off. If so, the 
             # file below won't exists. If that's the case, skip it.
             if [ ! -f workspace/CIRCLE_COMPARE_URL.txt ]; then
-              circleci step halt
               exit 0
             fi
 
