@@ -200,7 +200,8 @@ jobs:
           cd ./shared/images; ./refresh-tools-cache
 
   publish_image: &publish_image
-    machine: true
+    machine:
+      image: circleci/classic:201808-01
     working_directory: ~/circleci-bundles
     shell: /bin/bash -eol pipefail
     parameters:
