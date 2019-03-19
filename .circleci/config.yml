@@ -199,7 +199,8 @@ jobs:
           cd ./shared/images; ./refresh-tools-cache
 
   publish_image: &publish_image
-    machine: true
+    machine:
+      image: circleci/classic:201808-01
     working_directory: ~/circleci-bundles
     shell: /bin/bash -eol pipefail
     parameters:
@@ -314,7 +315,7 @@ jobs:
 
   publish_buildpack-deps:
     <<: *publish_image
-    parallelism: 7
+    parallelism: 8
     environment:
       - PLATFORM: buildpack-deps
 
@@ -387,7 +388,7 @@ jobs:
 
   publish_python:
     <<: *publish_image
-    parallelism: 7
+    parallelism: 8
     environment:
       - PLATFORM: python
 
