@@ -299,7 +299,7 @@ jobs:
               echo "forked PR: building/testing images; skipping docker push"
             fi
 
-            make -j $PLATFORM/publish_images # add -w -d for debug info
+            make -l $PLATFORM/publish_images # add -w -d for debug info
 
       - store_artifacts:
           path: "."
