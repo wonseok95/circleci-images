@@ -316,7 +316,7 @@ jobs:
 
   publish_buildpack-deps:
     <<: *publish_image
-    parallelism: 7
+    parallelism: 8
     environment:
       - PLATFORM: buildpack-deps
 
@@ -389,7 +389,7 @@ jobs:
 
   publish_python:
     <<: *publish_image
-    parallelism: 7
+    parallelism: 8
     environment:
       - PLATFORM: python
 
