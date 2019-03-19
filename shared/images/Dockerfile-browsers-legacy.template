@@ -59,10 +59,10 @@ RUN curl --silent --show-error --location --fail --retry 3 --output /tmp/google-
       && sudo sed -i 's|HERE/chrome"|HERE/chrome" --disable-setuid-sandbox --no-sandbox|g' \
            "/opt/google/chrome/google-chrome" \
       && export CHROME_VERSION="$(google-chrome --version)" \
-      && export CHROMEDRIVER_RELEASE="$(echo $CHROME_VERSION | sed 's/^Google Chrome //')" && export CHROMEDRIVER_RELEASE=${CHROMEDRIVER_RELEASE%%.*}
+      && google-chrome --version
 
-RUN CHROMEDRIVER_VERSION=$(curl --location --fail --retry 3 http://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROMEDRIVER_RELEASE}) \
-      && curl --silent --show-error --location --fail --retry 3 --output /tmp/chromedriver_linux64.zip "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip" \
+RUN CHROME_VERSION="$(google-chrome --version)" \
+      && export CHROMEDRIVER_RELEASE="$(echo $CHROME_VERSION | sed 's/^Google Chrome //')" && export CHROMEDRIVER_RELEASE=${CHROMEDRIVER_RELEASE%%.*} \
       && cd /tmp \
       && unzip chromedriver_linux64.zip \
       && rm -rf chromedriver_linux64.zip \
