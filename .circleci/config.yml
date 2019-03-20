@@ -29,30 +29,27 @@ jobs:
       - run:
           name: only proceed if `shared` or `Makefile` or any image dirs were modified (unless we're on master)
           command: |
-            # Sometimes we have the "compare-url" functionality off. If so, the 
-            # file below won't exists. If that's the case, skip it.
-            if [ ! -f workspace/CIRCLE_COMPARE_URL.txt ]; then
-              circleci step halt
-              exit 0
-            fi
-
-            # save value stored in file to a local env var
-            CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
-
-            # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
-
-            COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
-            echo "Commit range: $COMMIT_RANGE"
-
-            # if this is a forked PR, skip commit range logic; it doesn't handle forks well
+            # if this is a forked PR, skip this job
             # community contributors won't have perms to push to dockerfiles repo anyway
 
             if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
               echo "this is a forked PR; skipping push to circleci-dockerfiles repo"
               circleci step halt
               exit 0
-            else
-              make list_bundles
+            fi
+
+            make list_bundles
+
+            # Sometimes we have the "compare-url" functionality off
+            if [ -f workspace/CIRCLE_COMPARE_URL.txt ]; then
+              # save value stored in file to a local env var
+              CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
+
+              # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
+
+              COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
+              echo "Commit range: $COMMIT_RANGE"
+
               if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "shared" -e "Makefile" -f BUNDLES.txt) && "$CIRCLE_BRANCH" != "master" ]]; then
                 circleci step halt
                 exit 0
@@ -114,30 +111,27 @@ jobs:
       - run:
           name: only proceed if `shared` or `Makefile` or any image dirs were modified (unless we're on master)
           command: |
-            # Sometimes we have the "compare-url" functionality off. If so, the 
-            # file below won't exists. If that's the case, skip it.
-            if [ ! -f workspace/CIRCLE_COMPARE_URL.txt ]; then
-              circleci step halt
-              exit 0
-            fi
-
-            # save value stored in file to a local env var
-            CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
-
-            # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
-
-            COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
-            echo "Commit range: $COMMIT_RANGE"
-
-            # if this is a forked PR, skip commit range logic; it doesn't handle forks well
+            # if this is a forked PR, skip this job
             # community contributors won't have perms to push to example-images repo anyway
 
             if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
               echo "this is a forked PR; skipping push to example-images repo"
               circleci step halt
               exit 0
-            else
-              make list_bundles
+            fi
+
+            make list_bundles
+
+            # Sometimes we have the "compare-url" functionality off
+            if [ -f workspace/CIRCLE_COMPARE_URL.txt ]; then
+              # save value stored in file to a local env var
+              CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
+
+              # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
+
+              COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
+              echo "Commit range: $COMMIT_RANGE"
+
               if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "shared" -e "Makefile" -f BUNDLES.txt) && "$CIRCLE_BRANCH" != "master" ]]; then
                 circleci step halt
                 exit 0
@@ -227,7 +221,7 @@ jobs:
       - run:
           name: only proceed if `$PLATFORM` or `shared` or `Makefile` were modified (unless we're on master)
           command: |
-            # Sometimes we have the "compare-url" functionality off. If so, the 
+            # Sometimes we have the "compare-url" functionality off. If so, the
             # file below won't exists. If that's the case, skip it.
             if [ ! -f workspace/CIRCLE_COMPARE_URL.txt ]; then
               exit 0
