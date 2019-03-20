@@ -12,6 +12,7 @@ NEW_REPO=${NEW_REPO:-${NEW_ORG}/${BASE_REPO_BASE}}
 INCLUDE_ALPINE=${INCLUDE_ALPINE:-false}
 
 TAG_FILTER="${TAG_FILTER:-cat}"
+TAG_INCLUDE_FILTER="${TAG_INCLUDE_FILTER:-cat}"
 
 CIRCLE_NODE_TOTAL=${CIRCLE_NODE_TOTAL:-1}
 CIRCLE_NODE_INDEX=${CIRCLE_NODE_INDEX:-0}
@@ -28,6 +29,7 @@ function find_tags_and_aliases() {
     | sed  's/^.*Tags: //g' \
     | grep -v $ALPINE_TAG -e 'slim' -e 'onbuild' -e windows -e wheezy -e nanoserver \
     | ${TAG_FILTER} \
+    | ${TAG_INCLUDE_FILTER} \
     | sed 's/, /:/' \
     | sed 's/, /,/g' \
     | sort | awk "NR % ${CIRCLE_NODE_TOTAL} == ${CIRCLE_NODE_INDEX}"
