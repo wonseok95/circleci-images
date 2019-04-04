@@ -7,8 +7,7 @@ jobs:
   generate_dockerfiles:
     working_directory: ~/repo
     resource_class: small
-    docker:
-      - image: gcc:7
+    docker: [image: gcc:7]
     steps:
       - checkout
       - run:
@@ -30,23 +29,27 @@ jobs:
       - run:
           name: only proceed if `shared` or `Makefile` or any image dirs were modified (unless we're on master)
           command: |
-            # save value stored in file to a local env var
-            CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
-
-            # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
-
-            COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
-            echo "Commit range: $COMMIT_RANGE"
-
-            # if this is a forked PR, skip commit range logic; it doesn't handle forks well
+            # if this is a forked PR, skip this job
             # community contributors won't have perms to push to dockerfiles repo anyway
 
             if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
               echo "this is a forked PR; skipping push to circleci-dockerfiles repo"
               circleci step halt
               exit 0
-            else
-              make list_bundles
+            fi
+
+            make list_bundles
+
+            # Sometimes we have the "compare-url" functionality off
+            if [ -f workspace/CIRCLE_COMPARE_URL.txt ]; then
+              # save value stored in file to a local env var
+              CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
+
+              # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
+
+              COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
+              echo "Commit range: $COMMIT_RANGE"
+
               if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "shared" -e "Makefile" -f BUNDLES.txt) && "$CIRCLE_BRANCH" != "master" ]]; then
                 circleci step halt
                 exit 0
@@ -108,23 +111,27 @@ jobs:
       - run:
           name: only proceed if `shared` or `Makefile` or any image dirs were modified (unless we're on master)
           command: |
-            # save value stored in file to a local env var
-            CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
-
-            # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
-
-            COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
-            echo "Commit range: $COMMIT_RANGE"
-
-            # if this is a forked PR, skip commit range logic; it doesn't handle forks well
+            # if this is a forked PR, skip this job
             # community contributors won't have perms to push to example-images repo anyway
 
             if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
               echo "this is a forked PR; skipping push to example-images repo"
               circleci step halt
               exit 0
-            else
-              make list_bundles
+            fi
+
+            make list_bundles
+
+            # Sometimes we have the "compare-url" functionality off
+            if [ -f workspace/CIRCLE_COMPARE_URL.txt ]; then
+              # save value stored in file to a local env var
+              CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
+
+              # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
+
+              COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
+              echo "Commit range: $COMMIT_RANGE"
+
               if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "shared" -e "Makefile" -f BUNDLES.txt) && "$CIRCLE_BRANCH" != "master" ]]; then
                 circleci step halt
                 exit 0
@@ -186,7 +193,8 @@ jobs:
           cd ./shared/images; ./refresh-tools-cache
 
   publish_image: &publish_image
-    machine: true
+    machine:
+      image: circleci/classic:201808-01
     working_directory: ~/circleci-bundles
     shell: /bin/bash -eol pipefail
     parameters:
@@ -213,6 +221,12 @@ jobs:
       - run:
           name: only proceed if `$PLATFORM` or `shared` or `Makefile` were modified (unless we're on master)
           command: |
+            # Sometimes we have the "compare-url" functionality off. If so, the
+            # file below won't exists. If that's the case, skip it.
+            if [ ! -f workspace/CIRCLE_COMPARE_URL.txt ]; then
+              exit 0
+            fi
+
             # save value stored in file to a local env var
             CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
 
@@ -295,7 +309,7 @@ jobs:
 
   publish_buildpack-deps:
     <<: *publish_image
-    parallelism: 7
+    parallelism: 8
     environment:
       - PLATFORM: buildpack-deps
 
@@ -357,7 +371,7 @@ jobs:
 
   publish_php:
     <<: *publish_image
-    parallelism: 20
+    parallelism: 16
     environment:
       - PLATFORM: php
 
@@ -368,7 +382,7 @@ jobs:
 
   publish_python:
     <<: *publish_image
-    parallelism: 7
+    parallelism: 8
     environment:
       - PLATFORM: python
 
@@ -414,12 +428,10 @@ workflows:
               only:
                 - master
     jobs:
-      - circle-compare-url/reconstruct:
-          name: reconstruct_compare_url
-          resource-class: small
-      - generate_dockerfiles:
-          requires:
-            - reconstruct_compare_url
+      #- circle-compare-url/reconstruct:
+      #    name: reconstruct_compare_url
+      #    resource-class: small
+      - generate_dockerfiles
       - refresh_tools_cache:
           requires:
             - generate_dockerfiles
@@ -445,15 +457,11 @@ workflows:
 
   commit:
     jobs:
-      - circle-compare-url/reconstruct:
-          name: reconstruct_compare_url
-          resource-class: small
-      - generate_dockerfiles:
-          requires:
-            - reconstruct_compare_url
-      - generate_automated_build_images:
-          requires:
-            - reconstruct_compare_url
+      #- circle-compare-url/reconstruct:
+      #    name: reconstruct_compare_url
+      #    resource-class: small
+      - generate_dockerfiles
+      - generate_automated_build_images
       - refresh_tools_cache:
           requires:
             - generate_dockerfiles
