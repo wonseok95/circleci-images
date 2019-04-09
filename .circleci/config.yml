@@ -292,7 +292,8 @@ jobs:
               echo "forked PR: building/testing images; skipping docker push"
             fi
 
-            make -j $PLATFORM/publish_images # add -w -d for debug info
+            # add -w -d for debug info
+            make -j -w -d $PLATFORM/publish_images
 
       - store_artifacts:
           path: "."
@@ -309,7 +310,7 @@ jobs:
 
   publish_buildpack-deps:
     <<: *publish_image
-    parallelism: 8
+    # parallelism: 8
     environment:
       - PLATFORM: buildpack-deps
 
