@@ -25,7 +25,7 @@ The official images on Docker Hub are curated by Docker as their way to provide 
 
 Finally, our convenience images are augmenting these official images, by adding some missing packages, that we install ourselves for common dependencies shared for the CI environment.
 
-All of the official images on Docker Hub have an "_" for the username, for example:
+All of the official images on Docker Hub have an `_` for the username, for example:
 https://hub.docker.com/_/ruby
 
 You can view all of the officially supported images here:
@@ -80,6 +80,11 @@ To build all images—push a commit with `[build-images]` text appearing in the 
 
 Also, add the bundle name to in Makefile `BUNDLES` field.
 
+## Image Browser
+
+This repo publishes a github pages site which can be used to browse the available tags, which are published as a JSON file on the docs site.
+
+The code lives in [./shared/browser](./shared/browser)
 
 ## Development
 *This section is a work in progress*
