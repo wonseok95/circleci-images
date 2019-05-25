@@ -68,7 +68,7 @@ function Pickers({ repos, selectedRepo, selectedVariant }) {
       <Picker
         title="Variants"
         selected={selectedVariant}
-        options={[{ label: "All", value: "all" }].concat(variants)}
+        options={variants}
         onSelect={actions.selectVariant}
       />
     </div>

@@ -18,6 +18,8 @@ const store = {
 };
 
 export const variants = [
+  { label: "All", value: "all", virtual: true },
+  { label: "None", value: "none", virtual: true },
   { label: "Node + Browsers", value: "node-browsers" },
   { label: "Browsers", value: "browsers" },
   { label: "Node", value: "node" },
@@ -58,6 +60,9 @@ function expand(json) {
   Object.entries(json).forEach(([repo, { name, tags }]) => {
     expanded.repos.push({ name, repo });
 
+    // It would be neat if we could try and parse the various tags
+    // to identify the various flavours of the upstream images
+    // and then use that data to generate the UI filters
     tags.forEach(tag => {
       expanded.tags.push({
         language: name,
@@ -93,7 +98,10 @@ function tagFilter(data) {
 
 function filter(data) {
   return ({ repo, variant }) =>
-    repo === data.repo && (data.variant === "all" || variant === data.variant);
+    repo === data.repo &&
+    (data.variant === "all" ||
+      (data.variant === "none" && !variant) ||
+      data.variant === variant);
 }
 
 const variantValues = variants.map(x => x.value);
