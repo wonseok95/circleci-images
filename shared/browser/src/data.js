@@ -1,7 +1,5 @@
 export function get() {
-  return 0
+  return 0;
 }
 
-export const actions = {
-
-};
+export const actions = {};

@@ -408,6 +408,18 @@ jobs:
     environment:
       - PLATFORM: erlang
 
+  build_image_browser:
+    docker:
+      - image: circleci/node:lts
+    working_directory: ~/project/shared/browser
+    steps:
+      - checkout:
+          path: ~/project
+      - run: npm ci
+      - run: npm run prettier -- --check
+      - run: npm run build
+
+
 cron_workflow_filters: &cron_workflow_filters
   scheduled-workflow: true
   requires:
@@ -463,6 +475,7 @@ workflows:
       #    resource-class: small
       - generate_dockerfiles
       - generate_automated_build_images
+      - build_image_browser
       - refresh_tools_cache:
           requires:
             - generate_dockerfiles
