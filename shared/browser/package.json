@@ -18,6 +18,7 @@
     "extends": "react-app"
   },
   "homepage": ".",
+  "proxy": "https://circleci.com/",
   "browserslist": {
     "production": [
       ">0.2%",

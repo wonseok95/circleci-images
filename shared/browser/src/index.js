@@ -4,21 +4,30 @@ import ReactDOM from "react-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 
-import { get, actions } from "./data";
+import { subscribe, actions, selectors } from "./data";
 
 import App from "./App";
 
-function render() {
+function render(data) {
+  window.dev = { data, actions, selectors };
   ReactDOM.render(
-    <App data={get()} actions={actions} />,
+    <App data={data} actions={actions} />,
     document.getElementById("root")
   );
 }
 
-render();
+subscribe(render);
 
 if (module.hot) {
+  module.hot.addStatusHandler(status => {
+    if (status === "check") {
+      console.log("hot reload started");
+      console.time("hot reload");
+    } else if (status === "idle") {
+      console.timeEnd("hot reload");
+    }
+  });
   module.hot.accept(["./data", "./App"], () => {
-    render();
+    subscribe(render);
   });
 }
