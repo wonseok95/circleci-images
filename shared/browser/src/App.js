@@ -103,6 +103,9 @@ function Tags({ repo, tags }) {
   }
   return (
     <Table size="sm">
+      <caption className="caption-top">
+        Showing {tags.length} tag{tags.length !== 1 && "s"}
+      </caption>
       <thead>
         <tr>
           <th>Image</th>
