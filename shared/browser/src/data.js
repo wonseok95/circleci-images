@@ -15,6 +15,7 @@ const store = {
   tags: {}, // repo => Repo
   repo: "none",
   variant: "all",
+  grep: "",
 };
 
 const emptyRepo = () => ({
@@ -25,10 +26,10 @@ const emptyRepo = () => ({
 const variants = [
   { name: "All", tag: "all", virtual: true },
   { name: "None", tag: "none", virtual: true },
-  { name: "Node + Browsers", tag: "node-browsers" },
   { name: "Node + Legacy Browsers", tag: "node-browsers-legacy" },
-  { name: "Browsers", tag: "browsers" },
+  { name: "Node + Browsers", tag: "node-browsers" },
   { name: "Legacy Browsers", tag: "browsers-legacy" },
+  { name: "Browsers", tag: "browsers" },
   { name: "Node", tag: "node" },
   { name: "PostGIS + RAM", tag: "postgis-ram" },
   { name: "RAM", tag: "ram" },
@@ -41,6 +42,7 @@ export const actions = {
   init,
   selectRepo,
   selectVariant,
+  setGrep,
 };
 
 function init() {
@@ -66,6 +68,10 @@ function selectRepo(repoName) {
 
 function selectVariant(variant) {
   update({ variant: variant });
+}
+
+function setGrep(grep) {
+  update({ grep: grep });
 }
 
 function updateJson(json) {
@@ -139,10 +145,12 @@ function selectedTags(data) {
 }
 
 function filter(data) {
-  return ({ variant }) =>
-    data.variant === "all" ||
-    (data.variant === "none" && !variant) ||
-    data.variant === variant;
+  const greps = data.grep.split(" ");
+  return ({ tag, variant }) =>
+    (data.variant === "all" ||
+      (data.variant === "none" && !variant) ||
+      data.variant === variant) &&
+    (!data.grep || greps.every(grep => tag.includes(grep)));
 }
 
 function relevantVariants(data) {

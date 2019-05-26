@@ -1,8 +1,20 @@
 import React from "react";
 
+import { useDebouncedCallback } from "use-debounce";
 import TimeAgo from "react-timeago";
-
-import { Container, Row, Navbar, NavbarBrand, Button, Table } from "reactstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Navbar,
+  NavbarBrand,
+  Button,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  Table,
+} from "reactstrap";
 
 import { actions, selectors } from "./data";
 
@@ -40,22 +52,25 @@ function ImageBrowser({ data }) {
   return (
     <>
       <Row className="p-3">
-        <Picker
-          title="Language"
-          selected={data.repo}
-          options={selectors
-            .repos(data)
-            .map(({ name: label, repo: value }) => ({ label, value }))}
-          onSelect={actions.selectRepo}
-        />
-        <Picker
-          title="Variants"
-          selected={data.variant}
-          options={selectors
-            .relevantVariants(data)
-            .map(({ name: label, tag: value }) => ({ label, value }))}
-          onSelect={actions.selectVariant}
-        />
+        <Form>
+          <Picker
+            title="Language"
+            selected={data.repo}
+            options={selectors
+              .repos(data)
+              .map(({ name: label, repo: value }) => ({ label, value }))}
+            onSelect={actions.selectRepo}
+          />
+          <Picker
+            title="Variants"
+            selected={data.variant}
+            options={selectors
+              .relevantVariants(data)
+              .map(({ name: label, tag: value }) => ({ label, value }))}
+            onSelect={actions.selectVariant}
+          />
+          <Textbox id="grep" title="Match" onChange={actions.setGrep} />
+        </Form>
       </Row>
       <Row>
         <Tags repo={data.repo} tags={selectors.selectedTags(data)} />
@@ -66,34 +81,65 @@ function ImageBrowser({ data }) {
 
 function Picker({ title, selected, options, onClear, onSelect }) {
   return (
-    <div className="mb-2">
-      <h4>{title}</h4>
-      {options.map(({ value, label }) => {
-        return (
+    <FormGroup>
+      <Label>{title}</Label>
+      <div>
+        {options.map(({ value, label }) => {
+          return (
+            <Button
+              key={value}
+              outline={selected !== value}
+              color="info"
+              size="sm"
+              className="m-1"
+              onClick={() => onSelect(value)}
+            >
+              {label}
+            </Button>
+          );
+        })}
+        {onClear && (
           <Button
-            key={value}
-            outline={selected !== value}
-            color="info"
+            outline
+            color="secondary"
             size="sm"
             className="m-1"
-            onClick={() => onSelect(value)}
+            onClick={onClear}
           >
-            {label}
+            Clear
           </Button>
-        );
-      })}
-      {onClear && (
-        <Button
-          outline
-          color="secondary"
-          size="sm"
-          className="m-1"
-          onClick={onClear}
-        >
+        )}
+      </div>
+    </FormGroup>
+  );
+}
+
+function Textbox({ id, title, onChange }) {
+  const [value, setValue] = React.useState("");
+  const [delayedOnChange] = useDebouncedCallback(onChange, 200);
+  React.useEffect(() => delayedOnChange(value), [value, delayedOnChange]);
+
+  return (
+    <FormGroup className="mb-2" row>
+      <Label for={id} sm={2}>
+        {title}
+      </Label>
+      <Col sm={8}>
+        <Input
+          type="text"
+          id={id}
+          autoComplete="off"
+          placeholder="Space separated keywords to include"
+          value={value}
+          onChange={e => setValue(e.target.value)}
+        />
+      </Col>
+      <Col sm={2}>
+        <Button outline color="secondary" onClick={() => setValue("")}>
           Clear
         </Button>
-      )}
-    </div>
+      </Col>
+    </FormGroup>
   );
 }
 
