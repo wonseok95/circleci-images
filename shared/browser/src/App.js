@@ -4,7 +4,7 @@ import TimeAgo from "react-timeago";
 
 import { Container, Row, Navbar, NavbarBrand, Button, Table } from "reactstrap";
 
-import { actions, selectors, variants } from "./data";
+import { actions, selectors } from "./data";
 
 function App({ data }) {
   return (
@@ -40,40 +40,27 @@ function ImageBrowser({ data }) {
   return (
     <>
       <Row className="p-3">
-        <Pickers
-          repos={data.repos}
-          selectedRepo={data.repo}
-          selectedVariant={data.variant}
+        <Picker
+          title="Language"
+          selected={data.repo}
+          options={selectors
+            .repos(data)
+            .map(({ name: label, repo: value }) => ({ label, value }))}
+          onSelect={actions.selectRepo}
+        />
+        <Picker
+          title="Variants"
+          selected={data.variant}
+          options={selectors
+            .relevantVariants(data)
+            .map(({ name: label, tag: value }) => ({ label, value }))}
+          onSelect={actions.selectVariant}
         />
       </Row>
       <Row>
-        <Tags tags={selectors.tagFilter(data)} />
+        <Tags repo={data.repo} tags={selectors.selectedTags(data)} />
       </Row>
     </>
-  );
-}
-
-function Pickers({ repos, selectedRepo, selectedVariant }) {
-  return (
-    <div>
-      <Picker
-        title="Language"
-        selected={selectedRepo}
-        options={[{ label: "None", value: "none" }].concat(
-          repos.map(({ name, repo }) => ({
-            label: name,
-            value: repo,
-          }))
-        )}
-        onSelect={actions.selectRepo}
-      />
-      <Picker
-        title="Variants"
-        selected={selectedVariant}
-        options={variants}
-        onSelect={actions.selectVariant}
-      />
-    </div>
   );
 }
 
@@ -110,7 +97,7 @@ function Picker({ title, selected, options, onClear, onSelect }) {
   );
 }
 
-function Tags({ tags }) {
+function Tags({ repo, tags }) {
   if (!tags.length) {
     return <p>No language selected.</p>;
   }
@@ -118,16 +105,14 @@ function Tags({ tags }) {
     <Table size="sm">
       <thead>
         <tr>
-          <th>Language</th>
           <th>Image</th>
           <th>Size</th>
           <th>Updated</th>
         </tr>
       </thead>
       <tbody>
-        {tags.map(({ language, repo, tag, size, updated }) => (
-          <tr key={"" + repo + tag}>
-            <td>{language}</td>
+        {tags.map(({ language, tag, size, updated }) => (
+          <tr key={"" + tag}>
             <td>
               circleci/{repo}:{tag}
             </td>

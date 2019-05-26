@@ -1,5 +1,3 @@
-import sortBy from "lodash.sortby";
-
 /** Data Model **/
 
 const states = {
@@ -14,18 +12,27 @@ const store = {
   error: null,
   json: {},
   repos: [],
-  tags: [],
+  tags: {}, // repo => Repo
   repo: "none",
   variant: "all",
 };
 
-export const variants = [
-  { label: "All", value: "all", virtual: true },
-  { label: "None", value: "none", virtual: true },
-  { label: "Node + Browsers", value: "node-browsers" },
-  { label: "Browsers", value: "browsers" },
-  { label: "Node", value: "node" },
-  { label: "RAM", value: "ram" },
+const emptyRepo = () => ({
+  variants: [],
+  tags: [],
+});
+
+const variants = [
+  { name: "All", tag: "all", virtual: true },
+  { name: "None", tag: "none", virtual: true },
+  { name: "Node + Browsers", tag: "node-browsers" },
+  { name: "Node + Legacy Browsers", tag: "node-browsers-legacy" },
+  { name: "Browsers", tag: "browsers" },
+  { name: "Legacy Browsers", tag: "browsers-legacy" },
+  { name: "Node", tag: "node" },
+  { name: "PostGIS + RAM", tag: "postgis-ram" },
+  { name: "RAM", tag: "ram" },
+  { name: "PostGIS", tag: "postgis" },
 ];
 
 /** State Transitions **/
@@ -49,6 +56,18 @@ function init() {
     );
 }
 
+function selectRepo(repoName) {
+  update({ repo: repoName });
+
+  const repo = selectedRepo(store);
+  const variant = repo.variants.includes(store.variant) ? store.variant : "all";
+  update({ variant });
+}
+
+function selectVariant(variant) {
+  update({ variant: variant });
+}
+
 function updateJson(json) {
   update({ state: states.ok, json, ...expand(json) });
 }
@@ -56,65 +75,83 @@ function updateJson(json) {
 function expand(json) {
   const expanded = {
     repos: [],
-    tags: [],
+    tags: {},
   };
 
   json.forEach(({ name, repo, tags }) => {
     expanded.repos.push({ name, repo });
 
-    // It would be neat if we could try and parse the various tags
-    // to identify the various flavours of the upstream images
-    // and then use that data to generate the UI filters
-    //
-    // an approach that might work would be to split on `-`, and remove
-    // duplicates - possibly with some extra logic to group together things
-    // that look like version numbers or operating systems
-    tags.forEach(({ name: tag, size, updated }) => {
-      expanded.tags.push({
-        language: name,
-        repo,
-        tag,
-        size,
-        updated: new Date(updated),
-        variant: deriveVariant(tag),
-      });
-    });
+    expanded.tags[repo] = expandRepoTags(tags);
   });
-
-  expanded.data = sortBy(expanded.data, t => t.updated.toISOString());
 
   return expanded;
 }
 
-function selectRepo(repo) {
-  update({ repo: repo });
+function expandRepoTags(tags) {
+  // It would be neat if we could try and parse the various tags
+  // to identify the various flavours of the upstream images
+  // and then use that data to generate the UI filters
+  //
+  // an approach that might work would be to split on `-`, and remove
+  // duplicates - possibly with some extra logic to group together things
+  // that look like version numbers or operating systems
+  const repo = emptyRepo();
+  const variants = new Set();
+
+  repo.tags = tags
+    .map(({ name: tag, size, updated }) => {
+      const variant = deriveVariant(tag);
+      variants.add(variant);
+      return {
+        tag,
+        variant,
+        size,
+        updated: new Date(updated),
+      };
+    })
+    .sort((a, b) => b.updated - a.updated);
+
+  repo.variants = Array.from(variants.values());
+
+  return repo;
 }
 
-function selectVariant(variant) {
-  update({ variant: variant });
+const variantValues = variants.map(x => x.tag);
+function deriveVariant(tag) {
+  return variantValues.find(subTag => tag.includes(subTag));
 }
 
 /** Selectors **/
 
 export const selectors = {
-  tagFilter,
+  repos,
+  selectedTags,
+  relevantVariants,
 };
 
-function tagFilter(data) {
-  return data.tags.filter(filter(data));
+function repos(data) {
+  return [{ name: "None", repo: "none" }].concat(data.repos);
+}
+
+function selectedTags(data) {
+  const repo = selectedRepo(data);
+  return repo.tags.filter(filter(data));
 }
 
 function filter(data) {
-  return ({ repo, variant }) =>
-    repo === data.repo &&
-    (data.variant === "all" ||
-      (data.variant === "none" && !variant) ||
-      data.variant === variant);
+  return ({ variant }) =>
+    data.variant === "all" ||
+    (data.variant === "none" && !variant) ||
+    data.variant === variant;
 }
 
-const variantValues = variants.map(x => x.value);
-function deriveVariant(tag) {
-  return variantValues.find(subTag => tag.includes(subTag));
+function relevantVariants(data) {
+  const repo = selectedRepo(data);
+  return variants.filter(v => v.virtual || repo.variants.includes(v.tag));
+}
+
+function selectedRepo(data) {
+  return data.tags[data.repo] || emptyRepo();
 }
 
 /** Data Subscriptions **/
