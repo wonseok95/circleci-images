@@ -12,6 +12,7 @@
   "scripts": {
     "start": "react-scripts start",
     "prettier": "prettier --write '**/*.js'",
+    "prettier-check": "prettier --check '**/*.js'",
     "build": "react-scripts build"
   },
   "eslintConfig": {
@@ -33,5 +34,8 @@
   },
   "devDependencies": {
     "prettier": "1.17.1"
+  },
+  "prettier": {
+    "trailingComma": "es5"
   }
 }

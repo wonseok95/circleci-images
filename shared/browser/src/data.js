@@ -4,7 +4,7 @@ const states = {
   initial: "initial",
   loading: "loading",
   error: "error",
-  ok: "ok"
+  ok: "ok",
 };
 
 const store = {
@@ -14,7 +14,7 @@ const store = {
   repos: [],
   tags: [],
   repo: "none",
-  variant: "all"
+  variant: "all",
 };
 
 export const variants = [
@@ -23,7 +23,7 @@ export const variants = [
   { label: "Node + Browsers", value: "node-browsers" },
   { label: "Browsers", value: "browsers" },
   { label: "Node", value: "node" },
-  { label: "RAM", value: "ram" }
+  { label: "RAM", value: "ram" },
 ];
 
 /** State Transitions **/
@@ -31,7 +31,7 @@ export const variants = [
 export const actions = {
   init,
   selectRepo,
-  selectVariant
+  selectVariant,
 };
 
 function init() {
@@ -54,7 +54,7 @@ function updateJson(json) {
 function expand(json) {
   const expanded = {
     repos: [],
-    tags: []
+    tags: [],
   };
 
   Object.entries(json).forEach(([repo, { name, tags }]) => {
@@ -63,12 +63,16 @@ function expand(json) {
     // It would be neat if we could try and parse the various tags
     // to identify the various flavours of the upstream images
     // and then use that data to generate the UI filters
+    //
+    // an approach that might work would be to split on `-`, and remove
+    // duplicates - possibly with some extra logic to group together things
+    // that look like version numbers or operating systems
     tags.forEach(tag => {
       expanded.tags.push({
         language: name,
         repo,
         tag,
-        variant: deriveVariant(tag)
+        variant: deriveVariant(tag),
       });
     });
   });
@@ -87,7 +91,7 @@ function selectVariant(variant) {
 /** Selectors **/
 
 export const selectors = {
-  tagFilter
+  tagFilter,
 };
 
 function tagFilter(data) {

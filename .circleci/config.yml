@@ -416,7 +416,7 @@ jobs:
       - checkout:
           path: ~/project
       - run: npm ci
-      - run: npm run prettier -- --check
+      - run: npm run prettier-check
       - run: npm run build
 
 

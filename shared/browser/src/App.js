@@ -60,7 +60,7 @@ function Pickers({ repos, selectedRepo, selectedVariant }) {
         options={[{ label: "None", value: "none" }].concat(
           repos.map(({ name, repo }) => ({
             label: name,
-            value: repo
+            value: repo,
           }))
         )}
         onSelect={actions.selectRepo}
