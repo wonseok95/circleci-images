@@ -13,13 +13,13 @@
     "start": "react-scripts start",
     "prettier": "prettier --write '**/*.js'",
     "prettier-check": "prettier --check '**/*.js'",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "postbuild": "node src/download-dockerhub-info.js > build/dockerhub-info.json"
   },
   "eslintConfig": {
     "extends": "react-app"
   },
   "homepage": ".",
-  "proxy": "https://circleci.com/",
   "browserslist": {
     "production": [
       ">0.2%",

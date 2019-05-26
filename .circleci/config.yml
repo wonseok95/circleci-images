@@ -418,6 +418,8 @@ jobs:
       - run: npm ci
       - run: npm run prettier-check
       - run: npm run build
+      - store_artifacts:
+          path: build
 
 
 cron_workflow_filters: &cron_workflow_filters

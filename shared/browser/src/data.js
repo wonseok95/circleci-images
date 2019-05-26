@@ -39,7 +39,7 @@ function init() {
     update({ state: states.loading });
   }
   // TODO: hit prod when CORS is enabled
-  fetch("/docs/2.0/docker-image-tags.json")
+  fetch("./dockerhub-info.json")
     .then(resp => resp.json())
     .then(
       json => updateJson(json),
@@ -57,7 +57,7 @@ function expand(json) {
     tags: [],
   };
 
-  Object.entries(json).forEach(([repo, { name, tags }]) => {
+  json.forEach(({ name, repo, tags }) => {
     expanded.repos.push({ name, repo });
 
     // It would be neat if we could try and parse the various tags
@@ -67,11 +67,13 @@ function expand(json) {
     // an approach that might work would be to split on `-`, and remove
     // duplicates - possibly with some extra logic to group together things
     // that look like version numbers or operating systems
-    tags.forEach(tag => {
+    tags.forEach(({ name: tag, size, updated }) => {
       expanded.tags.push({
         language: name,
         repo,
         tag,
+        size,
+        updated: new Date(updated),
         variant: deriveVariant(tag),
       });
     });
