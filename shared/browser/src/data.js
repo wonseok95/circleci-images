@@ -1,3 +1,5 @@
+import sortBy from "lodash.sortby";
+
 /** Data Model **/
 
 const states = {
@@ -79,6 +81,8 @@ function expand(json) {
     });
   });
 
+  expanded.data = sortBy(expanded.data, t => t.updated.toISOString());
+
   return expanded;
 }
 
@@ -97,9 +101,7 @@ export const selectors = {
 };
 
 function tagFilter(data) {
-  const matchingTags = data.tags.filter(filter(data));
-  matchingTags.sort(by({ repo: 1, tag: -1 }));
-  return matchingTags;
+  return data.tags.filter(filter(data));
 }
 
 function filter(data) {
@@ -139,22 +141,6 @@ function select() {
     default:
       return { state: states.error, error: "unexpected state" };
   }
-}
-
-/** utils **/
-
-/**
- * Generate sort comparators
- */
-function by(fields) {
-  return (a, b) => {
-    for (const field in fields) {
-      if (a[field] === b[field]) continue;
-      const direction = fields[field];
-      return a[field].localeCompare(b[field]) * direction;
-    }
-    return 0;
-  };
 }
 
 if (module.hot) {

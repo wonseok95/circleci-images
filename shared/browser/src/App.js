@@ -1,5 +1,7 @@
 import React from "react";
 
+import TimeAgo from "react-timeago";
+
 import { Container, Row, Navbar, NavbarBrand, Button, Table } from "reactstrap";
 
 import { actions, selectors, variants } from "./data";
@@ -118,20 +120,32 @@ function Tags({ tags }) {
         <tr>
           <th>Language</th>
           <th>Image</th>
+          <th>Size</th>
+          <th>Updated</th>
         </tr>
       </thead>
       <tbody>
-        {tags.map(({ language, repo, tag }) => (
+        {tags.map(({ language, repo, tag, size, updated }) => (
           <tr key={"" + repo + tag}>
             <td>{language}</td>
             <td>
               circleci/{repo}:{tag}
+            </td>
+            <td>
+              <Megabytes bytes={size} />
+            </td>
+            <td>
+              <TimeAgo date={updated} title={updated.toISOString()} />
             </td>
           </tr>
         ))}
       </tbody>
     </Table>
   );
+}
+
+function Megabytes({ bytes }) {
+  return <span>{Math.round(bytes / 1024 / 1024)}MB</span>;
 }
 
 export default App;
