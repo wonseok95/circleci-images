@@ -17,7 +17,7 @@ function generate_dockerfile {
   echo "${dockerfile_path}"
 }
 
-# we can set parallelism to 6 to cover all API versions (23 through 28)
+# we can set parallelism to 6 to cover all API versions (23 through 29)
 # if we want to add another API version, bump paralellism by 1
 if [[ "$CIRCLE_NODE_TOTAL" -gt 1 ]]; then
   let API=${CIRCLE_NODE_INDEX}+23
@@ -40,7 +40,7 @@ if [[ "$CIRCLE_NODE_TOTAL" -gt 1 ]]; then
   # create specific NDK dockerfiles (call m4 here when we want multiple NDK versions)
   cat Dockerfile-ndk.template >> "${ndk_variant_dockerfile}"
 else
-  for API in 23 24 25 26 27 28; do
+  for API in 23 24 25 26 27 28 29; do
     echo Generating Android ${API} Dockerfiles
 
     tag=api-${API}
