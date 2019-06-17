@@ -304,7 +304,7 @@ jobs:
 
   publish_android:
     <<: *publish_image
-    parallelism: 6 # don't increase or decrease this, it correlates to the number of API versions we build in android/generate images
+    parallelism: 7 # don't increase or decrease this, it correlates to the number of API versions we build in android/generate images
     environment:
       - PLATFORM: android
 
