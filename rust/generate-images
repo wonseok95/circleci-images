@@ -4,5 +4,13 @@ NAME=Rust
 BASE_REPO=rust
 VARIANTS=(browsers node node-browsers)
 
+IMAGE_CUSTOMIZATIONS=$(cat <<'EOF'
+
+# install musl libc for static binaries
+RUN apt-get install -y musl musl-dev musl-tools
+
+EOF
+)
+
 source ../shared/images/generate-node.sh
 source ../shared/images/generate.sh

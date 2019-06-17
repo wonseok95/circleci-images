@@ -7,6 +7,14 @@ file:
   /home/circleci:
     exists: true
 
+package:
+  musl:
+    installed: true
+  musl-dev:
+    installed: true
+  musl-tools:
+    installed: true
+
 user:
   # ensure circleci user exists
   circleci:
