@@ -27,7 +27,7 @@ function find_tags_and_aliases() {
   curl --silent --location --fail --retry 3 "$MANIFEST_SOURCE" \
     | grep Tags \
     | sed  's/^.*Tags: //g' \
-    | grep -v $ALPINE_TAG -e 'slim' -e 'onbuild' -e windows -e wheezy -e nanoserver -e sid -e buster \
+    | grep -v $ALPINE_TAG -e 'slim' -e 'onbuild' -e windows -e nanoserver -e alpha -e beta -e preview -e sid -e wheezy -e jessie \
     | ${TAG_FILTER} \
     | ${TAG_INCLUDE_FILTER} \
     | sed 's/, /:/' \
