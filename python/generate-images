@@ -7,7 +7,7 @@ VARIANTS=(browsers node node-browsers)
 IMAGE_CUSTOMIZATIONS=$(cat <<'EOF'
 
 # Install pipenv and poetry
-RUN sudo pip install pipenv poetry
+RUN sudo pip install --no-cache pipenv poetry
 
 EOF
 )
