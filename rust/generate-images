@@ -6,6 +6,8 @@ VARIANTS=(browsers node node-browsers)
 
 IMAGE_CUSTOMIZATIONS=$(cat <<'EOF'
 
+RUN rustup component add rustfmt
+
 # install musl libc for static binaries
 RUN apt-get install -y musl musl-dev musl-tools
 
