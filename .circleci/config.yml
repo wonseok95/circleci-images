@@ -1,0 +1,12 @@
+version: 2
+jobs:
+  build:
+    steps: []
+workflows:
+  version: 2
+  nope:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: never
