@@ -418,8 +418,67 @@ jobs:
       - run: npm ci
       - run: npm run prettier-check
       - run: npm run build
+      - persist_to_workspace:
+          root: ~/project/shared/browser/build
+          paths:
+            - .
       - store_artifacts:
           path: build
+
+  publish_image_browser:
+    docker:
+      - image: circleci/node:lts
+    steps:
+      - add_ssh_keys:
+          # Read/Write Deploy Key for circleci-images
+          fingerprints:
+            - "9e:11:ee:83:f9:83:ef:a3:9b:ab:a8:c7:0c:3a:92:ed"
+      - checkout
+      - run:
+          name: empty the git repo
+          command: |
+            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
+            git config --global user.name "$CIRCLE_USERNAME"
+
+            git checkout --orphan gh-pages
+            git reset
+            git clean -df
+
+            # the first one leaves some files around, try harder!
+            git clean -df
+      - attach_workspace:
+          at: .
+      - run:
+          name: add a no-op circleci config
+          command: |
+            mkdir .circleci
+            cat \<< EOF > .circleci/config.yml
+            version: 2
+            jobs:
+              build:
+                steps: []
+            workflows:
+              version: 2
+              nope:
+                jobs:
+                  - build:
+                      filters:
+                        branches:
+                          only: never
+            EOF
+      - run:
+          name: commit the generated site
+          command: |
+            git add -Av .
+            git commit -m "Generated Image Browser
+
+            Generated at $CIRCLE_BUILD_URL
+            From commit $CIRCLE_SHA1"
+      - run:
+          name: publish to gh-pages branch
+          command: |
+            git --no-pager show --stat HEAD
+            git push --force-with-lease origin HEAD:gh-pages
 
 
 cron_workflow_filters: &cron_workflow_filters
@@ -478,6 +537,13 @@ workflows:
       - generate_dockerfiles
       - generate_automated_build_images
       - build_image_browser
+      - publish_image_browser:
+          requires:
+            - build_image_browser
+          filters:
+            branches:
+              only:
+                - master
       - refresh_tools_cache:
           requires:
             - generate_dockerfiles
