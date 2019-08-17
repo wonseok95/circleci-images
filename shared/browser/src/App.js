@@ -143,6 +143,18 @@ function Textbox({ id, title, onChange }) {
   );
 }
 
+function dockerfileUrl(repo, tag) {
+  // Note: this only works for tags we're still building
+  // I'm not sure if we have a way to know which git SHA built a given tag
+  return [
+    "https://github.com/CircleCI-Public/circleci-dockerfiles/blob/master/",
+    encodeURIComponent(repo),
+    "/images/",
+    encodeURIComponent(tag),
+    "/Dockerfile",
+  ].join("");
+}
+
 function Tags({ repo, tags }) {
   if (!tags.length) {
     return <p>No language selected.</p>;
@@ -163,7 +175,13 @@ function Tags({ repo, tags }) {
         {tags.map(({ language, tag, size, updated }) => (
           <tr key={"" + tag}>
             <td>
-              circleci/{repo}:{tag}
+              <a
+                href={dockerfileUrl(repo, tag)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                circleci/{repo}:{tag}
+              </a>
             </td>
             <td>
               <Megabytes bytes={size} />
