@@ -32,6 +32,9 @@ async function fetchRepo(repo) {
   const repoInfo = await fetchRepoInfo(repo);
   const tags = await fetchAllTags(repo);
 
+  // TODO: fetch labels to find which git SHA produced each tag?
+  // https://github.com/docker/distribution/issues/1252#issuecomment-274944254
+
   return {
     namespace: repoInfo.namespace,
     repo: repoInfo.name,
@@ -46,6 +49,7 @@ const dockerhub = axios.create({
 });
 
 async function fetchRepoInfo(repo) {
+  console.warn("Fetching repo info for %s", repo);
   return (await dockerhub.get(buildUrl(repo))).data;
 }
 
@@ -55,8 +59,9 @@ async function fetchAllTags(repo) {
   let page = 0;
   let data;
   do {
+    console.warn("Fetching tags for %s page %d", repo, ++page);
     data = (await dockerhub.get(buildUrl(repo, "tags"), {
-      params: { page: ++page, page_size: 100 },
+      params: { page, page_size: 100 },
     })).data;
     tags.push(...data.results);
   } while (data.next);
@@ -92,5 +97,5 @@ if (require.main === module) {
   process.on("unhandledRejection", err => {
     throw err;
   });
-  fetchInfo().then(data => console.log(JSON.stringify(data)));
+  module.exports.then(data => console.log(JSON.stringify(data)));
 }
