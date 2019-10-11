@@ -6,7 +6,7 @@ VARIANTS=(ram postgis postgis-ram)
 
 INCLUDE_ALPINE=true
 
-TAG_FILTER="grep -v -e ^12"
+TAG_FILTER="grep -v -e ^13"
 
 source ../shared/images/generate.sh
 
