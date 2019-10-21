@@ -69,8 +69,15 @@ jobs:
       - run:
           name: git config, git clone
           command: |
-            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
-            git config --global user.name "$CIRCLE_USERNAME"
+            if [ ! -z "$CIRCLE_USERNAME" ]; then
+
+              git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
+              git config --global user.name "$CIRCLE_USERNAME"
+            else
+
+              git config --global user.email "community-partner@circleci.com"
+              git config --global user.name "cpe-team"
+            fi
 
             git clone git@github.com:CircleCI-Public/circleci-dockerfiles.git
 
