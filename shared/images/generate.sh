@@ -95,15 +95,13 @@ function render_readme_template() {
 
   if [ -e images/latest/Dockerfile ]
   then
-    cat images/latest/Dockerfile | \
-      grep -v -e '^###' -e '^{{' -e '^# BEGIN' -e '^# END BEGIN' | \
+     grep -v -e '^###' -e '^{{' -e '^# BEGIN' -e '^# END BEGIN' images/latest/Dockerfile | \
       grep -v -e '^ *$' > $BASIC_TEMP_PATH
   fi
 
   if [ -e images/latest/browsers/Dockerfile ]
   then
-    cat images/latest/browsers/Dockerfile | \
-     grep -v -e '^###' -e '^{{' -e '^# BEGIN' -e '^# END BEGIN' | \
+    grep -v -e '^###' -e '^{{' -e '^# BEGIN' -e '^# END BEGIN' images/latest/browsers/Dockerfile | \
      grep -v -e '^ *$' > $BROWSERS_TEMP_PATH
   else
     TEMPLATE_TYPE=service
@@ -111,8 +109,7 @@ function render_readme_template() {
 
   TEMPLATE_PATH=$(find_template $TEMPLATE_TYPE README)
 
-  cat $TEMPLATE_PATH | \
-    sed "s|{{NAME}}|${NAME}|g" | \
+   sed "s|{{NAME}}|${NAME}|g" $TEMPLATE_PATH | \
     sed "s|{{BASE_IMAGE}}|$BASE_IMAGE|g" | \
     sed "s|{{BASE_REPO}}|$BASE_REPO|g" | \
     sed "/{{DOCKERFILE_BASIC_SAMPLE}}/ r ${BASIC_TEMP_PATH}" | \

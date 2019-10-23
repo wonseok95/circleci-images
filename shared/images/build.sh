@@ -25,7 +25,7 @@ function is_variant() {
 }
 
 function update_aliases() {
-    for alias in $(cat ALIASES | sed 's/,/ /g')
+    for alias in $(sed 's/,/ /g' ALIASES)
     do
         echo handling alias ${alias}
 
