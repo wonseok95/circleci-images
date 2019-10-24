@@ -2,7 +2,7 @@
 
 NAME="Go (Golang)"
 BASE_REPO=golang
-VARIANTS=(browsers node node-browsers)
+VARIANTS=(browsers)
 
 IMAGE_CUSTOMIZATIONS='
 RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | INSTALL_DIRECTORY=/usr/local/bin sh
