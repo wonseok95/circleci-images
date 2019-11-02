@@ -2,7 +2,7 @@
 
 NAME="jruby"
 BASE_REPO=jruby
-VARIANTS=(browsers)
+VARIANTS=(browsers node node-browsers)
 
 source ../shared/images/generate-node.sh
 source ../shared/images/generate.sh

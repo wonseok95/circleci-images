@@ -2,7 +2,7 @@
 
 NAME="elixir"
 BASE_REPO=elixir
-VARIANTS=(browsers)
+VARIANTS=(browsers node node-browsers)
 
 source ../shared/images/generate-node.sh
 source ../shared/images/generate.sh
