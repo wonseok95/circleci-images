@@ -49,4 +49,3 @@ mkdir -p resources
 generate_node_variant "lts[$,]" > resources/Dockerfile-node.template
 generate_node_browser_variant > resources/Dockerfile-node-browsers.template
 generate_node_browser_legacy_variant > resources/Dockerfile-node-browsers-legacy.template
-
