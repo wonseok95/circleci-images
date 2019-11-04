@@ -17,7 +17,7 @@ function generate_dockerfile {
   echo "${dockerfile_path}"
 }
 
-# we can set parallelism to 6 to cover all API versions (23 through 29)
+# we can set parallelism to 7 to cover all API versions (23 through 29)
 # if we want to add another API version, bump paralellism by 1
 if [[ "$CIRCLE_NODE_TOTAL" -gt 1 ]]; then
   let API=${CIRCLE_NODE_INDEX}+23
