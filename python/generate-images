@@ -2,7 +2,7 @@
 
 NAME=Python
 BASE_REPO=python
-VARIANTS=(browsers)
+VARIANTS=(browsers node node-browsers)
 
 IMAGE_CUSTOMIZATIONS=$(cat <<'EOF'
 
