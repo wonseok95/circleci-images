@@ -2,7 +2,7 @@
 
 NAME=PHP
 BASE_REPO=php
-VARIANTS=(browsers)
+VARIANTS=(browsers node node-browsers)
 
 TAG_FILTER="grep -v -e rc -e beta"
 
