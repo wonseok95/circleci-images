@@ -4,7 +4,7 @@ NAME=PostgreSQL
 BASE_REPO=postgres
 VARIANTS=(ram postgis postgis-ram)
 
-INCLUDE_ALPINE=true
+INCLUDE_ALPINE=false
 
 TAG_FILTER="grep -v -e ^13"
 
