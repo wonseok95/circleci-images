@@ -17,7 +17,7 @@ RUN whoami
 USER root
 EOF
 
-  NODE_MANIFEST_INFO=$(curl --silent --location --fail --retry 3 https://raw.githubusercontent.com/docker-library/official-images/master/library/node | grep -A 3 "$DESIRED_NODE_TAG")
+  NODE_MANIFEST_INFO=$(curl --silent --location --fail --retry 3 https://raw.githubusercontent.com/docker-library/official-images/master/library/node | egrep -A 3 "$DESIRED_NODE_TAG")
   NODE_GIT_COMMIT=$(printf "%s\n" "${NODE_MANIFEST_INFO}" | grep GitCommit | awk '{print $2;}')
   NODE_DIRECTORY=$(printf "%s\n" "${NODE_MANIFEST_INFO}" | grep Directory | awk '{print $2;}')
 
@@ -46,6 +46,6 @@ function generate_node_browser_legacy_variant() {
 }
 
 mkdir -p resources
-generate_node_variant "lts[$,]" > resources/Dockerfile-node.template
+generate_node_variant "[[:blank:]]lts($|,)" > resources/Dockerfile-node.template
 generate_node_browser_variant > resources/Dockerfile-node-browsers.template
 generate_node_browser_legacy_variant > resources/Dockerfile-node-browsers-legacy.template
