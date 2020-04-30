@@ -186,7 +186,7 @@ jobs:
       - image: circleci/python:3.6.6 # aws cli dependency pyaml does not yet support 3.7 - https://github.com/aws/aws-cli/issues/3427
     steps:
       - checkout
-      - run: sudo pip install awscli==1.14.17
+      - run: sudo pip install awscli==1.18.48
       - run: |
           # if this is a forked PR, stop this step;
           # community contributors won't have perms to upload to our S3 bucket
@@ -201,7 +201,7 @@ jobs:
 
   publish_image: &publish_image
     machine:
-      image: circleci/classic:201808-01
+      image: ubuntu-1604:202004-01
     working_directory: ~/circleci-bundles
     shell: /bin/bash -eol pipefail
     parameters:
@@ -427,7 +427,6 @@ commit_workflow_filters: &commit_workflow_filters
     - refresh_tools_cache
 
 workflows:
-  version: 2
   build_test_deploy:
     triggers:
       - schedule:
