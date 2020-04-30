@@ -273,6 +273,7 @@ jobs:
 
       - run:
           name: Build, Test, Publish Images
+          no_output_timeout: 20m
           command: |
             export COMPUTED_ORG=ccitest
             if [[ "$CIRCLE_BRANCH" == "master" ]]; then
