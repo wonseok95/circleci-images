@@ -416,6 +416,35 @@ jobs:
     environment:
       - PLATFORM: erlang
 
+  prune_tags:
+    # This job will run regularly in order to delete Docker tags that we're
+    # not using. This will help keep the amount of Docker Hub storage we're
+    # using at a controlled level.
+    docker:
+      - image: cimg/base:2020.08
+    parameters:
+      images:
+        description: "The images whose tags are to be deleted, comma separated."
+        type: string
+      duration:
+        description: "The amount of days of which to delete a tag."
+        type: string
+    steps:
+      - run:
+          name: "Install Sonar"
+          command: |
+            SONAR_VER=0.7.0
+            SONAR_URL="https://github.com/felicianotech/sonar/releases/download/v${SONAR_VER}/sonar-v${SONAR_VER}-linux-amd64.tar.gz"
+            curl -sSL $SONAR_URL | sudo tar -xz -C /usr/local/bin sonar
+      - run:
+          name: "Delete Tags"
+          command: |
+            IFS=',' read -r -a images \<<< "<< parameters.images >>"
+            for image in "${images[@]}"
+            do
+              sonar tags delete --yes --gt=<< parameters.duration >> --field=date $image
+            done
+
 cron_workflow_filters: &cron_workflow_filters
   scheduled-workflow: true
   requires:
@@ -462,6 +491,22 @@ workflows:
       - publish_rust:           *cron_workflow_filters
       - publish_buildpack-deps: *cron_workflow_filters
       - publish_erlang:         *commit_workflow_filters
+      - prune_tags:
+          name: "Prune ccitest - Language Images"
+          images: "ccitest/android,ccitest/clojure,ccitest/elixir,ccitest/golang,ccitest/jruby,ccitest/node,ccitest/openjdk,ccitest/php,ccitest/python,ccitest/ruby,ccitest/rust"
+          duration: "48h"
+      - prune_tags:
+          name: "Prune ccitest - Database Images"
+          images: "ccitest/buildpack-deps,ccitest/dynamodb,ccitest/mariadb,ccitest/mongo,ccitest/mysql,ccitest/postgres,ccitest/redis"
+          duration: "48h"
+      - prune_tags:
+          name: "Prune ccistaging - Language Images"
+          images: "ccistaging/android,ccistaging/clojure,ccistaging/elixir,ccistaging/golang,ccistaging/jruby,ccistaging/node,ccistaging/openjdk,ccistaging/php,ccistaging/python,ccistaging/ruby,ccistaging/rust"
+          duration: "32d"
+      - prune_tags:
+          name: "Prune ccistaging - Database Images"
+          images: "ccistaging/buildpack-deps,ccistaging/dynamodb,ccistaging/mariadb,ccistaging/mongo,ccistaging/mysql,ccistaging/postgres,ccistaging/redis"
+          duration: "32d"
 
   commit:
     jobs:
