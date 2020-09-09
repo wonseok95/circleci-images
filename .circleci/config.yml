@@ -491,22 +491,6 @@ workflows:
       - publish_rust:           *cron_workflow_filters
       - publish_buildpack-deps: *cron_workflow_filters
       - publish_erlang:         *commit_workflow_filters
-      - prune_tags:
-          name: "Prune ccitest - Language Images"
-          images: "ccitest/android,ccitest/clojure,ccitest/elixir,ccitest/golang,ccitest/jruby,ccitest/node,ccitest/openjdk,ccitest/php,ccitest/python,ccitest/ruby,ccitest/rust"
-          duration: "48h"
-      - prune_tags:
-          name: "Prune ccitest - Database Images"
-          images: "ccitest/buildpack-deps,ccitest/dynamodb,ccitest/mariadb,ccitest/mongo,ccitest/mysql,ccitest/postgres,ccitest/redis"
-          duration: "48h"
-      - prune_tags:
-          name: "Prune ccistaging - Language Images"
-          images: "ccistaging/android,ccistaging/clojure,ccistaging/elixir,ccistaging/golang,ccistaging/jruby,ccistaging/node,ccistaging/openjdk,ccistaging/php,ccistaging/python,ccistaging/ruby,ccistaging/rust"
-          duration: "32d"
-      - prune_tags:
-          name: "Prune ccistaging - Database Images"
-          images: "ccistaging/buildpack-deps,ccistaging/dynamodb,ccistaging/mariadb,ccistaging/mongo,ccistaging/mysql,ccistaging/postgres,ccistaging/redis"
-          duration: "32d"
 
   commit:
     jobs:
