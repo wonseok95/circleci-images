@@ -141,6 +141,8 @@ then
 
     if [[ $PUSH_IMAGES == true ]]; then
         docker push $IMAGE_NAME
+		imageDigest=$(docker inspect --format='{{index .RepoDigests 0}}' ${IMAGE_NAME})
+		echo "${IMAGE_NAME}: $imageDigest" >> ./docker-image-digests.txt
 
         handle_ccitest_org_images
 
@@ -164,6 +166,8 @@ else
 
     if [[ $PUSH_IMAGES == true ]]; then
         docker push $IMAGE_NAME
+		imageDigest=$(docker inspect --format='{{index .RepoDigests 0}}' ${IMAGE_NAME})
+		echo "${IMAGE_NAME}: $imageDigest" >> ./docker-image-digests.txt
 
         handle_ccitest_org_images
 
