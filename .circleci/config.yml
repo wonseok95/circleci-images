@@ -1,185 +1,6 @@
 version: 2.1
 
-orbs:
-  circle-compare-url: iynere/compare-url@0.4.8
-
 jobs:
-  generate_dockerfiles:
-    working_directory: ~/repo
-    resource_class: small
-    docker: [image: gcc:7]
-    steps:
-      - checkout
-      - run:
-          name: Generate Dockerfiles
-          command: make -j
-      - run:
-          name: Prepare Artifacts
-          command: |
-            mkdir /tmp/dockerfiles
-            find . -name Dockerfile -type f | grep -v shared | xargs -I{} cp -v --parents {} /tmp/dockerfiles
-      - store_artifacts:
-          path: /tmp/dockerfiles
-          destination: Dockerfiles
-
-      - attach_workspace:
-          at: workspace
-
-      # skip pushing identical dockerfiles to circleci-dockerfiles if relevant code is unchanged
-      - run:
-          name: only proceed if `shared` or `Makefile` or any image dirs were modified (unless we're on master)
-          command: |
-            # if this is a forked PR, skip this job
-            # community contributors won't have perms to push to dockerfiles repo anyway
-
-            if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
-              echo "this is a forked PR; skipping push to circleci-dockerfiles repo"
-              circleci step halt
-              exit 0
-            fi
-
-            make list_bundles
-
-            # Sometimes we have the "compare-url" functionality off
-            if [ -f workspace/CIRCLE_COMPARE_URL.txt ]; then
-              # save value stored in file to a local env var
-              CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
-
-              # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
-
-              COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
-              echo "Commit range: $COMMIT_RANGE"
-
-              if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "shared" -e "Makefile" -f BUNDLES.txt) && "$CIRCLE_BRANCH" != "master" ]]; then
-                circleci step halt
-                exit 0
-              fi
-            fi
-
-      # otherwise, upload Dockerfiles to circleci-public/circleci-dockerfiles repo
-      - add_ssh_keys:
-          fingerprints:
-            - "af:0a:93:75:51:75:1f:16:90:d9:97:b1:7a:bb:f0:27"
-
-      # potentially push Dockerfiles to CircleCI-Public/circleci-dockerfiles on circleci-images pushes to any branch
-      # checkout the equivalent branch on circleci-dockerfiiles
-      # if it doesn't exist, create it
-      # eventually, some kind of cron job that prunes branches would be helpful, but populating that repo with tons of branches of dockerfiles isn't that annoying & will be helpful for development
-
-      - run:
-          name: git config, git clone
-          command: |
-            if [ ! -z "$CIRCLE_USERNAME" ]; then
-
-              git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
-              git config --global user.name "$CIRCLE_USERNAME"
-            else
-
-              git config --global user.email "community-partner@circleci.com"
-              git config --global user.name "cpe-team"
-            fi
-
-            git clone git@github.com:CircleCI-Public/circleci-dockerfiles.git
-
-      - run:
-          name: git checkout, git push
-          working_directory: circleci-dockerfiles
-          command: |
-            git checkout $(git show-ref --verify --quiet refs/heads/$CIRCLE_BRANCH || echo '-b') $CIRCLE_BRANCH
-
-            cp -rfv /tmp/dockerfiles/* ~/repo/circleci-dockerfiles
-
-            git add .
-            git commit --allow-empty -m "Dockerfiles from $CIRCLE_BUILD_URL"
-            git push -f origin $CIRCLE_BRANCH
-
-  generate_automated_build_images:
-    working_directory: ~/repo
-    resource_class: small
-    docker:
-      - image: gcc:7
-    steps:
-      - checkout
-
-      - run:
-          name: Generate Dockerfiles, READMEs for automated builds
-          command: |
-            make -j
-            make example_images
-
-      - store_artifacts:
-          path: /tmp/example-images
-
-      - attach_workspace:
-          at: workspace
-
-      # skip pushing identical Dockerfiles/READMEs to example-images if relevant code is unchanged
-      # will also avoid tons of unecessary queueing in our Docker Hub automated builds
-      - run:
-          name: only proceed if `shared` or `Makefile` or any image dirs were modified (unless we're on master)
-          command: |
-            # if this is a forked PR, skip this job
-            # community contributors won't have perms to push to example-images repo anyway
-
-            if [[ $CIRCLE_PR_REPONAME == "circleci-images" ]]; then
-              echo "this is a forked PR; skipping push to example-images repo"
-              circleci step halt
-              exit 0
-            fi
-
-            make list_bundles
-
-            # Sometimes we have the "compare-url" functionality off
-            if [ -f workspace/CIRCLE_COMPARE_URL.txt ]; then
-              # save value stored in file to a local env var
-              CIRCLE_COMPARE_URL=$(cat workspace/CIRCLE_COMPARE_URL.txt)
-
-              # borrowed from https://discuss.circleci.com/t/does-circleci-2-0-work-with-monorepos
-
-              COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
-              echo "Commit range: $COMMIT_RANGE"
-
-              if [[ ! $(git diff $COMMIT_RANGE --name-status | grep -e "shared" -e "Makefile" -f BUNDLES.txt) && "$CIRCLE_BRANCH" != "master" ]]; then
-                circleci step halt
-                exit 0
-              fi
-            fi
-
-      - add_ssh_keys:
-          fingerprints:
-            - "9c:e2:cf:bb:f2:25:4d:05:d9:b0:30:bf:73:c5:7d:8f"
-
-      - run:
-          name: git config, git clone
-          command: |
-            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
-            git config --global user.name "$CIRCLE_USERNAME"
-
-            git clone git@github.com:CircleCI-Public/example-images.git
-
-      - run:
-          name: git checkout, git push
-          working_directory: example-images
-          command: |
-            git checkout $(git show-ref --verify --quiet refs/heads/$CIRCLE_BRANCH || echo '-b') $CIRCLE_BRANCH
-
-            cp -rfv /tmp/example-images/* ~/repo/example-images
-
-            git add .
-            git commit --allow-empty -m "example images from $CIRCLE_BUILD_URL"
-
-            if [[ "$CIRCLE_BRANCH" == "master" || "$CIRCLE_BRANCH" == "staging" ]]; then
-              git push -f origin $CIRCLE_BRANCH
-            else
-              # docker hub automated builds on the ccitest org are looking for tags of the following pattern:
-              # /ccitest-*/
-              # append the branch (since that org pulls from all non-master/staging branches) & SHA1
-
-              CCITEST_TAG=ccitest-$CIRCLE_BRANCH-${CIRCLE_SHA1:0:7}
-              git tag $CCITEST_TAG
-              git push origin $CCITEST_TAG
-            fi
-
   refresh_tools_cache:
     resource_class: small
     docker:
@@ -447,13 +268,9 @@ jobs:
 
 cron_workflow_filters: &cron_workflow_filters
   scheduled-workflow: true
-  requires:
-    - refresh_tools_cache
 
 commit_workflow_filters: &commit_workflow_filters
   scheduled-workflow: false
-  requires:
-    - refresh_tools_cache
 
 workflows:
   build_test_deploy:
@@ -468,10 +285,6 @@ workflows:
       #- circle-compare-url/reconstruct:
       #    name: reconstruct_compare_url
       #    resource-class: small
-      - generate_dockerfiles
-      - refresh_tools_cache:
-          requires:
-            - generate_dockerfiles
       - publish_android:        *cron_workflow_filters
       - publish_node:           *cron_workflow_filters
       - publish_python:         *cron_workflow_filters
@@ -497,12 +310,6 @@ workflows:
       #- circle-compare-url/reconstruct:
       #    name: reconstruct_compare_url
       #    resource-class: small
-      - generate_dockerfiles
-      - generate_automated_build_images
-      - refresh_tools_cache:
-          requires:
-            - generate_dockerfiles
-            - generate_automated_build_images
       - publish_android:        *commit_workflow_filters
       - publish_node:           *commit_workflow_filters
       - publish_python:         *commit_workflow_filters
