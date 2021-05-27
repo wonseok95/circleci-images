@@ -1,5 +1,5 @@
 
-ARG ndk_version=android-ndk-r20
+ARG ndk_version=android-ndk-r21e
 ARG android_ndk_home=/opt/android/${ndk_version}
 
 # install NDK
