@@ -25,9 +25,15 @@ RUN echo 'PATH="$HOME/.local/bin:$PATH"' >> /etc/profile.d/user-local-path.sh
 RUN apt-get update \
   && mkdir -p /usr/share/man/man1 \
   && apt-get install -y \
-    git mercurial xvfb apt \
-    locales sudo openssh-client ca-certificates tar gzip parallel \
-    net-tools netcat unzip zip bzip2 gnupg curl wget make
+    git xvfb apt \
+    locales sudo openssh-client ca-certificates tar gzip \
+    net-tools netcat unzip zip bzip2 gnupg curl wget make \
+  && if grep -q hirsute /etc/os-release || grep -q impish /etc/os-release; then \
+  	 	echo "Skipping, the following two packages aren't supported" \
+		# https://bugs.launchpad.net/ubuntu/+source/docker.io/+bug/1918021
+	 else \
+	 	apt-get install -y parallel mercurial \
+	 ; fi
 
 
 # Set timezone to UTC by default
