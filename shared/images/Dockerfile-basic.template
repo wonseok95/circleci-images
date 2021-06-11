@@ -64,7 +64,9 @@ RUN set -ex \
   && curl --silent --show-error --location --fail --retry 3 --output /tmp/docker.tgz "${DOCKER_URL}" \
   && ls -lha /tmp/docker.tgz \
   && tar -xz -C /tmp -f /tmp/docker.tgz \
+  && ls -lah /tmp/docker/ \
   && mv /tmp/docker/* /usr/bin \
+  && ls -lah /usr/bin/ | grep docker \
   && rm -rf /tmp/docker /tmp/docker.tgz \
   && which docker \
   && (docker version || true)
