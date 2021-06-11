@@ -4,4 +4,6 @@ NAME=MongoDB
 BASE_REPO=mongo
 VARIANTS=(ram)
 
+TAG_FILTER="grep -v -e -rc"
+
 source ../shared/images/generate.sh
