@@ -65,7 +65,7 @@ RUN set -ex \
   && ls -lha /tmp/docker.tgz \
   && tar -xz -C /tmp -f /tmp/docker.tgz \
   && ls -lah /tmp/docker/ \
-  && chown circleci:circleci /tmp/docker/* \
+  && chown root:root /tmp/docker/* \
   && mv /tmp/docker/* /usr/bin \
   && ls -lah /usr/bin/ | grep docker \
   && rm -rf /tmp/docker /tmp/docker.tgz \
